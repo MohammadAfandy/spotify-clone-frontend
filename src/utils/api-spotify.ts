@@ -10,6 +10,7 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  params: {},
 });
 
 // before request, set the access token and country param
