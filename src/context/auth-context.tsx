@@ -1,0 +1,80 @@
+import { createContext, useState, useEffect, useCallback } from 'react';
+import ApiSpotify from '../utils/api-spotify';
+import { getCookie, removeCookie, setCookie } from '../utils/helpers';
+
+import User from '../types/User';
+import Playlist from '../types/Playlist';
+import Track from '../types/Track';
+
+type AuthContextObj = {
+  isLoggedIn: boolean,
+  user: User,
+  logout: () => void,
+  playlists: Playlist[],
+  refreshPlaylists: () => void,
+};
+
+export const AuthContext = createContext<AuthContextObj>({
+  isLoggedIn: false,
+  user: {} as User,
+  logout: () => {},
+  playlists: [],
+  refreshPlaylists: () => {},
+});
+
+const AuthProvider: React.FC = ({ children }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!getCookie('access_token'));
+  const [user, setUser] = useState<User>({} as User);
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [savedTracks, setSavedTracks] = useState<Track[]>([]);
+
+  const logout = (): void => {
+    setIsLoggedIn(false);
+    setPlaylists([]);
+    setSavedTracks([]);
+    setUser({} as User);
+    removeCookie('refresh_token');
+    removeCookie('access_token');
+    removeCookie('country');
+  };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await ApiSpotify.get('/me');
+        setUser(response.data);
+        setCookie('country', response.data.country);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+  
+  const refreshPlaylists = useCallback(async () => {
+    try {
+      const response = await ApiSpotify.get('/me/playlists', { params: { limit: 20 } });
+      setPlaylists(response.data.items);
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
+  const contextValue = {
+    user,
+    logout,
+    isLoggedIn,
+    playlists,
+    refreshPlaylists,
+    savedTracks,
+  };
+
+  return (
+    <AuthContext.Provider value={contextValue}>
+      { children }
+    </AuthContext.Provider>
+  );
+};
+
+export default AuthProvider;
