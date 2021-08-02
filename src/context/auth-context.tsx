@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useCallback } from 'react';
 import ApiSpotify from '../utils/api-spotify';
-import { getCookie, removeCookie, setCookie } from '../utils/helpers';
+import { getCookie, removeCookie, setCookie, getHashValue } from '../utils/helpers';
 
 import User from '../types/User';
 import Playlist from '../types/Playlist';
@@ -39,18 +39,31 @@ const AuthProvider: React.FC = ({ children }) => {
   };
 
   useEffect(() => {
+    const { access_token, refresh_token, country } = getHashValue();
+    if (access_token) {
+      setCookie('access_token', access_token);
+      setCookie('refresh_token', refresh_token);
+      setCookie('country', country);
+      setIsLoggedIn(true);
+      window.location.hash = '';
+    }
+  }, []);
+
+  useEffect(() => {
     const fetchUser = async () => {
-      try {
-        const response = await ApiSpotify.get('/me');
-        setUser(response.data);
-        setCookie('country', response.data.country);
-      } catch (error) {
-        console.error(error);
+      if (isLoggedIn) {
+        try {
+          const response = await ApiSpotify.get('/me');
+          setUser(response.data);
+          setCookie('country', response.data.country);
+        } catch (error) {
+          console.error(error);
+        }
       }
     };
 
     fetchUser();
-  }, []);
+  }, [isLoggedIn]);
   
   const refreshPlaylists = useCallback(async () => {
     try {

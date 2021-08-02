@@ -4,6 +4,17 @@ import moment from 'moment';
 
 const cookiePrefix = 'spotify_clone_';
 
+export const getHashValue = () => {
+  const arrHash = window.location.hash.substring(1).split('&');
+  const result: { [key: string]: string } = {};
+  arrHash.forEach((hash) => {
+    const [param, value] = hash.split('=');
+    result[param] = decodeURIComponent(value);
+  });
+
+  return result;
+};
+
 export const getCookie = (key: string): string => {
   return Cookies.get(cookiePrefix + key) || '';
 }

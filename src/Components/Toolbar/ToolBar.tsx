@@ -58,6 +58,10 @@ const ToolBar: React.FC = () => {
     history.goForward();
   };
 
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <div className="fixed flex w-auto items-center left-52 right-0 top-0 px-4 py-2 z-50">
       <div className="flex items-center mr-auto">
@@ -104,7 +108,7 @@ const ToolBar: React.FC = () => {
       <div className="flex items-center">
         <span className="mr-4">{user.id}</span>
         <Button
-          onClick={() => logout()}
+          onClick={handleLogout}
           text="Logout"
           color="red"
         />

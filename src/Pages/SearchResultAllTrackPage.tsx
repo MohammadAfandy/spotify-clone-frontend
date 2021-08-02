@@ -18,10 +18,6 @@ const SearchResultAllTrackPage: React.FC = () => {
     tracks,
     pageData
   } = useFetchTracks(`/search?q=${query}&type=track`);
-  console.log({
-    tracks,
-    pageData
-  })
 
   const handlePlayTrack = (selectedOffset: number, selectedPositionMs: number) => {
     const trackUris = tracks.map((track) => track.uri);

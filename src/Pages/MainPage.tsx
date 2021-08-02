@@ -1,22 +1,23 @@
 import { Fragment, useContext } from 'react';
-import { Redirect, Route } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../context/auth-context';
+import PlayerProvider from '../context/player-context';
+import { getHashValue } from '../utils/helpers';
 
-import LoginPage from '../Pages/LoginPage';
 import Navbar from '../Components/Navbar/Navbar';
 import ToolBar from '../Components/Toolbar/ToolBar';
 import MainContent from '../Components/MainContent/MainContent';
 import Player from '../Components/Player/Player';
-import PlayerProvider from '../context/player-context';
 
 const MainPage: React.FC = () => {
-  const { isLoggedIn } = useContext(AuthContext);
+  const {
+    isLoggedIn,
+  } = useContext(AuthContext);
+  const { access_token } = getHashValue();
+
   return (
     <Fragment>
-      <Route path="/login" exact>
-        <LoginPage />
-      </Route>
-      {isLoggedIn ? (
+      {(isLoggedIn || access_token) ? (
         <PlayerProvider>
           <div className="flex">
             <div className="flex w-full" style={{ height: 'calc(100vh - 6rem)' }}>
@@ -30,7 +31,7 @@ const MainPage: React.FC = () => {
           </div>
         </PlayerProvider>
       ) : (
-        <Redirect to="/login" />
+        <Redirect push to="/login" />
       )}
     </Fragment>
   )

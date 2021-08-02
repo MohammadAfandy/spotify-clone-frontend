@@ -126,7 +126,7 @@ const PlayerProvider: React.FC = ({ children }) => {
 
   return (
     <PlayerContext.Provider value={contextValue}>
-      <Helmet>
+      <Helmet defer={false}>
         <title>
           {isPlaying && currentTrack?.uri ? `${currentTrack.name} • ${getArtistNames(currentTrack.artists)}` : 'Spotify Clone'}
         </title>
