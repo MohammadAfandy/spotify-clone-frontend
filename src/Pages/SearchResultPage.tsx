@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { useParams, useHistory, useLocation } from "react-router-dom";
+import { useParams, useHistory, useLocation } from 'react-router-dom';
 import Track from '../types/Track';
 import Artist from '../types/Artist';
 import Album from '../types/Album';
@@ -26,9 +26,7 @@ const SearchResultPage: React.FC = () => {
   const [shows, setShows] = useState<Show[]>([]);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
 
-  const {
-    togglePlay,
-  } = useContext(PlayerContext);
+  const { togglePlay } = useContext(PlayerContext);
 
   const handlePlayTrack = (event: React.MouseEvent, uri: string) => {
     event.stopPropagation();
@@ -37,11 +35,13 @@ const SearchResultPage: React.FC = () => {
 
   useEffect(() => {
     const fetchSearch = async () => {
-      const response = await ApiSpotify.get('/search', { params: {
-        q: params.query,
-        type: 'track,artist,album,playlist,show,episode',
-        limit: 5,
-      }});
+      const response = await ApiSpotify.get('/search', {
+        params: {
+          q: params.query,
+          type: 'track,artist,album,playlist,show,episode',
+          limit: 5,
+        },
+      });
 
       setTracks(response.data.tracks.items);
       setArtists(response.data.artists.items);
@@ -49,19 +49,23 @@ const SearchResultPage: React.FC = () => {
       setPlaylists(response.data.playlists.items);
       setShows(response.data.shows.items);
       setEpisodes(response.data.episodes.items);
-    }
+    };
 
     fetchSearch();
   }, [params]);
 
   return (
     <div className="flex flex-col px-4 py-4">
-
       {tracks.length > 0 && (
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-end mr-8 font-bold">
             <div className="text-2xl">Songs</div>
-            <div className="text-md cursor-pointer hover:underline" onClick={() => history.push(location.pathname + '/track')}>See All</div>
+            <div
+              className="text-md cursor-pointer hover:underline"
+              onClick={() => history.push(location.pathname + '/track')}
+            >
+              See All
+            </div>
           </div>
           {tracks.map((track) => (
             <PlayerListTrackMini
@@ -76,10 +80,7 @@ const SearchResultPage: React.FC = () => {
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-end mr-8 font-bold">
             <div className="text-2xl">Artists</div>
-            <TextLink
-              text="See All"
-              url={location.pathname + '/artist'}
-            />
+            <TextLink text="See All" url={location.pathname + '/artist'} />
           </div>
           <div className="grid grid-cols-5 gap-4">
             {artists.map((artist) => (
@@ -87,7 +88,9 @@ const SearchResultPage: React.FC = () => {
                 key={artist.id}
                 name={artist.name}
                 description={artist.type}
-                image={artist.images && artist.images[0] && artist.images[0].url}
+                image={
+                  artist.images && artist.images[0] && artist.images[0].url
+                }
                 uri={artist.uri}
                 href={'/artist/' + artist.id}
               />
@@ -100,10 +103,7 @@ const SearchResultPage: React.FC = () => {
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-end mr-8 font-bold">
             <div className="text-2xl">Albums</div>
-            <TextLink
-              text="See All"
-              url={location.pathname + '/album'}
-            />
+            <TextLink text="See All" url={location.pathname + '/album'} />
           </div>
           <div className="grid grid-cols-5 gap-4">
             {albums.map((album) => (
@@ -124,10 +124,7 @@ const SearchResultPage: React.FC = () => {
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-end mr-8 font-bold">
             <div className="text-2xl">Playlists</div>
-            <TextLink
-              text="See All"
-              url={location.pathname + '/playlist'}
-            />
+            <TextLink text="See All" url={location.pathname + '/playlist'} />
           </div>
           <div className="grid grid-cols-5 gap-4">
             {playlists.map((playlist) => (
@@ -135,7 +132,11 @@ const SearchResultPage: React.FC = () => {
                 key={playlist.id}
                 name={playlist.name}
                 description={`By ${playlist.owner.display_name}`}
-                image={playlist.images && playlist.images[0] && playlist.images[0].url}
+                image={
+                  playlist.images &&
+                  playlist.images[0] &&
+                  playlist.images[0].url
+                }
                 uri={playlist.uri}
                 href={'/playlist/' + playlist.id}
               />
@@ -148,10 +149,7 @@ const SearchResultPage: React.FC = () => {
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-end mr-8 font-bold">
             <div className="text-2xl">Podcasts</div>
-            <TextLink
-              text="See All"
-              url={location.pathname + '/show'}
-            />
+            <TextLink text="See All" url={location.pathname + '/show'} />
           </div>
           <div className="grid grid-cols-5 gap-4">
             {shows.map((show) => (
@@ -172,10 +170,7 @@ const SearchResultPage: React.FC = () => {
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-end mr-8 font-bold">
             <div className="text-2xl">Episodes</div>
-            <TextLink
-              text="See All"
-              url={location.pathname + '/episode'}
-            />
+            <TextLink text="See All" url={location.pathname + '/episode'} />
           </div>
           <div className="grid grid-cols-5 gap-4">
             {episodes.map((episode) => (
@@ -183,7 +178,9 @@ const SearchResultPage: React.FC = () => {
                 key={episode.id}
                 name={episode.name}
                 description={''}
-                image={episode.images && episode.images[0] && episode.images[0].url}
+                image={
+                  episode.images && episode.images[0] && episode.images[0].url
+                }
                 uri={episode.uri}
                 href={'/episode/' + episode.id}
               />
@@ -191,9 +188,8 @@ const SearchResultPage: React.FC = () => {
           </div>
         </div>
       )}
-  
     </div>
-  )
-}
+  );
+};
 
 export default SearchResultPage;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useHistory } from 'react-router-dom';
 import Artist from '../types/Artist';
 import Album from '../types/Album';
 import Playlist from '../types/Playlist';
@@ -11,9 +11,13 @@ import CardItem from '../Components/Card/CardItem';
 
 const SearchResultAllPage: React.FC = () => {
   const history = useHistory();
-  const { query, type } = useParams<{ query: string, type: string }>();
+  const { query, type } = useParams<{ query: string; type: string }>();
 
-  if (['track', 'artist', 'album', 'playlist', 'show', 'episode'].includes(type) === false) {
+  if (
+    ['track', 'artist', 'album', 'playlist', 'show', 'episode'].includes(
+      type
+    ) === false
+  ) {
     history.replace('/');
   }
 
@@ -25,11 +29,13 @@ const SearchResultAllPage: React.FC = () => {
 
   useEffect(() => {
     const fetchSearchDetail = async () => {
-      const response = await ApiSpotify.get('/search', { params: {
-        q: query,
-        type: type,
-        limit: 50,
-      }});
+      const response = await ApiSpotify.get('/search', {
+        params: {
+          q: query,
+          type: type,
+          limit: 50,
+        },
+      });
 
       if (type === 'album') {
         setAlbums(response.data.albums.items);
@@ -42,7 +48,7 @@ const SearchResultAllPage: React.FC = () => {
       } else if (type === 'episode') {
         setEpisodes(response.data.episodes.items);
       }
-    }
+    };
 
     fetchSearchDetail();
   }, [type, query]);
@@ -87,7 +93,9 @@ const SearchResultAllPage: React.FC = () => {
               key={playlist.id}
               name={playlist.name}
               description={`By ${playlist.owner.display_name}`}
-              image={playlist.images && playlist.images[0] && playlist.images[0].url}
+              image={
+                playlist.images && playlist.images[0] && playlist.images[0].url
+              }
               uri={playlist.uri}
               href={'/playlist/' + playlist.id}
             />
@@ -115,7 +123,9 @@ const SearchResultAllPage: React.FC = () => {
               key={episode.id}
               name={episode.name}
               description={''}
-              image={episode.images && episode.images[0] && episode.images[0].url}
+              image={
+                episode.images && episode.images[0] && episode.images[0].url
+              }
               uri={episode.uri}
               href={'/episode/' + episode.id}
             />
@@ -123,7 +133,7 @@ const SearchResultAllPage: React.FC = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 export default SearchResultAllPage;

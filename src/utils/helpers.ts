@@ -17,7 +17,7 @@ export const getHashValue = () => {
 
 export const getCookie = (key: string): string => {
   return Cookies.get(cookiePrefix + key) || '';
-}
+};
 
 export const setCookie = (key: string, value: string): void => {
   Cookies.set(cookiePrefix + key, value);
@@ -62,14 +62,20 @@ export const getArtistNames = (artists: Artist[]): string => {
   return artists.map((v) => v.name).join(', ');
 };
 
-export const formatDate = (date: string | number | Date, format = 'string'): string => {
+export const formatDate = (
+  date: string | number | Date,
+  format = 'string'
+): string => {
   return moment(date).format(format);
 };
 
-export const duration = (miliseconds: number, humanize = false): string|number => {
+export const duration = (
+  miliseconds: number,
+  humanize = false
+): string | number => {
   const momentObj = moment.utc(miliseconds);
   const hours = momentObj.hours();
-  
+
   if (humanize) {
     const minutes = momentObj.minutes();
     const seconds = momentObj.seconds();
@@ -97,13 +103,14 @@ export const fromNow = (date: Date): string => {
   const diff = momentObj.diff(new Date(), 'months');
   if (diff <= -1) {
     return momentObj.format('MMM D, YYYY');
-  }  
+  }
   return momentObj.fromNow();
 };
 
-export const toBase64 = (file: Blob): Promise<string | ArrayBuffer | null> => new Promise((resolve, reject) => {
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onload = () => resolve(reader.result);
-  reader.onerror = (error) => reject(error);
-});
+export const toBase64 = (file: Blob): Promise<string | ArrayBuffer | null> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });

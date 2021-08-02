@@ -10,17 +10,18 @@ import MainContent from '../Components/MainContent/MainContent';
 import Player from '../Components/Player/Player';
 
 const MainPage: React.FC = () => {
-  const {
-    isLoggedIn,
-  } = useContext(AuthContext);
+  const { isLoggedIn } = useContext(AuthContext);
   const { access_token } = getHashValue();
 
   return (
     <Fragment>
-      {(isLoggedIn || access_token) ? (
+      {isLoggedIn || access_token ? (
         <PlayerProvider>
           <div className="flex">
-            <div className="flex w-full" style={{ height: 'calc(100vh - 6rem)' }}>
+            <div
+              className="flex w-full"
+              style={{ height: 'calc(100vh - 6rem)' }}
+            >
               <Navbar />
               <ToolBar />
               <MainContent />
@@ -34,7 +35,7 @@ const MainPage: React.FC = () => {
         <Redirect push to="/login" />
       )}
     </Fragment>
-  )
-}
+  );
+};
 
 export default MainPage;

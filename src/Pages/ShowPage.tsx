@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useParams } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 import Show from '../types/Show';
 import ApiSpotify from '../utils/api-spotify';
 import { AuthContext } from '../context/auth-context';
@@ -16,44 +16,53 @@ const ShowPage: React.FC = () => {
   const [isFollowed, setIsFollowed] = useState(false);
 
   const { user } = useContext(AuthContext);
-  const {
-    togglePlay,
-  } = useContext(PlayerContext);
+  const { togglePlay } = useContext(PlayerContext);
 
   useEffect(() => {
     const fetchShow = async () => {
       const [dataShow, dataFollowed] = await Promise.all([
         ApiSpotify.get('/shows/' + params.id),
-        ApiSpotify.get('/me/shows/contains', { params: {
-          ids: params.id,
-        }}),
+        ApiSpotify.get('/me/shows/contains', {
+          params: {
+            ids: params.id,
+          },
+        }),
       ]);
 
       setShow(dataShow.data);
       setIsFollowed(dataFollowed.data[0]);
-    }
+    };
     fetchShow();
   }, [params.id, user.id]);
 
-  const { setNextUrl, episodes, pageData } = useFetchEpisodes('/shows/' + params.id + '/episodes');
+  const { setNextUrl, episodes, pageData } = useFetchEpisodes(
+    '/shows/' + params.id + '/episodes'
+  );
 
   const handleFollow = async () => {
     let response;
     if (isFollowed) {
-      response = await ApiSpotify.delete('/me/shows', { params: {
-        ids: show.id,
-      }});
+      response = await ApiSpotify.delete('/me/shows', {
+        params: {
+          ids: show.id,
+        },
+      });
     } else {
-      response = await ApiSpotify.put('/me/shows', null, { params: {
-        ids: show.id,
-      }});
+      response = await ApiSpotify.put('/me/shows', null, {
+        params: {
+          ids: show.id,
+        },
+      });
     }
     if (response.status === 200) {
       setIsFollowed((prevState) => !prevState);
     }
   };
 
-  const handlePlayEpisode = (selectedOffset: number, selectedPositionMs: number) => {
+  const handlePlayEpisode = (
+    selectedOffset: number,
+    selectedPositionMs: number
+  ) => {
     const episodeUris = episodes.map((v) => v.uri);
     togglePlay(episodeUris, selectedOffset, selectedPositionMs);
   };
@@ -66,10 +75,7 @@ const ShowPage: React.FC = () => {
             image={show.images && show.images[0].url}
             name={show.name}
             type="PODCAST"
-            footer={[
-              show.publisher,
-              `${show.total_episodes} episodes`,
-            ]}
+            footer={[show.publisher, `${show.total_episodes} episodes`]}
           />
           <div className="flex items-center mb-8">
             <Button
@@ -95,7 +101,9 @@ const ShowPage: React.FC = () => {
             </div>
           </div>
         </div>
-      ) : ''}
+      ) : (
+        ''
+      )}
     </div>
   );
 };

@@ -1,8 +1,8 @@
 import { Play, Pause } from 'react-feather';
 
 type PlayButtonProps = {
-  isPlaying?: boolean,
-  className?: string,
+  isPlaying?: boolean;
+  className?: string;
   onClick?: (event: React.MouseEvent<SVGElement>) => void;
 };
 
@@ -11,7 +11,11 @@ const defaultProps: PlayButtonProps = {
   className: '',
 };
 
-const PlayButton: React.FC<PlayButtonProps> = ({ className, onClick, isPlaying }) => {
+const PlayButton: React.FC<PlayButtonProps> = ({
+  className,
+  onClick,
+  isPlaying,
+}) => {
   const Prop = isPlaying ? Pause : Play;
   return (
     <Prop
@@ -19,9 +23,9 @@ const PlayButton: React.FC<PlayButtonProps> = ({ className, onClick, isPlaying }
       onClick={onClick}
       fill="#fff"
     />
-  )
-}
+  );
+};
 
 PlayButton.defaultProps = defaultProps;
 
-export default PlayButton
+export default PlayButton;

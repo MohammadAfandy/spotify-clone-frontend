@@ -34,7 +34,7 @@ import TextLink from '../Link/TextLink';
 declare global {
   interface Window {
     Spotify: any;
-    onSpotifyWebPlaybackSDKReady: () => void,
+    onSpotifyWebPlaybackSDKReady: () => void;
   }
 }
 
@@ -42,45 +42,45 @@ window.Spotify = window.Spotify || {};
 
 type PlaybackState = {
   track_window: {
-    current_track: Track,
-    next_tracks: Track[],
-    previous_tracks: Track[],
-  },
+    current_track: Track;
+    next_tracks: Track[];
+    previous_tracks: Track[];
+  };
   context: {
-    uri: string,
-  },
+    uri: string;
+  };
   disallows: {
-    pausing: boolean,
-    peeking_next: boolean,
-    peeking_prev: boolean,
-    resuming: boolean,
-    seeking: boolean,
-    skipping_prev: boolean
-  },
-  duration: number,
-  loading: boolean,
-  paused: boolean,
-  playback_quality: string,
-  position: number,
-  repeat_mode: number,
-  shuffle: boolean,
-  timestamp: number,
+    pausing: boolean;
+    peeking_next: boolean;
+    peeking_prev: boolean;
+    resuming: boolean;
+    seeking: boolean;
+    skipping_prev: boolean;
+  };
+  duration: number;
+  loading: boolean;
+  paused: boolean;
+  playback_quality: string;
+  position: number;
+  repeat_mode: number;
+  shuffle: boolean;
+  timestamp: number;
 };
 
 type Device = {
-  id: string,
-  is_active: boolean,
-  is_private_session: boolean,
-  is_restricted: boolean,
-  name: string,
-  type: string,
-  volume_percent: number
+  id: string;
+  is_active: boolean;
+  is_private_session: boolean;
+  is_restricted: boolean;
+  name: string;
+  type: string;
+  volume_percent: number;
 };
 
 let player: {
-  addListener: (type: string, callback: (arg: any) => void) => void,
-  connect: () => void,
-  disconnect: () => void,
+  addListener: (type: string, callback: (arg: any) => void) => void;
+  connect: () => void;
+  disconnect: () => void;
 };
 
 const initialLyric = {
@@ -90,9 +90,9 @@ const initialLyric = {
 };
 
 const mapRepeatMode = [
-  { state: 'off', mode: 0, text: '', },
-  { state: 'context', mode: 1, text: '•', },
-  { state: 'track', mode: 2, text: '1', },
+  { state: 'off', mode: 0, text: '' },
+  { state: 'context', mode: 1, text: '•' },
+  { state: 'track', mode: 2, text: '1' },
 ];
 
 const Player: React.FC = () => {
@@ -106,7 +106,7 @@ const Player: React.FC = () => {
     changeCurrentTrack,
     changePositionMs,
   } = useContext(PlayerContext);
-  
+
   const [isDeviceActive, setIsDeviceActive] = useState(false);
 
   const [deviceId, setDeviceId] = useState('');
@@ -116,7 +116,7 @@ const Player: React.FC = () => {
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(100);
   const [devices, setDevices] = useState([]);
-  
+
   const [positionMs, setPositionMs] = useState(0);
 
   const getUserDevices = async () => {
@@ -129,28 +129,28 @@ const Player: React.FC = () => {
   };
 
   const playerInit = () => {
-		player = new window.Spotify.Player({
-			name: PLAYER_NAME,
-			getOAuthToken: (cb: (token: string) => {}) => {
-				cb(getCookie('access_token'));
-			},
-		});
+    player = new window.Spotify.Player({
+      name: PLAYER_NAME,
+      getOAuthToken: (cb: (token: string) => {}) => {
+        cb(getCookie('access_token'));
+      },
+    });
 
-		player.addListener('initialization_error', (state) => {
-			console.error('initialization_error', state.message);
-		});
+    player.addListener('initialization_error', (state) => {
+      console.error('initialization_error', state.message);
+    });
     player.addListener('authentication_error', (state) => {
-			console.error('authentication_error', state.message);
-		});
-		player.addListener('account_error', (state) => {
-			console.error('account_error', state.message);
-		});
-		player.addListener('playback_error', (state) => {
-			console.error('playback_error', state.message);
-		});
+      console.error('authentication_error', state.message);
+    });
+    player.addListener('account_error', (state) => {
+      console.error('account_error', state.message);
+    });
+    player.addListener('playback_error', (state) => {
+      console.error('playback_error', state.message);
+    });
 
-		player.addListener('player_state_changed', (state: PlaybackState) => {
-			// console.log('player_state_changed', state);
+    player.addListener('player_state_changed', (state: PlaybackState) => {
+      // console.log('player_state_changed', state);
       if (state) {
         try {
           const {
@@ -165,7 +165,7 @@ const Player: React.FC = () => {
           setDuration(duration);
           setPositionMs(position);
           changeIsPlaying(!paused);
-          setShuffle(shuffle);      
+          setShuffle(shuffle);
           setRepeatMode(repeat_mode);
           changeCurrentTrack(current_track);
           setIsDeviceActive(true);
@@ -175,30 +175,30 @@ const Player: React.FC = () => {
       } else {
         setIsDeviceActive(false);
       }
-		});
+    });
 
-		player.addListener('ready', ({ device_id }: { device_id: string }) => {
-			console.info("Ready with Device ID", device_id);
+    player.addListener('ready', ({ device_id }: { device_id: string }) => {
+      console.info('Ready with Device ID', device_id);
       setDeviceId(device_id);
       setCookie('device_id', device_id);
-		});
+    });
 
-		player.addListener('not_ready', ({ device_id }: { device_id: string }) => {
-			console.info("Device ID has gone offline", device_id);
-		});
+    player.addListener('not_ready', ({ device_id }: { device_id: string }) => {
+      console.info('Device ID has gone offline', device_id);
+    });
 
-		player.connect();
-	};
+    player.connect();
+  };
 
   window.onSpotifyWebPlaybackSDKReady = () => playerInit();
 
   useEffect(() => {
     const loadScript = () => {
-      const script = document.createElement("script");
-      script.type = "text/javascript";
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
       script.async = true;
       script.defer = true;
-      script.src = "https://sdk.scdn.co/spotify-player.js";
+      script.src = 'https://sdk.scdn.co/spotify-player.js';
       document.body.appendChild(script);
     };
 
@@ -206,17 +206,26 @@ const Player: React.FC = () => {
       const response = await ApiSpotify.get('/me/player');
       // console.log('from playbackstate', response.data);
       if (response.status === 200) {
-        const { progress_ms, item, device, shuffle_state, repeat_state, is_playing } = response.data;
+        const {
+          progress_ms,
+          item,
+          device,
+          shuffle_state,
+          repeat_state,
+          is_playing,
+        } = response.data;
         setPositionMs(progress_ms);
         setDuration(item && item.duration_ms);
         setVolume(device.volume_percent);
         setShuffle(shuffle_state);
-        setRepeatMode(mapRepeatMode.find((v) => v.state === repeat_state)?.mode || 0);
+        setRepeatMode(
+          mapRepeatMode.find((v) => v.state === repeat_state)?.mode || 0
+        );
         changeIsPlaying(is_playing);
         changeCurrentTrack(item);
         setActiveDevice(device);
-      } else if (response.status === 204) { // no devices active
-  
+      } else if (response.status === 204) {
+        // no devices active
       }
     };
     loadScript();
@@ -254,7 +263,9 @@ const Player: React.FC = () => {
     if (positionMs <= 3000) {
       await ApiSpotify.post('me/player/previous');
     } else {
-      await ApiSpotify.put('me/player/seek', null, { params: { position_ms: 0 }});
+      await ApiSpotify.put('me/player/seek', null, {
+        params: { position_ms: 0 },
+      });
     }
   };
 
@@ -263,29 +274,38 @@ const Player: React.FC = () => {
   };
 
   const handleSeek = async (position_ms: number): Promise<void> => {
-    await ApiSpotify.put('me/player/seek', null, { params: { position_ms }});
+    await ApiSpotify.put('me/player/seek', null, { params: { position_ms } });
   };
-  
+
   const handleVolume = async (volume_percent: number): Promise<void> => {
-    await ApiSpotify.put('me/player/volume', null, { params: { volume_percent }});
+    await ApiSpotify.put('me/player/volume', null, {
+      params: { volume_percent },
+    });
   };
 
   const handleRepeatMode = async (): Promise<void> => {
     let state = '';
-    const currentModeIndex = mapRepeatMode.findIndex((v) => v.mode === repeatMode);
+    const currentModeIndex = mapRepeatMode.findIndex(
+      (v) => v.mode === repeatMode
+    );
     if (mapRepeatMode[currentModeIndex + 1]) {
       state = mapRepeatMode[currentModeIndex + 1].state;
     } else {
       state = mapRepeatMode[0].state;
     }
-    await ApiSpotify.put('me/player/repeat', null, { params: { state }});
+    await ApiSpotify.put('me/player/repeat', null, { params: { state } });
   };
 
   const handleShuffle = async (): Promise<void> => {
-    await ApiSpotify.put('me/player/shuffle', null, { params: { state: !shuffle }});
+    await ApiSpotify.put('me/player/shuffle', null, {
+      params: { state: !shuffle },
+    });
   };
 
-  const handleSelectDevice = (event: React.MouseEvent, selectedDeviceId: string): void => {
+  const handleSelectDevice = (
+    event: React.MouseEvent,
+    selectedDeviceId: string
+  ): void => {
     event.stopPropagation();
     transferPlayback(selectedDeviceId);
     getUserDevices();
@@ -336,10 +356,12 @@ const Player: React.FC = () => {
         setLyric(initialLyric);
         const artist = getArtistNames(currentTrack.artists);
         const title = currentTrack.name;
-        const response = await ApiBackend.get('/lyrics', { params: {
-          artist,
-          title,
-        }});
+        const response = await ApiBackend.get('/lyrics', {
+          params: {
+            artist,
+            title,
+          },
+        });
         setLyric({
           artist,
           title,
@@ -354,16 +376,14 @@ const Player: React.FC = () => {
 
   return (
     <div className="grid grid-cols-3 h-24 w-full border-t-2 border-gray-200 border-opacity-20 bg-black text-sm">
-      {(!isDeviceActive && !deviceId) && (
+      {!isDeviceActive && !deviceId && (
         <div className="col-span-3 flex flex-col items-center justify-center">
           Loading ...
         </div>
       )}
-      {(!isDeviceActive && deviceId) && (
+      {!isDeviceActive && deviceId && (
         <div className="col-span-3 flex flex-col items-center justify-center">
-          <div className="mb-2">
-            You are not listening on this Device
-          </div>
+          <div className="mb-2">You are not listening on this Device</div>
           <Button
             className=""
             text="Play Here"
@@ -372,11 +392,11 @@ const Player: React.FC = () => {
           />
         </div>
       )}
-      {(isDeviceActive && deviceId) && (
+      {isDeviceActive && deviceId && (
         <>
           {/* Artist and Love Button */}
           <div className="flex items-center ml-10">
-            {(currentTrack && currentTrack.uri) && (
+            {currentTrack && currentTrack.uri && (
               <>
                 <img
                   src={getSmallestImage(currentTrack.album.images)}
@@ -385,7 +405,9 @@ const Player: React.FC = () => {
                 />
                 <div className="flex flex-col mr-6 w-60">
                   {currentTrack.type === 'track' && (
-                    <div className="font-semibold truncate">{currentTrack.name}</div>
+                    <div className="font-semibold truncate">
+                      {currentTrack.name}
+                    </div>
                   )}
                   {currentTrack.type === 'episode' && (
                     <TextLink
@@ -399,7 +421,11 @@ const Player: React.FC = () => {
                       <Fragment key={artist.uri}>
                         <TextLink
                           text={artist.name}
-                          url={(currentTrack.type === 'track' ? '/artist/' : '/show/') + artist.uri.split(':')[2]}
+                          url={
+                            (currentTrack.type === 'track'
+                              ? '/artist/'
+                              : '/show/') + artist.uri.split(':')[2]
+                          }
                         />
                         {idx !== currentTrack.artists.length - 1 && ', '}
                       </Fragment>
@@ -419,7 +445,8 @@ const Player: React.FC = () => {
             {/* <div>{activeDevice.name}</div> */}
             <div className="flex justify-center items-center">
               <Shuffle
-                className="h-4 w-4 mr-6 cursor-pointer" color={getButtonColor(shuffle)}
+                className="h-4 w-4 mr-6 cursor-pointer"
+                color={getButtonColor(shuffle)}
                 onClick={() => handleShuffle()}
               />
               <SkipBack
@@ -436,10 +463,15 @@ const Player: React.FC = () => {
               />
               <div className="relative">
                 <Repeat
-                  className="h-4 w-4 mr-6 cursor-pointer" color={getButtonColor(repeatMode !== 0)}
+                  className="h-4 w-4 mr-6 cursor-pointer"
+                  color={getButtonColor(repeatMode !== 0)}
                   onClick={() => handleRepeatMode()}
                 />
-                <div className={`absolute left-2 top-4 bottom-0 text-xs font-light ${repeatMode !== 0 ? 'text-green-400' : 'text-white'}`}>
+                <div
+                  className={`absolute left-2 top-4 bottom-0 text-xs font-light ${
+                    repeatMode !== 0 ? 'text-green-400' : 'text-white'
+                  }`}
+                >
                   {mapRepeatMode.find((v) => v.mode === repeatMode)?.text || ''}
                 </div>
               </div>
@@ -453,11 +485,17 @@ const Player: React.FC = () => {
                 max={duration}
                 value={positionMs}
                 onChange={(e) => setPositionMs(Number(e.target.value))}
-                onMouseUp={(e: React.MouseEvent<HTMLInputElement>) => handleSeek(Number(e.currentTarget.value))}
+                onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
+                  handleSeek(Number(e.currentTarget.value))
+                }
               />
               <div className="group">
-                <div className="group-hover:block hidden">{durationFn(duration - positionMs)}</div>
-                <div className="group-hover:hidden block">{durationFn(duration)}</div>
+                <div className="group-hover:block hidden">
+                  {durationFn(duration - positionMs)}
+                </div>
+                <div className="group-hover:hidden block">
+                  {durationFn(duration)}
+                </div>
               </div>
             </div>
           </div>
@@ -470,8 +508,11 @@ const Player: React.FC = () => {
                 onClick={handleOpenLyric}
               />
             )}
-            <List className="w-6 mr-6 cursor-pointer" onClick={handleOpenList} />
-            <div data-tip data-for="device-tooltip" data-event="click focus" >
+            <List
+              className="w-6 mr-6 cursor-pointer"
+              onClick={handleOpenList}
+            />
+            <div data-tip data-for="device-tooltip" data-event="click focus">
               <Airplay className="w-6 mr-6 cursor-pointer" />
             </div>
             <Volume className="w-6 cursor-pointer" />
@@ -482,27 +523,29 @@ const Player: React.FC = () => {
               max="100"
               value={volume}
               onChange={(e) => setVolume(Number(e.target.value))}
-              onMouseUp={(e: React.MouseEvent<HTMLInputElement>) => handleVolume(Number(e.currentTarget.value))}
+              onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
+                handleVolume(Number(e.currentTarget.value))
+              }
             />
           </div>
 
           <ReactTooltip id="device-tooltip" globalEventOff="click">
             <div className="text-lg w-60 pointer-events-auto">
               <p className="text-xl mb-2">Select Device</p>
-              <div
-                className={`cursor-point text-green-500`}
-              >
-                This Player
-              </div>
-              {devices.filter(({ id }) => id !== deviceId).map(({ name, id }) => (
-                <div
-                  key={id}
-                  className={`cursor-pointer ${id === activeDevice.id ? 'text-green-500' : ''}`}
-                  onClick={(e) => handleSelectDevice(e, id)}
-                >
-                  {name}
-                </div>
-              ))}
+              <div className={`cursor-point text-green-500`}>This Player</div>
+              {devices
+                .filter(({ id }) => id !== deviceId)
+                .map(({ name, id }) => (
+                  <div
+                    key={id}
+                    className={`cursor-pointer ${
+                      id === activeDevice.id ? 'text-green-500' : ''
+                    }`}
+                    onClick={(e) => handleSelectDevice(e, id)}
+                  >
+                    {name}
+                  </div>
+                ))}
             </div>
           </ReactTooltip>
         </>

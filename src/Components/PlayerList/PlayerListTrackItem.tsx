@@ -8,14 +8,14 @@ import LikeButton from '../Button/LikeButton';
 import TextLink from '../Link/TextLink';
 
 type PlayerListTrackItemProps = {
-  track: Track,
-  offset: number,
-  number: number,
-  currentTrack: Track,
-  showAlbum?: boolean,
-  showDateAdded?: boolean,
-  onRemoveFromPlaylist?: (trackId: string) => void,
-  handlePlayTrack: (offset: number, positionMs: number) => void,
+  track: Track;
+  offset: number;
+  number: number;
+  currentTrack: Track;
+  showAlbum?: boolean;
+  showDateAdded?: boolean;
+  onRemoveFromPlaylist?: (trackId: string) => void;
+  handlePlayTrack: (offset: number, positionMs: number) => void;
 };
 
 const defaultProps: PlayerListTrackItemProps = {
@@ -60,7 +60,6 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
     }
   };
 
-  
   const handleAddToSavedEpisode = async (id: string) => {
     const params = {
       ids: id,
@@ -77,20 +76,21 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
   };
 
   return (
-    <div
-      className="flex py-2 hover:bg-gray-100 hover:bg-opacity-25 rounded-md text-sm"
-    >
-      <div className="group flex justify-center items-center mr-2" style={{ flexBasis: '5%' }}>
+    <div className="flex py-2 hover:bg-gray-100 hover:bg-opacity-25 rounded-md text-sm">
+      <div
+        className="group flex justify-center items-center mr-2"
+        style={{ flexBasis: '5%' }}
+      >
         {currentTrack && track.uri === currentTrack.uri ? (
           <img
-            src={'https://open.scdn.co/cdn/images/equaliser-animated-green.73b73928.gif'}
+            src={
+              'https://open.scdn.co/cdn/images/equaliser-animated-green.73b73928.gif'
+            }
             alt="playing"
             className="block group-hover:hidden"
           />
         ) : (
-          <div className="block group-hover:hidden">
-            {number}
-          </div>
+          <div className="block group-hover:hidden">{number}</div>
         )}
         <Play
           className="w-6 h-6 cursor-pointer hidden group-hover:block"
@@ -99,7 +99,11 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
       </div>
       <div className="flex items-center flex-grow min-w-0">
         {showAlbum && track.album && (
-          <img src={getSmallestImage(track.album.images)} alt={track.album.name} className="mr-2 w-10" />
+          <img
+            src={getSmallestImage(track.album.images)}
+            alt={track.album.name}
+            className="mr-2 w-10"
+          />
         )}
         <div className="flex flex-col justify-end truncate">
           {track.type === 'track' && (
@@ -113,20 +117,27 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
             />
           )}
           <div className="font-light truncate">
-            {track.artists && track.artists.map((artist, idx) => (
-              <Fragment key={artist.id}>
-                <TextLink
-                  text={artist.name}
-                  url={(track.type === 'track' ? '/artist/' : '/show/') + artist.id}
-                />
-                {idx !== track.artists.length - 1 && ', '}
-              </Fragment>
-            ))}
+            {track.artists &&
+              track.artists.map((artist, idx) => (
+                <Fragment key={artist.id}>
+                  <TextLink
+                    text={artist.name}
+                    url={
+                      (track.type === 'track' ? '/artist/' : '/show/') +
+                      artist.id
+                    }
+                  />
+                  {idx !== track.artists.length - 1 && ', '}
+                </Fragment>
+              ))}
           </div>
         </div>
       </div>
       {showAlbum && track.album && (
-        <div className="flex items-center min-w-0 mr-2" style={{ flexBasis: '30%' }}>
+        <div
+          className="flex items-center min-w-0 mr-2"
+          style={{ flexBasis: '30%' }}
+        >
           <TextLink
             className="truncate"
             text={track.album.name}
@@ -141,10 +152,13 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
       )}
       <div className="flex items-center mr-2" style={{ flexBasis: '5%' }}>
         {track.type === 'track' && (
-          <LikeButton isActive={isSaved} onClick={() => handleAddToSavedTrack(track.id)} />
+          <LikeButton
+            isActive={isSaved}
+            onClick={() => handleAddToSavedTrack(track.id)}
+          />
         )}
-        {track.type === 'episode' && (
-          isSaved ? (
+        {track.type === 'episode' &&
+          (isSaved ? (
             <Check
               className="cursor-pointer text-green-400"
               onClick={() => handleAddToSavedEpisode(track.id)}
@@ -154,12 +168,14 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
               className="cursor-pointer"
               onClick={() => handleAddToSavedEpisode(track.id)}
             />
-          )
-        )}
+          ))}
       </div>
       {onRemoveFromPlaylist && (
         <div className="flex items-center mr-2" style={{ flexBasis: '5%' }}>
-          <Trash className="cursor-pointer" onClick={() => onRemoveFromPlaylist(track.uri)} />
+          <Trash
+            className="cursor-pointer"
+            onClick={() => onRemoveFromPlaylist(track.uri)}
+          />
         </div>
       )}
       <div className="flex items-center mr-2" style={{ flexBasis: '5%' }}>

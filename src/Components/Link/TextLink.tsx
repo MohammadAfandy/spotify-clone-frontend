@@ -1,9 +1,9 @@
 import { useHistory } from 'react-router-dom';
 
 type TextLinkProps = {
-  className?: string,
-  text: string,
-  url: string,
+  className?: string;
+  text: string;
+  url: string;
 };
 
 const defaultProps: TextLinkProps = {
@@ -12,11 +12,7 @@ const defaultProps: TextLinkProps = {
   url: '',
 };
 
-const TextLink: React.FC<TextLinkProps> = ({
-  className,
-  text,
-  url,
-}) => {
+const TextLink: React.FC<TextLinkProps> = ({ className, text, url }) => {
   const history = useHistory();
   return (
     <span
@@ -25,8 +21,8 @@ const TextLink: React.FC<TextLinkProps> = ({
     >
       {text}
     </span>
-  )
-}
+  );
+};
 
 TextLink.defaultProps = defaultProps;
 

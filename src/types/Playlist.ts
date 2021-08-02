@@ -1,27 +1,27 @@
-import Track from "./Track";
+import Track from './Track';
 
 type Category = {
-  id: string,
-  name: string,
-  href: string,
-  description: string,
+  id: string;
+  name: string;
+  href: string;
+  description: string;
   followers: {
-    href: string | null,
-    total: number,
-  }
+    href: string | null;
+    total: number;
+  };
   tracks: {
-    href: string,
-    total: number,
-    items: Track[],
-  },
-  type: string,
-  uri: string,
+    href: string;
+    total: number;
+    items: Track[];
+  };
+  type: string;
+  uri: string;
   images?: {
-    [key: string]: any,
-  }[],
+    [key: string]: any;
+  }[];
   owner: {
-    [key: string]: any,
-  },
+    [key: string]: any;
+  };
 };
 
 export default Category;

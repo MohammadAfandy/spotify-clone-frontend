@@ -2,14 +2,19 @@ import { useState, useEffect } from 'react';
 import { PlayCircle, PlusCircle, Check } from 'react-feather';
 import Episode from '../../types/Episode';
 import ApiSpotify from '../../utils/api-spotify';
-import { getHighestImage, formatDate, duration, ellipsis } from '../../utils/helpers';
+import {
+  getHighestImage,
+  formatDate,
+  duration,
+  ellipsis,
+} from '../../utils/helpers';
 
 import TextLink from '../Link/TextLink';
 
 type PlayerListEpisodeItemProps = {
-  episode: Episode,
-  number: number,
-  handlePlayEpisode: (offset: number, positionMs: number) => void,
+  episode: Episode;
+  number: number;
+  handlePlayEpisode: (offset: number, positionMs: number) => void;
 };
 
 const defaultProps: PlayerListEpisodeItemProps = {
@@ -45,8 +50,15 @@ const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
   };
 
   return (
-    <div className="group flex items-center px-2 py-4 border-t-2 border-opacity-10 hover:bg-gray-500 hover:bg-opacity-25" key={episode.id}>
-      <img src={getHighestImage(episode.images)} alt={episode.name} className="mr-4 w-24 h-24 rounded-xl" />
+    <div
+      className="group flex items-center px-2 py-4 border-t-2 border-opacity-10 hover:bg-gray-500 hover:bg-opacity-25"
+      key={episode.id}
+    >
+      <img
+        src={getHighestImage(episode.images)}
+        alt={episode.name}
+        className="mr-4 w-24 h-24 rounded-xl"
+      />
       <div className="flex flex-col w-full">
         <TextLink
           className="mb-2"
@@ -63,14 +75,14 @@ const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
               onClick={() => handlePlayEpisode(number - 1, 0)}
             />
             {episode.explicit && (
-              <div className="bg-gray-100 border border-black text-black rounded-xs px-1 text-xs mr-2">E</div>
+              <div className="bg-gray-100 border border-black text-black rounded-xs px-1 text-xs mr-2">
+                E
+              </div>
             )}
             <div className="mr-2">
               {formatDate(episode.release_date, 'MMM DD')}
             </div>
-            <div>
-              {duration(episode.duration_ms, true)}
-            </div>
+            <div>{duration(episode.duration_ms, true)}</div>
           </div>
           <div className="hidden group-hover:flex items-center">
             {isSaved ? (

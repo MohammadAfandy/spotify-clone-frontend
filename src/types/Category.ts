@@ -1,10 +1,10 @@
 type Category = {
-  id: string,
-  name: string,
-  href: string,
+  id: string;
+  name: string;
+  href: string;
   icons: {
-    [key: string]: any,
-  },
+    [key: string]: any;
+  };
 };
 
 export default Category;

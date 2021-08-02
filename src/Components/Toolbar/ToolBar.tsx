@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'react-feather';
 import { AuthContext } from '../../context/auth-context';
 
@@ -86,35 +86,19 @@ const ToolBar: React.FC = () => {
         )}
         {isToolbarLinkActive && (
           <>
-            <ToolBarItem
-              to="/collection/playlists"
-              text="Playlists"
-            />
-            <ToolBarItem
-              to="/collection/podcasts"
-              text="Podcasts"
-            />
-            <ToolBarItem
-              to="/collection/artists"
-              text="Artists"
-            />
-            <ToolBarItem
-              to="/collection/albums"
-              text="Albums"
-            />
+            <ToolBarItem to="/collection/playlists" text="Playlists" />
+            <ToolBarItem to="/collection/podcasts" text="Podcasts" />
+            <ToolBarItem to="/collection/artists" text="Artists" />
+            <ToolBarItem to="/collection/albums" text="Albums" />
           </>
         )}
       </div>
       <div className="flex items-center">
         <span className="mr-4">{user.id}</span>
-        <Button
-          onClick={handleLogout}
-          text="Logout"
-          color="red"
-        />
+        <Button onClick={handleLogout} text="Logout" color="red" />
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default ToolBar;

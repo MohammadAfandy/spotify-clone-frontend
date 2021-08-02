@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useParams } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 import Playlist from '../types/Playlist';
 import Track from '../types/Track';
 import Episode from '../types/Episode';
@@ -24,62 +24,60 @@ const PlaylistPage: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [suggested, setSuggested] = useState<Track[]>([]);
 
-  const {
-    user,
-    refreshPlaylists,
-  } = useContext(AuthContext);
+  const { user, refreshPlaylists } = useContext(AuthContext);
 
-  const {
-    currentTrack,
-    togglePlay,
-  } = useContext(PlayerContext);
+  const { currentTrack, togglePlay } = useContext(PlayerContext);
 
-  const {
-    setNextUrl,
-    tracks,
-    pageData,
-    forceUpdate,
-  } = useFetchTracks('/playlists/' + params.id + '/tracks');
+  const { setNextUrl, tracks, pageData, forceUpdate } = useFetchTracks(
+    '/playlists/' + params.id + '/tracks'
+  );
 
   useEffect(() => {
     const fetchPlaylist = async () => {
-      const [
-        dataPlaylist,
-        dataFollowed,
-      ] = await Promise.all([
+      const [dataPlaylist, dataFollowed] = await Promise.all([
         ApiSpotify.get('/playlists/' + params.id),
-        ApiSpotify.get('/playlists/' + params.id + '/followers/contains', { params: {
-          ids: user.id,
-        }}),
+        ApiSpotify.get('/playlists/' + params.id + '/followers/contains', {
+          params: {
+            ids: user.id,
+          },
+        }),
       ]);
 
       setPlaylist(dataPlaylist.data);
       setIsFollowed(dataFollowed.data[0]);
       setIsOwnPlaylist(dataPlaylist.data.owner.id === user.id);
-    }
+    };
     fetchPlaylist();
   }, [params.id, user.id]);
 
   useEffect(() => {
     const fetchSearch = async () => {
       if (searchText.trim() !== '') {
-        const response = await ApiSpotify.get('/search', { params: {
-          q: searchText,
-          type: 'track,episode',
-          limit: 20,
-        }});
+        const response = await ApiSpotify.get('/search', {
+          params: {
+            q: searchText,
+            type: 'track,episode',
+            limit: 20,
+          },
+        });
 
         // sometimes the api return null in the items array
-        const suggestedTracks = response.data.tracks.items.filter((v: Track) => v != null);
-        const suggestedEpisodes = response.data.episodes.items.filter((v: Track) => v != null);
+        const suggestedTracks = response.data.tracks.items.filter(
+          (v: Track) => v != null
+        );
+        const suggestedEpisodes = response.data.episodes.items.filter(
+          (v: Track) => v != null
+        );
         const allSuggested = suggestedTracks.concat(suggestedEpisodes);
-        setSuggested(allSuggested.filter((v: Track) => {
-          return tracks.map((pl) => pl.uri).includes(v.uri) === false;
-        }));
+        setSuggested(
+          allSuggested.filter((v: Track) => {
+            return tracks.map((pl) => pl.uri).includes(v.uri) === false;
+          })
+        );
       } else {
         setSuggested([]);
       }
-    }
+    };
     const timer = setTimeout(() => {
       fetchSearch();
     }, 500);
@@ -89,7 +87,9 @@ const PlaylistPage: React.FC = () => {
   const handleFollow = async () => {
     let response;
     if (isFollowed) {
-      response = await ApiSpotify.delete('/playlists/' + params.id + '/followers');
+      response = await ApiSpotify.delete(
+        '/playlists/' + params.id + '/followers'
+      );
     } else {
       response = await ApiSpotify.put('/playlists/' + params.id + '/followers');
     }
@@ -103,7 +103,10 @@ const PlaylistPage: React.FC = () => {
     togglePlay([playlist.uri], 0);
   };
 
-  const handlePlayTrack = (selectedOffset: number, selectedPositionMs: number) => {
+  const handlePlayTrack = (
+    selectedOffset: number,
+    selectedPositionMs: number
+  ) => {
     togglePlay([playlist.uri], selectedOffset, selectedPositionMs);
   };
 
@@ -116,22 +119,28 @@ const PlaylistPage: React.FC = () => {
       uris: track.uri,
       position: 0,
     };
-    await ApiSpotify.post('/playlists/' + playlist.id + '/tracks', null, { params });
+    await ApiSpotify.post('/playlists/' + playlist.id + '/tracks', null, {
+      params,
+    });
     forceUpdate();
   };
 
   const handleRemoveFromPlaylist = async (trackUri: string) => {
     const body = {
-      tracks: [{
-        uri: trackUri,
-      }],
+      tracks: [
+        {
+          uri: trackUri,
+        },
+      ],
     };
-    await ApiSpotify.delete('/playlists/' + playlist.id + '/tracks', { data: body });
+    await ApiSpotify.delete('/playlists/' + playlist.id + '/tracks', {
+      data: body,
+    });
     forceUpdate();
   };
 
   const totalDuration = tracks.reduce((acc, curr) => {
-    return (acc + curr.duration_ms);
+    return acc + curr.duration_ms;
   }, 0);
 
   return (
@@ -146,7 +155,10 @@ const PlaylistPage: React.FC = () => {
             footer={[
               playlist.owner.display_name,
               `${playlist.followers.total.toLocaleString()} likes`,
-              `${playlist.tracks.total} songs, ${duration(totalDuration, true)}`,
+              `${playlist.tracks.total} songs, ${duration(
+                totalDuration,
+                true
+              )}`,
             ]}
           />
           <div className="mb-4 flex items-center">
@@ -168,7 +180,9 @@ const PlaylistPage: React.FC = () => {
                 tracks={tracks}
                 showAlbum
                 showDateAdded
-                onRemoveFromPlaylist={isOwnPlaylist ? handleRemoveFromPlaylist : undefined}
+                onRemoveFromPlaylist={
+                  isOwnPlaylist ? handleRemoveFromPlaylist : undefined
+                }
                 currentTrack={currentTrack}
                 handlePlayTrack={handlePlayTrack}
                 handleNext={() => setNextUrl(pageData.next)}
@@ -180,7 +194,9 @@ const PlaylistPage: React.FC = () => {
 
           {isOwnPlaylist && (
             <div className="mb-4 py-2 border-t-2 border-opacity-10 border-gray-500">
-              <div className="font-bold text-xl mb-2">Let's find something for your playlist</div>
+              <div className="font-bold text-xl mb-2">
+                Let's find something for your playlist
+              </div>
               <div className="font-bold text-xl">
                 <div className="mb-4">
                   <SearchInput
@@ -195,9 +211,13 @@ const PlaylistPage: React.FC = () => {
                     {suggested.map((suggest) => (
                       <PlayerListTrackMini
                         track={suggest as Track & Episode}
-                        handlePlayTrack={() => handlePlaySuggestedTrack(suggest.uri)}
+                        handlePlayTrack={() =>
+                          handlePlaySuggestedTrack(suggest.uri)
+                        }
                         showAddLibrary
-                        onAddToPlaylist={() => handleAddTrackToPlaylist(suggest)}
+                        onAddToPlaylist={() =>
+                          handleAddTrackToPlaylist(suggest)
+                        }
                       />
                     ))}
                   </>
@@ -206,7 +226,9 @@ const PlaylistPage: React.FC = () => {
             </div>
           )}
         </div>
-      ) : ''}
+      ) : (
+        ''
+      )}
     </div>
   );
 };

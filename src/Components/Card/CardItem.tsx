@@ -1,18 +1,18 @@
 import { useContext } from 'react';
-import { useHistory } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 import { PlayerContext } from '../../context/player-context';
 import { Music } from 'react-feather';
 
 import PlayButton from '../Button/PlayButton';
 
 type CardItemProps = {
-  className?: string,
-  name: string,
-  image: string,
-  description?: string,
+  className?: string;
+  name: string;
+  image: string;
+  description?: string;
   onClickPlay?: (event: React.MouseEvent<SVGElement>) => void;
-  uri?: string,
-  href?: string,
+  uri?: string;
+  href?: string;
 };
 
 const defaultProps: CardItemProps = {
@@ -34,13 +34,11 @@ const CardItem: React.FC<CardItemProps> = ({
   href,
 }) => {
   const history = useHistory();
-  const {
-    togglePlay,
-  } = useContext(PlayerContext);
+  const { togglePlay } = useContext(PlayerContext);
   const handleClick = (event: React.MouseEvent) => {
     if (!href) return;
     history.push(href);
-  }
+  };
   const handleClickPlay = (event: React.MouseEvent) => {
     event.stopPropagation();
     if (!uri) return;
@@ -66,12 +64,14 @@ const CardItem: React.FC<CardItemProps> = ({
       </div>
       <div className="text-sm font-bold mt-2">
         <div className="truncate">{name}</div>
-        <div className="text-sm font-light text-gray-300 truncate">{description}</div>
+        <div className="text-sm font-light text-gray-300 truncate">
+          {description}
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 CardItem.defaultProps = defaultProps;
 
-export default CardItem
+export default CardItem;

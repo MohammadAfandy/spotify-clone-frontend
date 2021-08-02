@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 import Category from '../types/Category';
 import Playlist from '../types/Playlist';
 import ApiSpotify from '../utils/api-spotify';
@@ -17,7 +17,9 @@ const CategoryDetailPage: React.FC = () => {
       setCategory(response.data);
     };
     const fetchPlayList = async () => {
-      const response = await ApiSpotify.get('/browse/categories/' + params.id + '/playlists');
+      const response = await ApiSpotify.get(
+        '/browse/categories/' + params.id + '/playlists'
+      );
       setPlaylists(response.data.playlists.items);
     };
 
@@ -27,23 +29,23 @@ const CategoryDetailPage: React.FC = () => {
 
   return (
     <div className="flex flex-col px-4 py-4">
-      <div className="w-full text-4xl font-bold mb-5">
-        {category.name}
-      </div>
+      <div className="w-full text-4xl font-bold mb-5">{category.name}</div>
       <div className="grid grid-cols-5 gap-4">
         {playlists.map((playlist) => (
           <CardItem
             key={playlist.id}
             name={playlist.name}
             description={playlist.owner.name}
-            image={playlist.images && playlist.images[0] && playlist.images[0].url}
+            image={
+              playlist.images && playlist.images[0] && playlist.images[0].url
+            }
             uri={playlist.uri}
             href={'/playlist/' + playlist.id}
           />
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CategoryDetailPage
+export default CategoryDetailPage;

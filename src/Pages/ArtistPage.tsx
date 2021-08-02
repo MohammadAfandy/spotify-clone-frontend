@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useParams } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 import Artist from '../types/Artist';
 import Album from '../types/Album';
 import ApiSpotify from '../utils/api-spotify';
@@ -22,63 +22,58 @@ const ArtistPage: React.FC = () => {
   const [isShowMore, setIsShowMore] = useState(false);
   const [isFollowed, setIsFollowed] = useState(false);
 
-  const {
-    currentTrack,
-    togglePlay,
-  } = useContext(PlayerContext);
+  const { currentTrack, togglePlay } = useContext(PlayerContext);
 
-  const {
-    setNextUrl,
-    tracks,
-    pageData,
-  } = useFetchTracks('/artists/' + params.id + '/top-tracks');
+  const { setNextUrl, tracks, pageData } = useFetchTracks(
+    '/artists/' + params.id + '/top-tracks'
+  );
 
   useEffect(() => {
     const fetchArtist = async () => {
-      const [
-        dataArtist,
-        dataAlbums,
-        dataRelatedArtists,
-        dataFollowed,
-      ] = await Promise.all([
-        ApiSpotify.get('/artists/' + params.id),
-        ApiSpotify.get('/artists/' + params.id + '/albums', {
-          params: {
-            limit: 5,
-          }
-        }),
-        ApiSpotify.get('/artists/' + params.id + '/related-artists', {
-          params: {
-            limit: 5,
-          }
-        }),
-        ApiSpotify.get('/me/following/contains', {
-          params: {
-            type: 'artist',
-            ids: params.id,
-          }
-        }),
-      ]);
+      const [dataArtist, dataAlbums, dataRelatedArtists, dataFollowed] =
+        await Promise.all([
+          ApiSpotify.get('/artists/' + params.id),
+          ApiSpotify.get('/artists/' + params.id + '/albums', {
+            params: {
+              limit: 5,
+            },
+          }),
+          ApiSpotify.get('/artists/' + params.id + '/related-artists', {
+            params: {
+              limit: 5,
+            },
+          }),
+          ApiSpotify.get('/me/following/contains', {
+            params: {
+              type: 'artist',
+              ids: params.id,
+            },
+          }),
+        ]);
       setArtist(dataArtist.data);
       setAlbums(dataAlbums.data.items);
       setRelatedArtists(dataRelatedArtists.data.artists);
       setIsFollowed(dataFollowed.data[0]);
-    }
+    };
     fetchArtist();
   }, [params.id]);
 
   const handleFollow = async () => {
     let response;
     if (isFollowed) {
-      response = await ApiSpotify.delete('/me/following', { params: {
-        type: 'artist',
-        ids: artist.id,
-      }});
+      response = await ApiSpotify.delete('/me/following', {
+        params: {
+          type: 'artist',
+          ids: artist.id,
+        },
+      });
     } else {
-      response = await ApiSpotify.put('/me/following', null, { params: {
-        type: 'artist',
-        ids: artist.id,
-      }});
+      response = await ApiSpotify.put('/me/following', null, {
+        params: {
+          type: 'artist',
+          ids: artist.id,
+        },
+      });
     }
     if (response.status === 204) {
       setIsFollowed((prevState) => !prevState);
@@ -89,7 +84,10 @@ const ArtistPage: React.FC = () => {
     togglePlay([artist.uri], 0);
   };
 
-  const handlePlayTrack = (selectedOffset: number, selectedPositionMs: number) => {
+  const handlePlayTrack = (
+    selectedOffset: number,
+    selectedPositionMs: number
+  ) => {
     togglePlay([artist.uri], selectedOffset, selectedPositionMs);
   };
 
@@ -103,10 +101,7 @@ const ArtistPage: React.FC = () => {
             type={artist.type}
           />
           <div className="flex items-center">
-            <PlayButton
-              className="w-16 h-16 mr-6"
-              onClick={handlePlay}
-            />
+            <PlayButton className="w-16 h-16 mr-6" onClick={handlePlay} />
             <Button
               text={isFollowed ? 'Following' : 'Follow'}
               onClick={handleFollow}
@@ -163,7 +158,9 @@ const ArtistPage: React.FC = () => {
                   key={artist.id}
                   name={artist.name}
                   description={artist.name}
-                  image={artist.images && artist.images[0] && artist.images[0].url}
+                  image={
+                    artist.images && artist.images[0] && artist.images[0].url
+                  }
                   uri={artist.uri}
                   href={'/artist/' + artist.id}
                 />
@@ -171,7 +168,9 @@ const ArtistPage: React.FC = () => {
             </div>
           </div>
         </div>
-      ) : ''}
+      ) : (
+        ''
+      )}
     </div>
   );
 };

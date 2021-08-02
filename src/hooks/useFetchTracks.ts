@@ -4,7 +4,6 @@ import Track from '../types/Track';
 import Page from '../types/Page';
 import { ITEM_LIST_LIMIT } from '../utils/constants';
 
-
 const useFetchTracks = (url: string) => {
   const [nextUrl, setNextUrl] = useState<string | null>(null);
   const [increment, setIncrement] = useState(0);
@@ -14,7 +13,7 @@ const useFetchTracks = (url: string) => {
 
   const forceUpdate = () => {
     setIncrement((prevState) => prevState + 1);
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,23 +31,26 @@ const useFetchTracks = (url: string) => {
 
         // sometime, track array object is under 'tracks' object
         if ('tracks' in response.data) {
-          if (Array.isArray(response.data.tracks)) { // (e.g. artists top track)
+          if (Array.isArray(response.data.tracks)) {
+            // (e.g. artists top track)
             trackList = response.data.tracks;
             setPageData({} as Page);
-          } else if ('items' in response.data.tracks) { // (e.g. search tracks)
+          } else if ('items' in response.data.tracks) {
+            // (e.g. search tracks)
             const { items, ...pageData } = response.data.tracks;
             trackList = items;
             setPageData(pageData);
           }
         } else {
           if (response.data.items.length) {
-
             // sometime the track object is nested inside items (e.g. playlist)
             if ('track' in response.data.items[0]) {
-              trackList = response.data.items.map((item: { added_at: Date, track: Track }) => ({
-                ...item.track,
-                added_at: item.added_at,
-              }));
+              trackList = response.data.items.map(
+                (item: { added_at: Date; track: Track }) => ({
+                  ...item.track,
+                  added_at: item.added_at,
+                })
+              );
             } else {
               trackList = response.data.items;
             }
@@ -58,14 +60,20 @@ const useFetchTracks = (url: string) => {
         }
 
         // for playlist, track and episode can be mixed
-        let trackListContain = trackList.filter((track) => track.type === 'track');
-        let episodeListContain = trackList.filter((episode) => episode.type === 'episode');
+        let trackListContain = trackList.filter(
+          (track) => track.type === 'track'
+        );
+        let episodeListContain = trackList.filter(
+          (episode) => episode.type === 'episode'
+        );
 
         // get is the track currently under saved tracks
         if (trackListContain.length) {
-          const response = await ApiSpotify.get('/me/tracks/contains', { params: {
-            ids: trackListContain.map((track) => track.id).join(','),
-          }});
+          const response = await ApiSpotify.get('/me/tracks/contains', {
+            params: {
+              ids: trackListContain.map((track) => track.id).join(','),
+            },
+          });
           const savedTracks = response.data;
           trackListContain = trackListContain.map((track, idx) => ({
             ...track,
@@ -74,9 +82,11 @@ const useFetchTracks = (url: string) => {
         }
 
         if (episodeListContain.length) {
-          const response = await ApiSpotify.get('/me/episodes/contains', { params: {
-            ids: episodeListContain.map((episode) => episode.id).join(','),
-          }});
+          const response = await ApiSpotify.get('/me/episodes/contains', {
+            params: {
+              ids: episodeListContain.map((episode) => episode.id).join(','),
+            },
+          });
           const savedEpisodes = response.data;
           episodeListContain = episodeListContain.map((episode, idx) => ({
             ...episode,
@@ -84,15 +94,14 @@ const useFetchTracks = (url: string) => {
           }));
         }
 
-        trackList = [
-          ...trackListContain,
-          ...episodeListContain,
-        ].sort((a, b) => {
-          if (!a.added_at) return 0;
-          if (a.added_at > b.added_at) return -1;
-          if (a.added_at < b.added_at) return 1;
-          return 0;
-        });
+        trackList = [...trackListContain, ...episodeListContain].sort(
+          (a, b) => {
+            if (!a.added_at) return 0;
+            if (a.added_at > b.added_at) return -1;
+            if (a.added_at < b.added_at) return 1;
+            return 0;
+          }
+        );
 
         if (nextUrl) {
           setTracks((prevState) => [...prevState, ...trackList]);
@@ -108,6 +117,6 @@ const useFetchTracks = (url: string) => {
   }, [nextUrl, increment, url]);
 
   return { setNextUrl, tracks, pageData, error, forceUpdate };
-}
+};
 
 export default useFetchTracks;

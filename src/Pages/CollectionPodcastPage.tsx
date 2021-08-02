@@ -16,33 +16,34 @@ const CollectionPodcastPage: React.FC = () => {
     const fetchCollectionPodcast = async () => {
       const paramsPodcast = { limit: 50 };
       const paramsEpisode = { limit: 5 };
-      const [
-        dataPodcast,
-        dataPlaylistEpisode,
-      ] = await Promise.all([
+      const [dataPodcast, dataPlaylistEpisode] = await Promise.all([
         ApiSpotify.get('/me/shows', { params: paramsPodcast }),
         ApiSpotify.get('/me/episodes', { params: paramsEpisode }),
       ]);
 
-      setPodcasts(dataPodcast.data.items.map((item: { added_at: Date, show: Show }) => ({
-        ...item.show,
-        added_at: item.added_at
-      })));
-      setPlaylistEpisodes(dataPlaylistEpisode.data.items.map((item: { added_at: Date, episode: Episode }) => ({
-        ...item.episode,
-        added_at: item.added_at
-      })));
+      setPodcasts(
+        dataPodcast.data.items.map((item: { added_at: Date; show: Show }) => ({
+          ...item.show,
+          added_at: item.added_at,
+        }))
+      );
+      setPlaylistEpisodes(
+        dataPlaylistEpisode.data.items.map(
+          (item: { added_at: Date; episode: Episode }) => ({
+            ...item.episode,
+            added_at: item.added_at,
+          })
+        )
+      );
       setplaylistTotalEpisode(dataPlaylistEpisode.data.total);
-    }
+    };
 
     fetchCollectionPodcast();
   }, []);
 
   return (
     <div className="flex flex-col px-4 py-4">
-      <div className="text-2xl mb-4 font-bold">
-        PODCASTS
-      </div>
+      <div className="text-2xl mb-4 font-bold">PODCASTS</div>
       <div className="grid grid-cols-5 gap-4">
         <div className="col-span-2">
           <CardCollection
@@ -67,7 +68,7 @@ const CollectionPodcastPage: React.FC = () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default CollectionPodcastPage;

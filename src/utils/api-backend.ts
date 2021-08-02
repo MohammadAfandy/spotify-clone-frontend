@@ -1,8 +1,6 @@
 import axios from 'axios';
 
-import {
-  BACKEND_URI,
-} from './constants';
+import { BACKEND_URI } from './constants';
 
 export default axios.create({
   baseURL: BACKEND_URI,

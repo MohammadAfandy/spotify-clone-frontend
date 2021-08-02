@@ -11,29 +11,25 @@ import PlayButton from '../Components/Button/PlayButton';
 
 const CollectionTrackPage: React.FC = () => {
   const { user } = useContext(AuthContext);
-  
-  const {
-    currentTrack,
-    togglePlay,
-  } = useContext(PlayerContext);
 
-  const {
-    setNextUrl,
-    tracks,
-    pageData,
-  } = useFetchTracks('/me/tracks');
+  const { currentTrack, togglePlay } = useContext(PlayerContext);
+
+  const { setNextUrl, tracks, pageData } = useFetchTracks('/me/tracks');
 
   const handlePlayFromStart = () => {
     togglePlay([`spotify:user:${user.id}:collection`], 0);
   };
 
-  const handlePlayTrack = (selectedOffset: number, selectedPositionMs: number) => {
+  const handlePlayTrack = (
+    selectedOffset: number,
+    selectedPositionMs: number
+  ) => {
     const trackUris = tracks.map((v) => v.uri);
     togglePlay(trackUris, selectedOffset, selectedPositionMs);
   };
 
   const totalDuration = tracks.reduce((acc, curr) => {
-    return (acc + curr.duration_ms);
+    return acc + curr.duration_ms;
   }, 0);
 
   return (
@@ -65,7 +61,9 @@ const CollectionTrackPage: React.FC = () => {
             hasMore={!!pageData.next}
           />
         </div>
-      ) : ''}
+      ) : (
+        ''
+      )}
     </div>
   );
 };

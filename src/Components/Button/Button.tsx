@@ -1,7 +1,7 @@
 type ButtonProps = {
-  className?: string,
-  text: string,
-  color?: string,
+  className?: string;
+  text: string;
+  color?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
@@ -25,9 +25,9 @@ const Button: React.FC<ButtonProps> = ({ className, text, color, onClick }) => {
     >
       {text}
     </button>
-  )
-}
+  );
+};
 
 Button.defaultProps = defaultProps;
 
-export default Button
+export default Button;

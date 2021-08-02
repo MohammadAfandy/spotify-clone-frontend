@@ -37,7 +37,7 @@ const HomePage: React.FC = () => {
       setNewReleases(dataNewReleases.data.albums.items);
       setFeaturedPlaylists(dataFeaturedPlaylists.data.playlists.items);
       setMessage(dataFeaturedPlaylists.data.message);
-    }
+    };
 
     fetchHome();
   }, []);
@@ -48,10 +48,7 @@ const HomePage: React.FC = () => {
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-end mr-8 font-bold">
             <div className="text-2xl">{message}</div>
-            <TextLink
-              text="See All"
-              url="/genre/featured-playlists"
-            />
+            <TextLink text="See All" url="/genre/featured-playlists" />
           </div>
           <div className="grid grid-cols-5 gap-4">
             {featuredPlaylists.map((playlist) => (
@@ -72,10 +69,7 @@ const HomePage: React.FC = () => {
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-end mr-8 font-bold">
             <div className="text-2xl">Your Top Tracks</div>
-            <TextLink
-              text="See All"
-              url="genre/top-tracks"
-            />
+            <TextLink text="See All" url="genre/top-tracks" />
           </div>
           <div className="grid grid-cols-5 gap-4">
             {topTracks.map((track) => (
@@ -95,10 +89,7 @@ const HomePage: React.FC = () => {
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-end mr-8 font-bold">
             <div className="text-2xl">Your Top Artists</div>
-            <TextLink
-              text="See All"
-              url="genre/top-artists"
-            />
+            <TextLink text="See All" url="genre/top-artists" />
           </div>
           <div className="grid grid-cols-5 gap-4">
             {topArtists.map((artist) => (
@@ -114,15 +105,12 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       )}
-  
+
       {newReleases.length > 0 && (
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-end mr-8 font-bold">
             <div className="text-2xl">New Releases</div>
-            <TextLink
-              text="See All"
-              url="genre/new-releases"
-            />
+            <TextLink text="See All" url="genre/new-releases" />
           </div>
           <div className="grid grid-cols-5 gap-4">
             {newReleases.map((album) => (
@@ -139,7 +127,7 @@ const HomePage: React.FC = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 export default HomePage;

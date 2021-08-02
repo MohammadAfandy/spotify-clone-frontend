@@ -1,13 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import {
-  Edit2,
-  Home,
-  List,
-  Music,
-  Plus,
-  Search,
-  Trash,
-} from 'react-feather';
+import { Edit2, Home, List, Music, Plus, Search, Trash } from 'react-feather';
 import { AuthContext } from '../../context/auth-context';
 import ApiSpotify from '../../utils/api-spotify';
 import { EPISODE_LOGO_IMAGE, LIKED_SONG_IMAGE } from '../../utils/constants';
@@ -31,11 +23,7 @@ const Navbar: React.FC = () => {
 
   const [previewImage, setPreviewImage] = useState('');
 
-  const {
-    user,
-    playlists,
-    refreshPlaylists,
-  } = useContext(AuthContext);
+  const { user, playlists, refreshPlaylists } = useContext(AuthContext);
 
   useEffect(() => {
     refreshPlaylists();
@@ -48,25 +36,30 @@ const Navbar: React.FC = () => {
     setPlaylistId('');
     setPlaylistIsPublic(false);
     setIsOwnPlaylist(false);
-    
+
     setPreviewImage('');
   };
 
   const handleSavePlaylist = async () => {
     if (playlistName.trim() === '') {
       return alert('Playlist name cannot empty');
-    };
+    }
     let savedPlaylistId = '';
     const body = {
       name: playlistName,
       description: playlistDescription,
       public: playlistIsPublic,
     };
-    if (playlistId) { // updating playlist
-      await ApiSpotify.put('/playlists/' + playlistId , body);
+    if (playlistId) {
+      // updating playlist
+      await ApiSpotify.put('/playlists/' + playlistId, body);
       savedPlaylistId = playlistId;
-    } else { // create new playlist
-      const response = await ApiSpotify.post('/users/' + user.id + '/playlists', body);
+    } else {
+      // create new playlist
+      const response = await ApiSpotify.post(
+        '/users/' + user.id + '/playlists',
+        body
+      );
       savedPlaylistId = response.data.id;
     }
 
@@ -93,7 +86,10 @@ const Navbar: React.FC = () => {
     refreshPlaylists();
   };
 
-  const handleEditPlaylist = async (event: React.MouseEvent, playlistId: string) => {
+  const handleEditPlaylist = async (
+    event: React.MouseEvent,
+    playlistId: string
+  ) => {
     event.preventDefault();
     const response = await ApiSpotify.get('/playlists/' + playlistId);
     setPlaylistId(response.data.id);
@@ -116,7 +112,9 @@ const Navbar: React.FC = () => {
     setPlaylistImage('');
   };
 
-  const handleUploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUploadImage = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       if (file.size > 256000) {
@@ -132,7 +130,11 @@ const Navbar: React.FC = () => {
     }
   };
 
-  const imageContainer = (imageUri: string, alt: string, showDelete: boolean) => (
+  const imageContainer = (
+    imageUri: string,
+    alt: string,
+    showDelete: boolean
+  ) => (
     <>
       {showDelete && (
         <div
@@ -142,27 +144,49 @@ const Navbar: React.FC = () => {
           <Trash className="w-4 h-4" />
         </div>
       )}
-      <img src={imageUri} alt={alt} className="w-full h-full group-hover:opacity-20" draggable="false" />
+      <img
+        src={imageUri}
+        alt={alt}
+        className="w-full h-full group-hover:opacity-20"
+        draggable="false"
+      />
     </>
   );
 
   return (
-    <nav className="fixed flex flex-col bg-black w-52 pr-2 pt-5" style={{ height: 'calc(100vh - 6rem)' }}>
-      <div className="px-6 mb-8 text-2xl">
-        Spotify Clone
-      </div>
+    <nav
+      className="fixed flex flex-col bg-black w-52 pr-2 pt-5"
+      style={{ height: 'calc(100vh - 6rem)' }}
+    >
+      <div className="px-6 mb-8 text-2xl">Spotify Clone</div>
       <div className="mb-4">
         <ul>
           <NavbarLink to="/" Icon={<Home />} text="Home" />
           <NavbarLink to="/search" Icon={<Search />} text="Search" />
-          <NavbarLink to="/collection/playlists" Icon={<List />} text="Your Library" />
+          <NavbarLink
+            to="/collection/playlists"
+            Icon={<List />}
+            text="Your Library"
+          />
         </ul>
       </div>
       <div className="mb-2">
         <ul>
-          <NavbarItem Icon={<Plus />} text="Create Playlist" onClick={() => setIsOpenModal(true)} />
-          <NavbarLink to="/collection/tracks" image={LIKED_SONG_IMAGE} text="Liked Song" />
-          <NavbarLink to="/collection/episodes" image={EPISODE_LOGO_IMAGE} text="Your Episode" />
+          <NavbarItem
+            Icon={<Plus />}
+            text="Create Playlist"
+            onClick={() => setIsOpenModal(true)}
+          />
+          <NavbarLink
+            to="/collection/tracks"
+            image={LIKED_SONG_IMAGE}
+            text="Liked Song"
+          />
+          <NavbarLink
+            to="/collection/episodes"
+            image={EPISODE_LOGO_IMAGE}
+            text="Your Episode"
+          />
         </ul>
       </div>
       <div className="mb-4 border-t-white border-t-2 border-opacity-30" />
@@ -186,11 +210,11 @@ const Navbar: React.FC = () => {
         handleCloseModal={handleCloseModal}
       >
         <div className="flex h-52">
-          <div className={`group relative flex justify-center items-center w-80 h-48 bg-light-black-2 rounded-md mr-4`}>
+          <div
+            className={`group relative flex justify-center items-center w-80 h-48 bg-light-black-2 rounded-md mr-4`}
+          >
             <label htmlFor="input-image">
-              <div
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 group-hover:block hidden cursor-pointer z-10 w-full text-center"
-              >
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 group-hover:block hidden cursor-pointer z-10 w-full text-center">
                 <Edit2 className="w-8 h-8 mx-auto" />
                 Choose Photo
               </div>
@@ -204,11 +228,10 @@ const Navbar: React.FC = () => {
             />
             {previewImage ? (
               imageContainer(previewImage, 'preview', true)
-            ) : (playlistImage ? (
-                imageContainer(playlistImage, playlistName, false)
-              ) : (
-                <Music className="w-24 h-24 group-hover:hidden block" />
-              )
+            ) : playlistImage ? (
+              imageContainer(playlistImage, playlistName, false)
+            ) : (
+              <Music className="w-24 h-24 group-hover:hidden block" />
             )}
           </div>
           <div className="flex flex-col w-full">
@@ -238,7 +261,9 @@ const Navbar: React.FC = () => {
           <label htmlFor="is-public"> Add to Profile</label>
         </div>
         <div className="text-xs mb-2">
-          By proceeding, you agree to give Spotify access to the image you choose to upload. Please make sure you have the right to upload the image.
+          By proceeding, you agree to give Spotify access to the image you
+          choose to upload. Please make sure you have the right to upload the
+          image.
         </div>
         <div className="flex justify-end">
           {playlistId && isOwnPlaylist && (
@@ -249,11 +274,7 @@ const Navbar: React.FC = () => {
               color="red"
             />
           )}
-          <Button
-            text="Save"
-            onClick={handleSavePlaylist}
-            color="green"
-          />
+          <Button text="Save" onClick={handleSavePlaylist} color="green" />
         </div>
       </Modal>
     </nav>

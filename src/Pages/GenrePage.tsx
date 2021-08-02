@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 import Track from '../types/Track';
 import Artist from '../types/Artist';
 import Album from '../types/Album';
@@ -10,7 +10,7 @@ import { getHighestImage, getArtistNames } from '../utils/helpers';
 import CardItem from '../Components/Card/CardItem';
 
 const GenrePage: React.FC = () => {
-  const { type } = useParams<{ query: string, type: string }>();
+  const { type } = useParams<{ query: string; type: string }>();
 
   const [topTracks, setTopTracks] = useState<Track[]>([]);
   const [topArtists, setTopArtists] = useState<Artist[]>([]);
@@ -22,34 +22,40 @@ const GenrePage: React.FC = () => {
   useEffect(() => {
     const fetchGenre = async () => {
       const params = { limit: 50 };
-      
+
       if (type === 'featured-playlists') {
-        const response = await ApiSpotify.get('/browse/featured-playlists', { params });
+        const response = await ApiSpotify.get('/browse/featured-playlists', {
+          params,
+        });
         setFeaturedPlaylists(response.data.playlists.items);
         setTypeText(response.data.message);
       } else if (type === 'top-tracks') {
-        const response = await ApiSpotify.get('/me/top/tracks', { params: { ...params, country: undefined } });
+        const response = await ApiSpotify.get('/me/top/tracks', {
+          params: { ...params, country: undefined },
+        });
         setTopTracks(response.data.items);
         setTypeText('Your Top Tracks');
       } else if (type === 'top-artists') {
-        const response = await ApiSpotify.get('/me/top/artists', { params: { ...params, country: undefined } });
+        const response = await ApiSpotify.get('/me/top/artists', {
+          params: { ...params, country: undefined },
+        });
         setTopArtists(response.data.items);
         setTypeText('Your Top Artists');
       } else if (type === 'new-releases') {
-        const response = await ApiSpotify.get('/browse/new-releases', { params });
+        const response = await ApiSpotify.get('/browse/new-releases', {
+          params,
+        });
         setNewReleases(response.data.albums.items);
-        setTypeText('New Releases',);
+        setTypeText('New Releases');
       }
-    }
+    };
 
     fetchGenre();
   }, [type]);
 
   return (
     <div className="flex flex-col px-4 py-4">
-      <div className="text-2xl mb-4">
-        {typeText}
-      </div>
+      <div className="text-2xl mb-4">{typeText}</div>
       {type === 'featured-playlists' && (
         <div className="grid grid-cols-5 gap-4">
           {featuredPlaylists.map((playlist) => (
@@ -106,7 +112,7 @@ const GenrePage: React.FC = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 export default GenrePage;

@@ -5,13 +5,13 @@ import NavbarItem from './NavbarItem';
 import styles from './Navbar.module.css';
 
 type NavbarLinkProps = {
-  to: string,
-  Icon?: React.ReactNode,
-  image?: string,
-  text: string,
-  editable?: boolean,
-  onClick?: () => void,
-  onClickEdit?: (e: React.MouseEvent) => void,
+  to: string;
+  Icon?: React.ReactNode;
+  image?: string;
+  text: string;
+  editable?: boolean;
+  onClick?: () => void;
+  onClickEdit?: (e: React.MouseEvent) => void;
 };
 
 const defaultProps: NavbarLinkProps = {
@@ -20,13 +20,16 @@ const defaultProps: NavbarLinkProps = {
   editable: false,
 };
 
-const NavbarLink: React.FC<NavbarLinkProps> = ({ to, Icon, text, image, editable, onClickEdit }) => {
+const NavbarLink: React.FC<NavbarLinkProps> = ({
+  to,
+  Icon,
+  text,
+  image,
+  editable,
+  onClickEdit,
+}) => {
   return (
-    <NavLink
-      to={to}
-      activeClassName={styles.activeLink}
-      exact
-    >
+    <NavLink to={to} activeClassName={styles.activeLink} exact>
       <NavbarItem
         Icon={Icon}
         text={text}

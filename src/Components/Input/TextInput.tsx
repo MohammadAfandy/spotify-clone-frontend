@@ -1,7 +1,7 @@
 type TextInputProps = {
-  className?: string,
-  value: string,
-  placeholder: string,
+  className?: string;
+  value: string;
+  placeholder: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
@@ -11,7 +11,12 @@ const defaultProps: TextInputProps = {
   placeholder: '',
 };
 
-const TextInput: React.FC<TextInputProps> = ({ className, value, placeholder, onChange }) => {
+const TextInput: React.FC<TextInputProps> = ({
+  className,
+  value,
+  placeholder,
+  onChange,
+}) => {
   return (
     <input
       type="text"
@@ -20,9 +25,9 @@ const TextInput: React.FC<TextInputProps> = ({ className, value, placeholder, on
       className={`bg-light-black-2 text-white font-bold p-3 mb-4 rounded-xl outline-none ${className}`}
       onChange={onChange}
     />
-  )
-}
+  );
+};
 
 TextInput.defaultProps = defaultProps;
 
-export default TextInput
+export default TextInput;

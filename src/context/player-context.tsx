@@ -6,23 +6,19 @@ import ApiSpotify from '../utils/api-spotify';
 import { getArtistNames } from '../utils/helpers';
 
 type PlayerContextObj = {
-  uris: string[],
-  changeUris: (uris: string[]) => void,
-  offset: number,
-  changeOffset: (offset: number) => void,
-  positionMs: number,
-  changePositionMs: (positionMs: number) => void,
-  currentTrack: Track,
-  changeCurrentTrack: (currentTrack: Track) => void,
-  isPlaying: boolean
-  changeIsPlaying: (isPlaying: boolean) => void,
+  uris: string[];
+  changeUris: (uris: string[]) => void;
+  offset: number;
+  changeOffset: (offset: number) => void;
+  positionMs: number;
+  changePositionMs: (positionMs: number) => void;
+  currentTrack: Track;
+  changeCurrentTrack: (currentTrack: Track) => void;
+  isPlaying: boolean;
+  changeIsPlaying: (isPlaying: boolean) => void;
 
-  togglePlay: (
-    uris: string[],
-    offset: number,
-    positionMs?: number,
-  ) => void,
-  togglePause: () => void,
+  togglePlay: (uris: string[], offset: number, positionMs?: number) => void;
+  togglePause: () => void;
 };
 
 export const PlayerContext = React.createContext<PlayerContextObj>({
@@ -36,13 +32,8 @@ export const PlayerContext = React.createContext<PlayerContextObj>({
   changeCurrentTrack: (currentTrack: Track) => {},
   isPlaying: false,
   changeIsPlaying: (isPlaying: boolean) => {},
-  
-  
-  togglePlay: (
-    uris: string[],
-    offset: number,
-    positionMs?: number,
-  ) => {},
+
+  togglePlay: (uris: string[], offset: number, positionMs?: number) => {},
   togglePause: () => {},
 });
 
@@ -54,11 +45,11 @@ const PlayerProvider: React.FC = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   const changeCurrentTrack = useCallback((currentTrack: Track) => {
-    setCurrentTrack(currentTrack)
+    setCurrentTrack(currentTrack);
   }, []);
 
   const changeIsPlaying = useCallback((isPlaying: boolean) => {
-    setIsPlaying(isPlaying)
+    setIsPlaying(isPlaying);
   }, []);
 
   const contextValue = {
@@ -73,15 +64,19 @@ const PlayerProvider: React.FC = ({ children }) => {
     isPlaying,
     changeIsPlaying,
 
-    togglePlay: async (
-      uris: string[],
-      offset: number,
-      positionMs = 0,
-    ) => {
+    togglePlay: async (uris: string[], offset: number, positionMs = 0) => {
       let newUris = [];
       let newContextUri = '';
       let noOffset = false;
-      const availableUris = ['album', 'artist', 'playlist', 'show', 'track', 'episode', 'user'];
+      const availableUris = [
+        'album',
+        'artist',
+        'playlist',
+        'show',
+        'track',
+        'episode',
+        'user',
+      ];
       for (const uri of uris) {
         const [, type] = uri.split(':');
         if (availableUris.includes(type) === false) {
@@ -105,9 +100,11 @@ const PlayerProvider: React.FC = ({ children }) => {
       const body = {
         uris: newUris.length ? newUris : undefined,
         context_uri: newContextUri || undefined,
-        offset: noOffset ? undefined : {
-          position: offset,
-        },
+        offset: noOffset
+          ? undefined
+          : {
+              position: offset,
+            },
         position_ms: positionMs,
       };
 
@@ -128,10 +125,12 @@ const PlayerProvider: React.FC = ({ children }) => {
     <PlayerContext.Provider value={contextValue}>
       <Helmet defer={false}>
         <title>
-          {isPlaying && currentTrack?.uri ? `${currentTrack.name} • ${getArtistNames(currentTrack.artists)}` : 'Spotify Clone'}
+          {isPlaying && currentTrack?.uri
+            ? `${currentTrack.name} • ${getArtistNames(currentTrack.artists)}`
+            : 'Spotify Clone'}
         </title>
       </Helmet>
-      { children }
+      {children}
     </PlayerContext.Provider>
   );
 };

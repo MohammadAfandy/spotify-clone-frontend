@@ -4,10 +4,10 @@ import Episode from '../../types/Episode';
 import PlayerListEpisodeItem from './PlayerListEpisodeItem';
 
 type PlayerListEpisodeProps = {
-  episodes: Episode[],
-  handlePlayEpisode: (offset: number, positionMs: number) => void,
-  handleNext: () => void,
-  hasMore: boolean,
+  episodes: Episode[];
+  handlePlayEpisode: (offset: number, positionMs: number) => void;
+  handleNext: () => void;
+  hasMore: boolean;
 };
 
 const defaultProps: PlayerListEpisodeProps = {

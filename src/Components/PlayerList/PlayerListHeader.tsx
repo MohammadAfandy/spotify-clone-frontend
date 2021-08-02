@@ -3,11 +3,11 @@ import { Music } from 'react-feather';
 import { ellipsis } from '../../utils/helpers';
 
 type PlayerListHeaderProps = {
-  image: string,
-  type: string,
-  name: string,
-  description?: string,
-  footer?: Array<React.ReactNode | string>,
+  image: string;
+  type: string;
+  name: string;
+  description?: string;
+  footer?: Array<React.ReactNode | string>;
 };
 
 const defaultProps: PlayerListHeaderProps = {
@@ -37,20 +37,23 @@ const PlayerListHeader: React.FC<PlayerListHeaderProps> = ({
       <div className="font-bold">
         <div className="mb-2 text-lg">{type}</div>
         <div className="mb-4 text-4xl">{name}</div>
-        <div className="mb-2 text-sm font-light">{description && ellipsis(description, 150)}</div>
+        <div className="mb-2 text-sm font-light">
+          {description && ellipsis(description, 150)}
+        </div>
         <div className="text-sm">
-          {footer && footer.map((foot, idx) => (
-            <Fragment key={idx}>
-              {foot}
-              {idx !== footer.length - 1 && ' • '}
-            </Fragment>
-          ))}
+          {footer &&
+            footer.map((foot, idx) => (
+              <Fragment key={idx}>
+                {foot}
+                {idx !== footer.length - 1 && ' • '}
+              </Fragment>
+            ))}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 PlayerListHeader.defaultProps = defaultProps;
 
-export default PlayerListHeader
+export default PlayerListHeader;

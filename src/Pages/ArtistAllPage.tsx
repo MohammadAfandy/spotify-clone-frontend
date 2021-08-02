@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useHistory } from 'react-router-dom';
 import ApiSpotify from '../utils/api-spotify';
 import Artist from '../types/Artist';
 import Album from '../types/Album';
@@ -8,7 +8,7 @@ import CardItem from '../Components/Card/CardItem';
 
 const AritstAllPage: React.FC = () => {
   const history = useHistory();
-  const { id, type } = useParams<{ id: string, type: string }>();
+  const { id, type } = useParams<{ id: string; type: string }>();
 
   if (['related', 'albums'].includes(type) === false) {
     history.replace('/');
@@ -25,16 +25,18 @@ const AritstAllPage: React.FC = () => {
       } else if (type === 'related') {
         uri = 'related-artists';
       }
-      const response = await ApiSpotify.get('/artists/' + id + '/' + uri, { params: {
-        limit: 50,
-      }});
+      const response = await ApiSpotify.get('/artists/' + id + '/' + uri, {
+        params: {
+          limit: 50,
+        },
+      });
 
       if (type === 'related') {
         setRelatedArtists(response.data.artists);
       } else if (type === 'albums') {
         setAlbums(response.data.items);
       }
-    }
+    };
 
     fetchArtistAll();
   }, [type, id]);
@@ -74,7 +76,7 @@ const AritstAllPage: React.FC = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 export default AritstAllPage;

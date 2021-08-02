@@ -10,10 +10,8 @@ import PlayButton from '../Components/Button/PlayButton';
 
 const CollectionEpisodePage: React.FC = () => {
   const { user } = useContext(AuthContext);
-  
-  const {
-    togglePlay,
-  } = useContext(PlayerContext);
+
+  const { togglePlay } = useContext(PlayerContext);
 
   const { setNextUrl, episodes, pageData } = useFetchEpisodes('/me/episodes');
 
@@ -22,7 +20,10 @@ const CollectionEpisodePage: React.FC = () => {
     togglePlay(episodeUris, 0);
   };
 
-  const handlePlayEpisode = (selectedOffset: number, selectedPositionMs: number) => {
+  const handlePlayEpisode = (
+    selectedOffset: number,
+    selectedPositionMs: number
+  ) => {
     const episodeUris = episodes.map((v) => v.uri);
     togglePlay(episodeUris, selectedOffset, selectedPositionMs);
   };
@@ -34,10 +35,7 @@ const CollectionEpisodePage: React.FC = () => {
           image={EPISODE_LOGO_IMAGE}
           name="Your Episodes"
           type="PLAYLIST"
-          footer={[
-            user.id,
-            `${pageData.total} episodes`,
-          ]}
+          footer={[user.id, `${pageData.total} episodes`]}
         />
         <div className="flex items-center mb-4">
           <PlayButton

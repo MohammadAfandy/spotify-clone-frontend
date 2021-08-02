@@ -1,8 +1,8 @@
 .lineThrough:before,
 .lineThrough:after {
   background-color: #fff;
-  opacity: .5;
-  content: "";
+  opacity: 0.5;
+  content: '';
   display: inline-block;
   height: 1px;
   position: relative;

@@ -22,7 +22,10 @@ import CollectionEpisodePage from '../../Pages/CollectionEpisodePage';
 
 const MainContent: React.FC = () => {
   return (
-    <div id="main-container" className="main-content overflow-auto flex flex-col w-full ml-52 mt-14">
+    <div
+      id="main-container"
+      className="main-content overflow-auto flex flex-col w-full ml-52 mt-14"
+    >
       <Switch>
         <Route path="/" exact>
           <HomePage />
@@ -33,9 +36,16 @@ const MainContent: React.FC = () => {
         <Route path="/search" exact>
           <SearchPage />
         </Route>
-        <Route path="/search/:query/track" exact render={(props) => (
-          <SearchResultAllTrackPage key={'search-track-' + props.match.params.query} {...props} />)
-        } />
+        <Route
+          path="/search/:query/track"
+          exact
+          render={(props) => (
+            <SearchResultAllTrackPage
+              key={'search-track-' + props.match.params.query}
+              {...props}
+            />
+          )}
+        />
         <Route path="/search/:query/:type" exact>
           <SearchResultAllPage />
         </Route>
@@ -76,15 +86,36 @@ const MainContent: React.FC = () => {
         {/* This is to trigger rerender on same props but different url
         because sometimes (as in this route list) the previous route is the same as the destination route
         and when it happens it doesn't reset the state of the component */}
-        <Route path="/search/:query" exact render={(props) => (
-          <SearchResultPage key={'search-' + props.match.params.query} {...props} />)
-        } />
-        <Route path="/artist/:id" exact render={(props) => (
-          <ArtistPagePage key={'artist-' + props.match.params.id} {...props} />)
-        } />
-        <Route path="/playlist/:id" exact render={(props) => (
-          <PlaylistPage key={'playlist-' + props.match.params.id} {...props} />)
-        } />
+        <Route
+          path="/search/:query"
+          exact
+          render={(props) => (
+            <SearchResultPage
+              key={'search-' + props.match.params.query}
+              {...props}
+            />
+          )}
+        />
+        <Route
+          path="/artist/:id"
+          exact
+          render={(props) => (
+            <ArtistPagePage
+              key={'artist-' + props.match.params.id}
+              {...props}
+            />
+          )}
+        />
+        <Route
+          path="/playlist/:id"
+          exact
+          render={(props) => (
+            <PlaylistPage
+              key={'playlist-' + props.match.params.id}
+              {...props}
+            />
+          )}
+        />
       </Switch>
     </div>
   );

@@ -1,17 +1,22 @@
 import { createContext, useState, useEffect, useCallback } from 'react';
 import ApiSpotify from '../utils/api-spotify';
-import { getCookie, removeCookie, setCookie, getHashValue } from '../utils/helpers';
+import {
+  getCookie,
+  removeCookie,
+  setCookie,
+  getHashValue,
+} from '../utils/helpers';
 
 import User from '../types/User';
 import Playlist from '../types/Playlist';
 import Track from '../types/Track';
 
 type AuthContextObj = {
-  isLoggedIn: boolean,
-  user: User,
-  logout: () => void,
-  playlists: Playlist[],
-  refreshPlaylists: () => void,
+  isLoggedIn: boolean;
+  user: User;
+  logout: () => void;
+  playlists: Playlist[];
+  refreshPlaylists: () => void;
 };
 
 export const AuthContext = createContext<AuthContextObj>({
@@ -23,7 +28,9 @@ export const AuthContext = createContext<AuthContextObj>({
 });
 
 const AuthProvider: React.FC = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!getCookie('access_token'));
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+    !!getCookie('access_token')
+  );
   const [user, setUser] = useState<User>({} as User);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [savedTracks, setSavedTracks] = useState<Track[]>([]);
@@ -64,10 +71,12 @@ const AuthProvider: React.FC = ({ children }) => {
 
     fetchUser();
   }, [isLoggedIn]);
-  
+
   const refreshPlaylists = useCallback(async () => {
     try {
-      const response = await ApiSpotify.get('/me/playlists', { params: { limit: 20 } });
+      const response = await ApiSpotify.get('/me/playlists', {
+        params: { limit: 20 },
+      });
       setPlaylists(response.data.items);
     } catch (error) {
       console.error(error);
@@ -84,9 +93,7 @@ const AuthProvider: React.FC = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      { children }
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };
 

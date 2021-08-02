@@ -1,9 +1,6 @@
 import axios from 'axios';
 import { getCookie, setCookie } from './helpers';
-import {
-  BACKEND_URI,
-  SPOTIFY_URI,
-} from './constants';
+import { BACKEND_URI, SPOTIFY_URI } from './constants';
 
 const axiosInstance = axios.create({
   baseURL: SPOTIFY_URI,
@@ -17,10 +14,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const { url = '' } = config;
-    const urlWithoutCountry = [
-      '/me/top/tracks',
-      '/me/top/artists',
-    ]
+    const urlWithoutCountry = ['/me/top/tracks', '/me/top/artists'];
     if (urlWithoutCountry.includes(url) === false) {
       config.params.country = getCookie('country');
     }
@@ -32,21 +26,21 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    return response
+    return response;
   },
   (error) => {
     return new Promise((resolve) => {
       const originalRequest = error.config;
       const refreshToken = getCookie('refresh_token');
       if (
-        error.response
-        && error.response.status === 401
-        && error.config
-        && !error.config.__isRetryRequest
-        && error.response.data.error.message === 'The access token expired'
-        && refreshToken
+        error.response &&
+        error.response.status === 401 &&
+        error.config &&
+        !error.config.__isRetryRequest &&
+        error.response.data.error.message === 'The access token expired' &&
+        refreshToken
       ) {
-        originalRequest._retry = true
+        originalRequest._retry = true;
 
         const response = fetch(BACKEND_URI + '/refresh_token', {
           method: 'POST',
@@ -54,7 +48,7 @@ axiosInstance.interceptors.response.use(
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ refresh_token: refreshToken })
+          body: JSON.stringify({ refresh_token: refreshToken }),
         })
           .then((res) => res.json())
           .then((res) => {
@@ -62,9 +56,9 @@ axiosInstance.interceptors.response.use(
           });
         resolve(response);
       }
-      return Promise.reject(error)
-    })
-  },
+      return Promise.reject(error);
+    });
+  }
 );
 
 export default axiosInstance;

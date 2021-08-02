@@ -13,7 +13,7 @@ const useFetchEpisodes = (url: string) => {
 
   const forceUpdate = () => {
     setIncrement((prevState) => prevState + 1);
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,13 +35,14 @@ const useFetchEpisodes = (url: string) => {
           setPageData({} as Page);
         } else {
           if (response.data.items.length) {
-
             // sometime the episode object is nested inside items (e.g. playlist)
             if ('episode' in response.data.items[0]) {
-              episodeList = response.data.items.map((item: { added_at: Date, episode: Episode }) => ({
-                ...item.episode,
-                added_at: item.added_at,
-              }));
+              episodeList = response.data.items.map(
+                (item: { added_at: Date; episode: Episode }) => ({
+                  ...item.episode,
+                  added_at: item.added_at,
+                })
+              );
             } else {
               episodeList = response.data.items;
             }
@@ -52,11 +53,13 @@ const useFetchEpisodes = (url: string) => {
 
         // get is the episode currently under saved episodes
         if (episodeList && episodeList.length) {
-          const response = await ApiSpotify.get('/me/episodes/contains', { params: {
-            ids: episodeList.map((episode) => episode.id).join(','),
-          }});
+          const response = await ApiSpotify.get('/me/episodes/contains', {
+            params: {
+              ids: episodeList.map((episode) => episode.id).join(','),
+            },
+          });
           const savedepisodes = response.data;
-  
+
           episodeList = episodeList.map((episode, idx) => ({
             ...episode,
             is_saved: savedepisodes[idx],
@@ -77,6 +80,6 @@ const useFetchEpisodes = (url: string) => {
   }, [nextUrl, increment, url]);
 
   return { setNextUrl, episodes, pageData, error, forceUpdate };
-}
+};
 
 export default useFetchEpisodes;

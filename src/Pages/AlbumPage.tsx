@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useParams } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 import { PlayerContext } from '../context/player-context';
 import Album from '../types/Album';
 import ApiSpotify from '../utils/api-spotify';
@@ -17,38 +17,43 @@ const AlbumPage: React.FC = () => {
   const [album, setAlbum] = useState<Album>(Object);
   const [isFollowed, setIsFollowed] = useState(false);
 
-  const {
-    currentTrack,
-    togglePlay,
-  } = useContext(PlayerContext);
+  const { currentTrack, togglePlay } = useContext(PlayerContext);
 
-  const { setNextUrl, tracks, pageData } = useFetchTracks('/albums/' + params.id + '/tracks');
+  const { setNextUrl, tracks, pageData } = useFetchTracks(
+    '/albums/' + params.id + '/tracks'
+  );
 
   useEffect(() => {
     const fetchAlbum = async () => {
       const [dataAlbum, dataFollowed] = await Promise.all([
         ApiSpotify.get('/albums/' + params.id),
-        ApiSpotify.get('/me/albums/contains', { params: {
-          ids: params.id,
-        }})
+        ApiSpotify.get('/me/albums/contains', {
+          params: {
+            ids: params.id,
+          },
+        }),
       ]);
-  
+
       setAlbum(dataAlbum.data);
       setIsFollowed(dataFollowed.data[0]);
-    }
+    };
     fetchAlbum();
   }, [params.id]);
 
   const handleFollow = async () => {
     let response;
     if (isFollowed) {
-      response = await ApiSpotify.delete('/me/albums', { params: {
-        ids: album.id,
-      }});
+      response = await ApiSpotify.delete('/me/albums', {
+        params: {
+          ids: album.id,
+        },
+      });
     } else {
-      response = await ApiSpotify.put('/me/albums', null, { params: {
-        ids: album.id,
-      }});
+      response = await ApiSpotify.put('/me/albums', null, {
+        params: {
+          ids: album.id,
+        },
+      });
     }
     if (response.status === 200) {
       setIsFollowed((prevState) => !prevState);
@@ -59,12 +64,15 @@ const AlbumPage: React.FC = () => {
     togglePlay([album.uri], 0);
   };
 
-  const handlePlayTrack = (selectedOffset: number, selectedPositionMs: number) => {
+  const handlePlayTrack = (
+    selectedOffset: number,
+    selectedPositionMs: number
+  ) => {
     togglePlay([album.uri], selectedOffset, selectedPositionMs);
   };
 
   const totalDuration = tracks.reduce((acc, curr) => {
-    return (acc + curr.duration_ms);
+    return acc + curr.duration_ms;
   }, 0);
 
   return (
@@ -76,12 +84,9 @@ const AlbumPage: React.FC = () => {
             name={album.name}
             type={album.album_type?.toUpperCase()}
             footer={[
-              ...(album.artists.map((artist) => (
-                <TextLink
-                  text={artist.name}
-                  url={'/artist/' + artist.id}
-                />
-              ))),
+              ...album.artists.map((artist) => (
+                <TextLink text={artist.name} url={'/artist/' + artist.id} />
+              )),
               `${album.total_tracks} songs, ${duration(totalDuration, true)}`,
             ]}
           />
@@ -104,7 +109,9 @@ const AlbumPage: React.FC = () => {
             hasMore={!!pageData.next}
           />
         </div>
-      ) : ''}
+      ) : (
+        ''
+      )}
     </div>
   );
 };
