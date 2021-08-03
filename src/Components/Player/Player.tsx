@@ -246,16 +246,22 @@ const Player: React.FC = () => {
     if (isPlaying) {
       typeUri = 'pause';
     }
-    const response = await ApiSpotify.put('me/player/' + typeUri);
-    if (typeUri === 'play') {
-      if (response.status === 404) {
-        await transferPlayback(deviceId);
-        await sleep(1000);
-        await ApiSpotify.put('me/player/' + typeUri);
+    try {
+      await ApiSpotify.put('me/player/' + typeUri);
+      if (typeUri === 'pause') {
+        // save last position ms in player context
+        changePositionMs(positionMs);
       }
-    } else {
-      // save last position ms in player context
-      changePositionMs(positionMs);
+    } catch (error) {
+      console.error(error);
+      if (error.response.status === 404) {
+        // no device found
+        if (typeUri === 'play') {
+          await transferPlayback(deviceId);
+          await sleep(1000);
+          await ApiSpotify.put('me/player/' + typeUri);
+        }
+      }
     }
   };
 

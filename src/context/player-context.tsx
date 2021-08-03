@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 
 import Track from '../types/Track';
 import ApiSpotify from '../utils/api-spotify';
-import { getArtistNames } from '../utils/helpers';
+import { getArtistNames, getCookie, sleep } from '../utils/helpers';
 
 type PlayerContextObj = {
   uris: string[];
@@ -108,11 +108,28 @@ const PlayerProvider: React.FC = ({ children }) => {
         position_ms: positionMs,
       };
 
-      const response = await ApiSpotify.put('me/player/play', body);
-      if (response.status === 204) {
-        setUris(uris);
-        setPositionMs(positionMs);
-        setOffset(offset);
+      try {
+        const response = await ApiSpotify.put('me/player/play', body);
+        if (response.status === 204) {
+          setUris(uris);
+          setPositionMs(positionMs);
+          setOffset(offset);
+        }
+      } catch (error) {
+        console.error(error);
+        if (error.response.status === 404) {
+          // no device found
+          await ApiSpotify.put('/me/player', {
+            device_ids: [getCookie('device_id')],
+          });
+          await sleep(1000);
+          const response = await ApiSpotify.put('me/player/play', body);
+          if (response.status === 204) {
+            setUris(uris);
+            setPositionMs(positionMs);
+            setOffset(offset);
+          }
+        }
       }
     },
 
