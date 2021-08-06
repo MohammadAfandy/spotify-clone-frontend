@@ -35,7 +35,7 @@ const CollectionEpisodePage: React.FC = () => {
           image={EPISODE_LOGO_IMAGE}
           name="Your Episodes"
           type="PLAYLIST"
-          footer={[user.id, `${pageData.total} episodes`]}
+          footer={[user.display_name, `${pageData.total} episodes`]}
         />
         <div className="flex items-center mb-4">
           <PlayButton

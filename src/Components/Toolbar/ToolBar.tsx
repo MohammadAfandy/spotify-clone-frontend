@@ -94,7 +94,7 @@ const ToolBar: React.FC = () => {
         )}
       </div>
       <div className="flex items-center">
-        <span className="mr-4">{user.id}</span>
+        <span className="mr-4">{user.display_name}</span>
         <Button onClick={handleLogout} text="Logout" color="red" />
       </div>
     </div>

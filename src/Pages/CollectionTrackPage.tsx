@@ -41,7 +41,7 @@ const CollectionTrackPage: React.FC = () => {
             name="Liked Songs"
             type="PLAYLIST"
             footer={[
-              user.id,
+              user.display_name,
               `${pageData.total} songs, ${duration(totalDuration, true)}`,
             ]}
           />
