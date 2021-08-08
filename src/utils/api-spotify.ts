@@ -44,7 +44,7 @@ axiosInstance.interceptors.response.use(
 
         const response = fetch(BACKEND_URI + '/refresh_token', {
           method: 'POST',
-          credentials: 'include',
+          // credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },
