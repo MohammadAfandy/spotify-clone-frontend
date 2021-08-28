@@ -1,16 +1,17 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { PlayerContext } from '../context/player-context';
+import { AuthContext } from '../context/auth-context';
 import Album from '../types/Album';
 import ApiSpotify from '../utils/api-spotify';
-import { duration } from '../utils/helpers';
+import { duration, makeRequest } from '../utils/helpers';
 import useFetchTracks from '../hooks/useFetchTracks';
 
 import PlayerListHeader from '../Components/PlayerList/PlayerListHeader';
 import PlayerListTrack from '../Components/PlayerList/PlayerListTrack';
 import PlayButton from '../Components/Button/PlayButton';
-import Button from '../Components/Button/Button';
 import TextLink from '../Components/Link/TextLink';
+import FolllowButton from '../Components/Button/FollowButton';
 
 const AlbumPage: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -18,6 +19,7 @@ const AlbumPage: React.FC = () => {
   const [isFollowed, setIsFollowed] = useState(false);
 
   const { currentTrack, togglePlay } = useContext(PlayerContext);
+  const { isLoggedIn } = useContext(AuthContext);
 
   const { setNextUrl, tracks, pageData } = useFetchTracks(
     '/albums/' + params.id + '/tracks'
@@ -25,20 +27,21 @@ const AlbumPage: React.FC = () => {
 
   useEffect(() => {
     const fetchAlbum = async () => {
-      const [dataAlbum, dataFollowed] = await Promise.all([
-        ApiSpotify.get('/albums/' + params.id),
-        ApiSpotify.get('/me/albums/contains', {
+      const dataAlbum = await makeRequest('/albums/' + params.id, {}, isLoggedIn);
+      setAlbum(dataAlbum.data);
+
+      if (isLoggedIn) {
+        const dataFollowed = await ApiSpotify.get('/me/albums/contains', {
           params: {
             ids: params.id,
           },
-        }),
-      ]);
+        });
+        setIsFollowed(dataFollowed.data[0]);
+      }
 
-      setAlbum(dataAlbum.data);
-      setIsFollowed(dataFollowed.data[0]);
     };
     fetchAlbum();
-  }, [params.id]);
+  }, [params.id, isLoggedIn]);
 
   const handleFollow = async () => {
     let response;
@@ -95,10 +98,9 @@ const AlbumPage: React.FC = () => {
               className="w-16 h-16 mr-6"
               onClick={handlePlayFromStart}
             />
-            <Button
-              text={isFollowed ? 'Following' : 'Follow'}
+            <FolllowButton
+              isFollowed={isFollowed}
               onClick={handleFollow}
-              color={isFollowed ? 'green' : 'white'}
             />
           </div>
           <PlayerListTrack

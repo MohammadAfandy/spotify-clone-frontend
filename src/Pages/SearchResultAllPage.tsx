@@ -1,17 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import Artist from '../types/Artist';
 import Album from '../types/Album';
 import Playlist from '../types/Playlist';
 import Show from '../types/Show';
 import Episode from '../types/Episode';
-import ApiSpotify from '../utils/api-spotify';
+import { AuthContext } from '../context/auth-context';
+import { makeRequest, removeNull } from '../utils/helpers';
 
 import CardItem from '../Components/Card/CardItem';
 
 const SearchResultAllPage: React.FC = () => {
   const history = useHistory();
   const { query, type } = useParams<{ query: string; type: string }>();
+
+  const { isLoggedIn } = useContext(AuthContext);
 
   if (
     ['track', 'artist', 'album', 'playlist', 'show', 'episode'].includes(
@@ -29,29 +32,29 @@ const SearchResultAllPage: React.FC = () => {
 
   useEffect(() => {
     const fetchSearchDetail = async () => {
-      const response = await ApiSpotify.get('/search', {
+      const response = await makeRequest('/search', {
         params: {
           q: query,
           type: type,
           limit: 50,
         },
-      });
+      }, isLoggedIn);
 
       if (type === 'album') {
-        setAlbums(response.data.albums.items);
+        setAlbums(response.data.albums.items.filter(removeNull));
       } else if (type === 'artist') {
-        setArtists(response.data.artists.items);
+        setArtists(response.data.artists.items.filter(removeNull));
       } else if (type === 'playlist') {
-        setPlaylists(response.data.playlists.items);
+        setPlaylists(response.data.playlists.items.filter(removeNull));
       } else if (type === 'show') {
-        setShows(response.data.shows.items);
+        setShows(response.data.shows.items.filter(removeNull));
       } else if (type === 'episode') {
-        setEpisodes(response.data.episodes.items);
+        setEpisodes(response.data.episodes.items.filter(removeNull));
       }
     };
 
     fetchSearchDetail();
-  }, [type, query]);
+  }, [type, query, isLoggedIn]);
 
   return (
     <div className="flex flex-col px-4 py-4">

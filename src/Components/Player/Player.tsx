@@ -150,7 +150,6 @@ const Player: React.FC = () => {
     });
 
     player.addListener('player_state_changed', (state: PlaybackState) => {
-      // console.log('player_state_changed', state);
       if (state) {
         try {
           const {
@@ -204,7 +203,6 @@ const Player: React.FC = () => {
 
     const getPlaybackState = async () => {
       const response = await ApiSpotify.get('/me/player');
-      // console.log('from playbackstate', response.data);
       if (response.status === 200) {
         const {
           progress_ms,
@@ -381,7 +379,7 @@ const Player: React.FC = () => {
   };
 
   return (
-    <div className="grid grid-cols-3 h-24 w-full border-t-2 border-gray-200 border-opacity-20 bg-black text-sm">
+    <div className="grid grid-cols-3 h-full w-full border-t-2 border-gray-200 border-opacity-20 bg-black text-sm">
       {!isDeviceActive && !deviceId && (
         <div className="col-span-3 flex flex-col items-center justify-center">
           Loading ...
@@ -535,17 +533,22 @@ const Player: React.FC = () => {
             />
           </div>
 
-          <ReactTooltip id="device-tooltip" globalEventOff="click">
+          <ReactTooltip
+            id="device-tooltip"
+            backgroundColor="#2e77d0"
+            globalEventOff="click"
+            textColor="white"
+          >
             <div className="text-lg w-60 pointer-events-auto">
               <p className="text-xl mb-2">Select Device</p>
-              <div className={`cursor-point text-green-500`}>This Player</div>
+              {/* <div className={`cursor-pointer`}>This Player</div> */}
               {devices
-                .filter(({ id }) => id !== deviceId)
+                // .filter(({ id }) => id !== deviceId)
                 .map(({ name, id }) => (
                   <div
                     key={id}
-                    className={`cursor-pointer ${
-                      id === activeDevice.id ? 'text-green-500' : ''
+                    className={`cursor-pointer border-b-2 border-white border-opacity-20 mb-1 text-sm ${
+                      id === activeDevice.id ? 'text-green-200' : ''
                     }`}
                     onClick={(e) => handleSelectDevice(e, id)}
                   >

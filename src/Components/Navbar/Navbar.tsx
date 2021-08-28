@@ -23,11 +23,18 @@ const Navbar: React.FC = () => {
 
   const [previewImage, setPreviewImage] = useState('');
 
-  const { user, playlists, refreshPlaylists } = useContext(AuthContext);
+  const {
+    isLoggedIn,
+    user,
+    playlists,
+    refreshPlaylists
+  } = useContext(AuthContext);
 
   useEffect(() => {
-    refreshPlaylists();
-  }, [refreshPlaylists]);
+    if (isLoggedIn) {
+      refreshPlaylists();
+    }
+  }, [isLoggedIn, refreshPlaylists]);
 
   const resetFormPlaylist = () => {
     setPlaylistName('');
@@ -163,30 +170,75 @@ const Navbar: React.FC = () => {
         <ul>
           <NavbarLink to="/" Icon={<Home />} text="Home" />
           <NavbarLink to="/search" Icon={<Search />} text="Search" />
-          <NavbarLink
-            to="/collection/playlists"
-            Icon={<List />}
-            text="Your Library"
-          />
+          <div
+            data-tip="library"
+            data-for="login-tooltip"
+            data-event="click"
+          >
+            {isLoggedIn ? (
+              <NavbarLink
+                to="/collection/playlists"
+                Icon={<List />}
+                text="Your Library"
+              />
+            ) : (
+              <NavbarItem
+                Icon={<List />}
+                text="Your Library"
+              />
+            )}
+          </div>
         </ul>
       </div>
       <div className="mb-2">
         <ul>
-          <NavbarItem
-            Icon={<Plus />}
-            text="Create Playlist"
-            onClick={() => setIsOpenModal(true)}
-          />
-          <NavbarLink
-            to="/collection/tracks"
-            image={LIKED_SONG_IMAGE}
-            text="Liked Song"
-          />
-          <NavbarLink
-            to="/collection/episodes"
-            image={EPISODE_LOGO_IMAGE}
-            text="Your Episode"
-          />
+          <div
+            data-tip="create-playlist"
+            data-for="login-tooltip"
+            data-event="click"
+          >
+            <NavbarItem
+              Icon={<Plus />}
+              text="Create Playlist"
+              onClick={() => setIsOpenModal(true)}
+            />
+          </div>
+          <div
+            data-tip="collection"
+            data-for="login-tooltip"
+            data-event="click"
+          >
+            {isLoggedIn ? (
+              <NavbarLink
+                to="/collection/tracks"
+                image={LIKED_SONG_IMAGE}
+                text="Liked Song"
+              />
+            ) : (
+              <NavbarItem
+                image={LIKED_SONG_IMAGE}
+                text="Liked Song"
+              />
+            )}
+          </div>
+          <div
+            data-tip="collection"
+            data-for="login-tooltip"
+            data-event="click"
+          >
+            {isLoggedIn ? (
+              <NavbarLink
+                to="/collection/episodes:"
+                image={EPISODE_LOGO_IMAGE}
+                text="Your Episode"
+              />
+            ) : (
+              <NavbarItem
+                image={EPISODE_LOGO_IMAGE}
+                text="Your Episode"
+              />
+            )}
+          </div>
         </ul>
       </div>
       <div className="mb-4 border-t-white border-t-2 border-opacity-30" />

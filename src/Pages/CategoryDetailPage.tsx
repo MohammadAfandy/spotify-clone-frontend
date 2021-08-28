@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import Category from '../types/Category';
 import Playlist from '../types/Playlist';
-import ApiSpotify from '../utils/api-spotify';
+import { AuthContext } from '../context/auth-context';
+import { makeRequest } from '../utils/helpers';
 
 import CardItem from '../Components/Card/CardItem';
 
@@ -11,21 +12,25 @@ const CategoryDetailPage: React.FC = () => {
   const [category, setCategory] = useState<Category>(Object);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
+  const { isLoggedIn } = useContext(AuthContext);
+
   useEffect(() => {
     const fetchCategory = async () => {
-      const response = await ApiSpotify.get('/browse/categories/' + params.id);
+      const response = await makeRequest('/browse/categories/' + params.id, {}, isLoggedIn);
       setCategory(response.data);
     };
     const fetchPlayList = async () => {
-      const response = await ApiSpotify.get(
-        '/browse/categories/' + params.id + '/playlists'
+      const response = await makeRequest(
+        '/browse/categories/' + params.id + '/playlists',
+        {},
+        isLoggedIn,
       );
       setPlaylists(response.data.playlists.items);
     };
 
     fetchCategory();
     fetchPlayList();
-  }, [params.id]);
+  }, [params.id, isLoggedIn]);
 
   return (
     <div className="flex flex-col px-4 py-4">

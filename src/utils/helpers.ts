@@ -1,6 +1,9 @@
 import Cookies from 'js-cookie';
 import Artist from '../types/Artist';
 import moment from 'moment';
+import ApiBackend from './api-backend';
+import ApiSpotify from './api-spotify';
+import { AxiosRequestConfig } from 'axios';
 
 const cookiePrefix = 'spotify_clone_';
 
@@ -93,7 +96,7 @@ export const duration = (
     return result.join(' ');
   } else {
     let format = 'mm:ss';
-    if (hours > 1) format = 'h:mm:ss';
+    if (hours > 0) format = 'h:mm:ss';
     return momentObj.format(format);
   }
 };
@@ -114,3 +117,27 @@ export const toBase64 = (file: Blob): Promise<string | ArrayBuffer | null> =>
     reader.onload = () => resolve(reader.result);
     reader.onerror = (error) => reject(error);
   });
+
+export const makeRequest = async (
+  path: string,
+  options: AxiosRequestConfig = {},
+  isLoggedIn = false
+) => {
+  try {
+    let axiosInstance;
+    if (isLoggedIn) {
+      axiosInstance = ApiSpotify;
+    } else {
+      axiosInstance = ApiBackend;
+      path = `/spotify${path}`;
+    }
+    const response = await axiosInstance.get(path, options);
+    return response;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const removeNull = (item: any) => {
+  return item != null;
+};

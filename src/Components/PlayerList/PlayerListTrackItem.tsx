@@ -95,6 +95,9 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
         <Play
           className="w-6 h-6 cursor-pointer hidden group-hover:block"
           onClick={() => handlePlayTrack(offset, 0)}
+          data-tip="play"
+          data-for="login-tooltip"
+          data-event="click"
         />
       </div>
       <div className="flex items-center flex-grow min-w-0">

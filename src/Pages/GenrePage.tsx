@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import Track from '../types/Track';
 import Artist from '../types/Artist';
 import Album from '../types/Album';
 import Playlist from '../types/Playlist';
 import ApiSpotify from '../utils/api-spotify';
-import { getHighestImage, getArtistNames } from '../utils/helpers';
+import { AuthContext } from '../context/auth-context';
+import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 
 import CardItem from '../Components/Card/CardItem';
 
@@ -19,14 +20,16 @@ const GenrePage: React.FC = () => {
   const [featuredPlaylists, setFeaturedPlaylists] = useState<Playlist[]>([]);
   const [typeText, setTypeText] = useState('');
 
+  const { isLoggedIn } = useContext(AuthContext);
+
   useEffect(() => {
     const fetchGenre = async () => {
       const params = { limit: 50 };
 
       if (type === 'featured-playlists') {
-        const response = await ApiSpotify.get('/browse/featured-playlists', {
+        const response = await makeRequest('/browse/featured-playlists', {
           params,
-        });
+        }, isLoggedIn);
         setFeaturedPlaylists(response.data.playlists.items);
         setTypeText(response.data.message);
       } else if (type === 'top-tracks') {
@@ -42,16 +45,16 @@ const GenrePage: React.FC = () => {
         setTopArtists(response.data.items);
         setTypeText('Your Top Artists');
       } else if (type === 'new-releases') {
-        const response = await ApiSpotify.get('/browse/new-releases', {
+        const response = await makeRequest('/browse/new-releases', {
           params,
-        });
+        }, isLoggedIn);
         setNewReleases(response.data.albums.items);
         setTypeText('New Releases');
       }
     };
 
     fetchGenre();
-  }, [type]);
+  }, [type, isLoggedIn]);
 
   return (
     <div className="flex flex-col px-4 py-4">

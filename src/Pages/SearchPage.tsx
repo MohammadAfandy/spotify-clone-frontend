@@ -1,17 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import Category from '../types/Category';
-import ApiSpotify from '../utils/api-spotify';
+import { AuthContext } from '../context/auth-context';
+import { makeRequest } from '../utils/helpers';
 
 const SearchPage: React.FC = () => {
   const history = useHistory();
   const [categories, setCategories] = useState<Category[]>([]);
 
+  const { isLoggedIn } = useContext(AuthContext);
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const params = { limit: 50 };
-        const response = await ApiSpotify.get('/browse/categories', { params });
+        const response = await makeRequest('/browse/categories', { params }, isLoggedIn);
         setCategories(response.data.categories.items);
       } catch (error) {
         console.error(error);
@@ -19,7 +22,7 @@ const SearchPage: React.FC = () => {
     };
 
     fetchCategories();
-  }, []);
+  }, [isLoggedIn]);
 
   return (
     <div className="grid grid-cols-5 gap-4 px-4 py-4">

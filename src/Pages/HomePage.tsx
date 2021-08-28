@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import Track from '../types/Track';
 import Artist from '../types/Artist';
 import Album from '../types/Album';
 import Playlist from '../types/Playlist';
 import ApiSpotify from '../utils/api-spotify';
-import { getHighestImage, getArtistNames } from '../utils/helpers';
+import { AuthContext } from '../context/auth-context';
+import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 
 import CardItem from '../Components/Card/CardItem';
 import TextLink from '../Components/Link/TextLink';
@@ -17,30 +18,35 @@ const HomePage: React.FC = () => {
   const [featuredPlaylists, setFeaturedPlaylists] = useState<Playlist[]>([]);
   const [message, setMessage] = useState('');
 
+  const { isLoggedIn } = useContext(AuthContext);
+
   useEffect(() => {
     const fetchHome = async () => {
       const params = { limit: 5 };
-      const [
-        dataTopTracks,
-        dataTopArtists,
-        dataNewReleases,
-        dataFeaturedPlaylists,
-      ] = await Promise.all([
-        ApiSpotify.get('/me/top/tracks', { params }),
-        ApiSpotify.get('/me/top/artists', { params }),
-        ApiSpotify.get('/browse/new-releases', { params }),
-        ApiSpotify.get('/browse/featured-playlists', { params }),
-      ]);
+      const promises = [
+        makeRequest('/browse/new-releases', { params }, isLoggedIn),
+        makeRequest('/browse/featured-playlists', { params }, isLoggedIn)
+      ];
+      if (isLoggedIn) {
+        promises.push(
+          ApiSpotify.get('/me/top/tracks', { params }),
+          ApiSpotify.get('/me/top/artists', { params })
+        );
+      }
+      const response = await Promise.all(promises);
 
-      setTopTracks(dataTopTracks.data.items);
-      setTopArtists(dataTopArtists.data.items);
-      setNewReleases(dataNewReleases.data.albums.items);
-      setFeaturedPlaylists(dataFeaturedPlaylists.data.playlists.items);
-      setMessage(dataFeaturedPlaylists.data.message);
+      setNewReleases(response[0].data.albums.items);
+      setFeaturedPlaylists(response[1].data.playlists.items);
+      setMessage(response[1].data.message);
+
+      if (isLoggedIn) {
+        setTopTracks(response[2].data.items);
+        setTopArtists(response[3].data.items);
+      }
     };
 
     fetchHome();
-  }, []);
+  }, [isLoggedIn]);
 
   return (
     <div className="flex flex-col px-4 py-4">
@@ -65,7 +71,7 @@ const HomePage: React.FC = () => {
         </div>
       )}
 
-      {topTracks.length > 0 && (
+      {isLoggedIn && topTracks.length > 0 && (
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-end mr-8 font-bold">
             <div className="text-2xl">Your Top Tracks</div>
@@ -85,7 +91,7 @@ const HomePage: React.FC = () => {
         </div>
       )}
 
-      {topArtists.length > 0 && (
+      {isLoggedIn && topArtists.length > 0 && (
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-end mr-8 font-bold">
             <div className="text-2xl">Your Top Artists</div>

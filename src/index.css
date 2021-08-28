@@ -4,7 +4,13 @@
 
 @layer base {
   body {
-    @apply bg-gradient-to-b from-gray-700 to-black text-white;
+    @apply bg-gradient-to-b from-gray-700 to-gray-900 text-white;
+  }
+}
+
+@layer utilities {
+  .box-shadow {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.8);
   }
 }
 

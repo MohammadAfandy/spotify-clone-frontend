@@ -8,7 +8,7 @@ import useFetchEpisodes from '../hooks/useFetchEpisodes';
 
 import PlayerListHeader from '../Components/PlayerList/PlayerListHeader';
 import PlayerListEpisode from '../Components/PlayerList/PlayerListEpisode';
-import Button from '../Components/Button/Button';
+import FolllowButton from '../Components/Button/FollowButton';
 
 const ShowPage: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -78,10 +78,9 @@ const ShowPage: React.FC = () => {
             footer={[show.publisher, `${show.total_episodes} episodes`]}
           />
           <div className="flex items-center mb-8">
-            <Button
-              text={isFollowed ? 'Following' : 'Follow'}
+            <FolllowButton
+              isFollowed={isFollowed}
               onClick={handleFollow}
-              color={isFollowed ? 'green' : 'white'}
             />
           </div>
 

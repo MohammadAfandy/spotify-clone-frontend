@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import ApiSpotify from '../utils/api-spotify';
 import Track from '../types/Track';
 import Page from '../types/Page';
+import { AuthContext } from '../context/auth-context';
 import { ITEM_LIST_LIMIT } from '../utils/constants';
+import { makeRequest } from '../utils/helpers';
 
 const useFetchTracks = (url: string) => {
   const [nextUrl, setNextUrl] = useState<string | null>(null);
@@ -10,6 +12,8 @@ const useFetchTracks = (url: string) => {
   const [pageData, setPageData] = useState<Page>({} as Page);
   const [tracks, setTracks] = useState<Track[]>([]);
   const [error, setError] = useState<Error | null>(null);
+
+  const { isLoggedIn } = useContext(AuthContext);
 
   const forceUpdate = () => {
     setIncrement((prevState) => prevState + 1);
@@ -21,11 +25,13 @@ const useFetchTracks = (url: string) => {
         const params = {
           limit: ITEM_LIST_LIMIT,
         };
-        let newUrl = url;
+        let response;
         if (nextUrl) {
-          newUrl = nextUrl;
+          let newUrl = nextUrl.split('/v1')[1];
+          response = await makeRequest(newUrl, { params }, isLoggedIn);
+        } else {
+          response = await makeRequest(url, { params }, isLoggedIn);
         }
-        const response = await ApiSpotify.get(newUrl, { params });
 
         let trackList: Track[] = [];
 
@@ -69,44 +75,50 @@ const useFetchTracks = (url: string) => {
 
         // get is the track currently under saved tracks
         if (trackListContain.length) {
-          const response = await ApiSpotify.get('/me/tracks/contains', {
-            params: {
-              ids: trackListContain.map((track) => track.id).join(','),
-            },
-          });
-          const savedTracks = response.data;
-          trackListContain = trackListContain.map((track, idx) => ({
-            ...track,
-            is_saved: savedTracks[idx],
-          }));
+          if (isLoggedIn) {
+            const response = await ApiSpotify.get('/me/tracks/contains', {
+              params: {
+                ids: trackListContain.map((track) => track.id).join(','),
+              },
+            });
+            const savedTracks = response.data;
+            trackListContain = trackListContain.map((track, idx) => ({
+              ...track,
+              is_saved: savedTracks[idx],
+            }));
+          }
         }
 
         if (episodeListContain.length) {
-          const response = await ApiSpotify.get('/me/episodes/contains', {
-            params: {
-              ids: episodeListContain.map((episode) => episode.id).join(','),
-            },
-          });
-          const savedEpisodes = response.data;
-          episodeListContain = episodeListContain.map((episode, idx) => ({
-            ...episode,
-            is_saved: savedEpisodes[idx],
-          }));
+          if (isLoggedIn) {
+            const response = await ApiSpotify.get('/me/episodes/contains', {
+              params: {
+                ids: episodeListContain.map((episode) => episode.id).join(','),
+              },
+            });
+            const savedEpisodes = response.data;
+            episodeListContain = episodeListContain.map((episode, idx) => ({
+              ...episode,
+              is_saved: savedEpisodes[idx],
+            }));
+          }
         }
 
-        trackList = [...trackListContain, ...episodeListContain].sort(
-          (a, b) => {
-            if (!a.added_at) return 0;
-            if (a.added_at > b.added_at) return -1;
-            if (a.added_at < b.added_at) return 1;
-            return 0;
+        let finalResult: Track[] = [];
+        for (const trackLs of trackList) {
+          let current = trackListContain.find((v) => v.id === trackLs.id);
+          if (!current) {
+            current = episodeListContain.find((v) => v.id === trackLs.id);
           }
-        );
+          if (current) {
+            finalResult.push(current);
+          }
+        }
 
         if (nextUrl) {
-          setTracks((prevState) => [...prevState, ...trackList]);
+          setTracks((prevState) => [...prevState, ...finalResult]);
         } else {
-          setTracks(trackList);
+          setTracks(finalResult);
         }
       } catch (error) {
         setError(error);
@@ -114,7 +126,7 @@ const useFetchTracks = (url: string) => {
     };
 
     fetchData();
-  }, [nextUrl, increment, url]);
+  }, [nextUrl, increment, url, isLoggedIn]);
 
   return { setNextUrl, tracks, pageData, error, forceUpdate };
 };

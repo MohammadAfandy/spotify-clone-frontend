@@ -41,6 +41,9 @@ const PlayerListTrackMini: React.FC<PlayerListTrackMiniProps> = ({
         <Play
           className="hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 group-hover:block"
           onClick={handlePlayTrack}
+          data-tip="play"
+          data-for="login-tooltip"
+          data-event="click"
         />
       </div>
       <div className="flex flex-col justify-end mr-auto">

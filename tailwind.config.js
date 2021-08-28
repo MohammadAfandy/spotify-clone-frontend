@@ -11,6 +11,9 @@ module.exports = {
         'light-black-1': '#262626',
         'light-black-2': '#3E3E3E',
       },
+      backgroundImage: theme => ({
+        'banner-gradient': 'linear-gradient(90deg, #af2896, #509bf5)',
+      }),
       inset: {
         '1/12': '8.333333%',
       },

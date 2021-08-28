@@ -4,15 +4,16 @@ import Artist from '../types/Artist';
 import Album from '../types/Album';
 import ApiSpotify from '../utils/api-spotify';
 import { PlayerContext } from '../context/player-context';
-import { getArtistNames } from '../utils/helpers';
+import { AuthContext } from '../context/auth-context';
+import { makeRequest, getArtistNames } from '../utils/helpers';
 import useFetchTracks from '../hooks/useFetchTracks';
 
-import Button from '../Components/Button/Button';
 import CardItem from '../Components/Card/CardItem';
 import PlayButton from '../Components/Button/PlayButton';
 import PlayerListHeader from '../Components/PlayerList/PlayerListHeader';
 import PlayerListTrack from '../Components/PlayerList/PlayerListTrack';
 import TextLink from '../Components/Link/TextLink';
+import FolllowButton from '../Components/Button/FollowButton';
 
 const ArtistPage: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -23,6 +24,7 @@ const ArtistPage: React.FC = () => {
   const [isFollowed, setIsFollowed] = useState(false);
 
   const { currentTrack, togglePlay } = useContext(PlayerContext);
+  const { isLoggedIn } = useContext(AuthContext);
 
   const { setNextUrl, tracks, pageData } = useFetchTracks(
     '/artists/' + params.id + '/top-tracks'
@@ -30,33 +32,35 @@ const ArtistPage: React.FC = () => {
 
   useEffect(() => {
     const fetchArtist = async () => {
-      const [dataArtist, dataAlbums, dataRelatedArtists, dataFollowed] =
-        await Promise.all([
-          ApiSpotify.get('/artists/' + params.id),
-          ApiSpotify.get('/artists/' + params.id + '/albums', {
-            params: {
-              limit: 5,
-            },
-          }),
-          ApiSpotify.get('/artists/' + params.id + '/related-artists', {
-            params: {
-              limit: 5,
-            },
-          }),
-          ApiSpotify.get('/me/following/contains', {
-            params: {
-              type: 'artist',
-              ids: params.id,
-            },
-          }),
-        ]);
+      const dataArtist = await makeRequest('/artists/' + params.id, {}, isLoggedIn);
       setArtist(dataArtist.data);
+
+      const dataAlbums = await makeRequest('/artists/' + params.id + '/albums', {
+        params: {
+          limit: 5,
+        },
+      }, isLoggedIn);
       setAlbums(dataAlbums.data.items);
+
+      const dataRelatedArtists = await makeRequest('/artists/' + params.id + '/related-artists', {
+        params: {
+          limit: 5,
+        },
+      }, isLoggedIn);
       setRelatedArtists(dataRelatedArtists.data.artists);
-      setIsFollowed(dataFollowed.data[0]);
+
+      if (isLoggedIn) {
+        const dataFollowed = await ApiSpotify.get('/me/following/contains', {
+          params: {
+            type: 'artist',
+            ids: params.id,
+          },
+        });
+        setIsFollowed(dataFollowed.data[0]);
+      }
     };
     fetchArtist();
-  }, [params.id]);
+  }, [params.id, isLoggedIn]);
 
   const handleFollow = async () => {
     let response;
@@ -102,10 +106,9 @@ const ArtistPage: React.FC = () => {
           />
           <div className="flex items-center">
             <PlayButton className="w-16 h-16 mr-6" onClick={handlePlay} />
-            <Button
-              text={isFollowed ? 'Following' : 'Follow'}
+            <FolllowButton
+              isFollowed={isFollowed}
               onClick={handleFollow}
-              color={isFollowed ? 'green' : 'white'}
             />
           </div>
           <PlayerListTrack

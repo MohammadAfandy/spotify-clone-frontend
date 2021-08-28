@@ -6,7 +6,7 @@ import Episode from '../types/Episode';
 import ApiSpotify from '../utils/api-spotify';
 import { AuthContext } from '../context/auth-context';
 import { PlayerContext } from '../context/player-context';
-import { getHighestImage, duration } from '../utils/helpers';
+import { getHighestImage, duration, makeRequest } from '../utils/helpers';
 import useFetchTracks from '../hooks/useFetchTracks';
 
 import PlayerListHeader from '../Components/PlayerList/PlayerListHeader';
@@ -24,7 +24,7 @@ const PlaylistPage: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [suggested, setSuggested] = useState<Track[]>([]);
 
-  const { user, refreshPlaylists } = useContext(AuthContext);
+  const { isLoggedIn, user, refreshPlaylists } = useContext(AuthContext);
 
   const { currentTrack, togglePlay } = useContext(PlayerContext);
 
@@ -34,21 +34,21 @@ const PlaylistPage: React.FC = () => {
 
   useEffect(() => {
     const fetchPlaylist = async () => {
-      const [dataPlaylist, dataFollowed] = await Promise.all([
-        ApiSpotify.get('/playlists/' + params.id),
-        ApiSpotify.get('/playlists/' + params.id + '/followers/contains', {
+      const dataPlaylist = await makeRequest('/playlists/' + params.id, {}, isLoggedIn);
+      if (isLoggedIn) {
+        const dataFollowed = await ApiSpotify.get('/playlists/' + params.id + '/followers/contains', {
           params: {
             ids: user.id,
           },
-        }),
-      ]);
+        });
+        setIsFollowed(dataFollowed.data[0]);
+      }
 
       setPlaylist(dataPlaylist.data);
-      setIsFollowed(dataFollowed.data[0]);
       setIsOwnPlaylist(dataPlaylist.data.owner.id === user.id);
     };
     fetchPlaylist();
-  }, [params.id, user.id]);
+  }, [params.id, user.id, isLoggedIn]);
 
   useEffect(() => {
     const fetchSearch = async () => {

@@ -26,6 +26,9 @@ const LikeButton: React.FC<LikeButtonProps> = ({
     <Heart
       className={`cursor-pointer transition duration-300 ease-in-out transform hover:scale-110  ${className}`}
       onClick={onClick}
+      data-tip="like"
+      data-for="login-tooltip"
+      data-event="click"
       {...colorProps}
     />
   );

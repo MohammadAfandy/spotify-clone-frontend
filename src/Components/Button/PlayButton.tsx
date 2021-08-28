@@ -22,6 +22,9 @@ const PlayButton: React.FC<PlayButtonProps> = ({
       className={`bg-green-500 rounded-full p-3 cursor-pointer transition duration-300 ease-in-out transform hover:scale-110 ${className}`}
       onClick={onClick}
       fill="#fff"
+      data-tip="play"
+      data-for="login-tooltip"
+      data-event="click"
     />
   );
 };

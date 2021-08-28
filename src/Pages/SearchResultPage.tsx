@@ -6,9 +6,9 @@ import Album from '../types/Album';
 import Playlist from '../types/Playlist';
 import Show from '../types/Show';
 import Episode from '../types/Episode';
-import ApiSpotify from '../utils/api-spotify';
 import { PlayerContext } from '../context/player-context';
-import { getArtistNames } from '../utils/helpers';
+import { AuthContext } from '../context/auth-context';
+import { makeRequest, getArtistNames, removeNull } from '../utils/helpers';
 
 import PlayerListTrackMini from '../Components/PlayerList/PlayerListTrackMini';
 import CardItem from '../Components/Card/CardItem';
@@ -27,6 +27,7 @@ const SearchResultPage: React.FC = () => {
   const [episodes, setEpisodes] = useState<Episode[]>([]);
 
   const { togglePlay } = useContext(PlayerContext);
+  const { isLoggedIn } = useContext(AuthContext);
 
   const handlePlayTrack = (event: React.MouseEvent, uri: string) => {
     event.stopPropagation();
@@ -35,24 +36,24 @@ const SearchResultPage: React.FC = () => {
 
   useEffect(() => {
     const fetchSearch = async () => {
-      const response = await ApiSpotify.get('/search', {
+      const response = await makeRequest('/search', {
         params: {
           q: params.query,
           type: 'track,artist,album,playlist,show,episode',
           limit: 5,
         },
-      });
+      }, isLoggedIn);
 
-      setTracks(response.data.tracks.items);
-      setArtists(response.data.artists.items);
-      setAlbums(response.data.albums.items);
-      setPlaylists(response.data.playlists.items);
-      setShows(response.data.shows.items);
-      setEpisodes(response.data.episodes.items);
+      setTracks(response.data.tracks.items.filter(removeNull));
+      setArtists(response.data.artists.items.filter(removeNull));
+      setAlbums(response.data.albums.items.filter(removeNull));
+      setPlaylists(response.data.playlists.items.filter(removeNull));
+      setShows(response.data.shows.items.filter(removeNull));
+      setEpisodes(response.data.episodes.items.filter(removeNull));
     };
 
     fetchSearch();
-  }, [params]);
+  }, [params, isLoggedIn]);
 
   return (
     <div className="flex flex-col px-4 py-4">
