@@ -49,20 +49,20 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
           </div>
           <div className="flex flex-grow">TITLE</div>
           {showAlbum && (
-            <div className="flex mr-2" style={{ flexBasis: '30%' }}>
+            <div className="hidden lg:flex mr-2" style={{ flexBasis: '30%' }}>
               {!isIncludeEpisode && `ALBUM`}
               {isIncludeEpisode && `ALBUM OR PODCAST`}
             </div>
           )}
           {showDateAdded && (
-            <div className="flex mr-2" style={{ flexBasis: '15%' }}>
+            <div className="hidden md:flex mr-2" style={{ flexBasis: '15%' }}>
               DATE ADDED
             </div>
           )}
-          <div className=" mr-2" style={{ flexBasis: '5%' }}></div>
-          {onRemoveFromPlaylist && (
-            <div className=" mr-2" style={{ flexBasis: '5%' }}></div>
-          )}
+          <div className="flex mr-2" style={{ flexBasis: '5%' }}></div>
+            {onRemoveFromPlaylist && (
+              <div className=" mr-2" style={{ flexBasis: '5%' }}></div>
+            )}
           <div className="flex mr-2" style={{ flexBasis: '5%' }}>
             <Clock className="w-4" />
           </div>

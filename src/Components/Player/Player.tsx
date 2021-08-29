@@ -105,6 +105,7 @@ const Player: React.FC = () => {
     currentTrack,
     changeCurrentTrack,
     changePositionMs,
+    changeIsError,
   } = useContext(PlayerContext);
 
   const [isDeviceActive, setIsDeviceActive] = useState(false);
@@ -137,6 +138,7 @@ const Player: React.FC = () => {
     });
 
     player.addListener('initialization_error', (state) => {
+      changeIsError(true);
       console.error('initialization_error', state.message);
     });
     player.addListener('authentication_error', (state) => {
@@ -177,6 +179,7 @@ const Player: React.FC = () => {
     });
 
     player.addListener('ready', ({ device_id }: { device_id: string }) => {
+      changeIsError(false);
       console.info('Ready with Device ID', device_id);
       setDeviceId(device_id);
       setCookie('device_id', device_id);

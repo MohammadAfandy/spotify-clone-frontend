@@ -26,6 +26,7 @@ const NavbarLink: React.FC<NavbarLinkProps> = ({
   text,
   image,
   editable,
+  onClick,
   onClickEdit,
 }) => {
   return (
@@ -35,6 +36,7 @@ const NavbarLink: React.FC<NavbarLinkProps> = ({
         text={text}
         image={image}
         editable={editable}
+        onClick={onClick}
         onClickEdit={onClickEdit}
       />
     </NavLink>

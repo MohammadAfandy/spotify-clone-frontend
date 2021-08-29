@@ -93,7 +93,7 @@ const AlbumPage: React.FC = () => {
               `${album.total_tracks} songs, ${duration(totalDuration, true)}`,
             ]}
           />
-          <div className="flex items-center">
+          <div className="flex items-center justify-center sm:justify-start">
             <PlayButton
               className="w-16 h-16 mr-6"
               onClick={handlePlayFromStart}

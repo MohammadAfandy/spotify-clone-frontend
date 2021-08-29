@@ -9,6 +9,7 @@ import { AuthContext } from '../context/auth-context';
 import { makeRequest, removeNull } from '../utils/helpers';
 
 import CardItem from '../Components/Card/CardItem';
+import GridWrapper from '../Components/Grid/GridWrapper';
 
 const SearchResultAllPage: React.FC = () => {
   const history = useHistory();
@@ -62,7 +63,7 @@ const SearchResultAllPage: React.FC = () => {
         All {type} for “{query}”
       </div>
       {type === 'artist' && (
-        <div className="grid grid-cols-5 gap-4">
+        <GridWrapper>
           {artists.map((artist) => (
             <CardItem
               key={artist.id}
@@ -73,10 +74,10 @@ const SearchResultAllPage: React.FC = () => {
               href={'/artist/' + artist.id}
             />
           ))}
-        </div>
+        </GridWrapper>
       )}
       {type === 'album' && (
-        <div className="grid grid-cols-5 gap-4">
+        <GridWrapper>
           {albums.map((album) => (
             <CardItem
               key={album.id}
@@ -87,10 +88,10 @@ const SearchResultAllPage: React.FC = () => {
               href={'/album/' + album.id}
             />
           ))}
-        </div>
+        </GridWrapper>
       )}
       {type === 'playlist' && (
-        <div className="grid grid-cols-5 gap-4">
+        <GridWrapper>
           {playlists.map((playlist) => (
             <CardItem
               key={playlist.id}
@@ -103,10 +104,10 @@ const SearchResultAllPage: React.FC = () => {
               href={'/playlist/' + playlist.id}
             />
           ))}
-        </div>
+        </GridWrapper>
       )}
       {type === 'show' && (
-        <div className="grid grid-cols-5 gap-4">
+        <GridWrapper>
           {shows.map((show) => (
             <CardItem
               key={show.id}
@@ -117,10 +118,10 @@ const SearchResultAllPage: React.FC = () => {
               href={'/show/' + show.id}
             />
           ))}
-        </div>
+        </GridWrapper>
       )}
       {type === 'episode' && (
-        <div className="grid grid-cols-5 gap-4">
+        <GridWrapper>
           {episodes.map((episode) => (
             <CardItem
               key={episode.id}
@@ -133,7 +134,7 @@ const SearchResultAllPage: React.FC = () => {
               href={'/episode/' + episode.id}
             />
           ))}
-        </div>
+        </GridWrapper>
       )}
     </div>
   );

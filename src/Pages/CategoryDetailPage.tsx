@@ -6,6 +6,7 @@ import { AuthContext } from '../context/auth-context';
 import { makeRequest } from '../utils/helpers';
 
 import CardItem from '../Components/Card/CardItem';
+import GridWrapper from '../Components/Grid/GridWrapper';
 
 const CategoryDetailPage: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -35,7 +36,7 @@ const CategoryDetailPage: React.FC = () => {
   return (
     <div className="flex flex-col px-4 py-4">
       <div className="w-full text-4xl font-bold mb-5">{category.name}</div>
-      <div className="grid grid-cols-5 gap-4">
+      <GridWrapper>
         {playlists.map((playlist) => (
           <CardItem
             key={playlist.id}
@@ -48,7 +49,7 @@ const CategoryDetailPage: React.FC = () => {
             href={'/playlist/' + playlist.id}
           />
         ))}
-      </div>
+      </GridWrapper>
     </div>
   );
 };

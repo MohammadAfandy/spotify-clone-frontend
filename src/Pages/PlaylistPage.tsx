@@ -161,7 +161,7 @@ const PlaylistPage: React.FC = () => {
               )}`,
             ]}
           />
-          <div className="mb-4 flex items-center">
+          <div className="mb-4 flex items-center justify-center sm:justify-start">
             <PlayButton
               className="w-16 h-16 mr-6"
               onClick={handlePlayFromStart}

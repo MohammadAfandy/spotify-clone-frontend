@@ -3,6 +3,9 @@
 ## About This Repo
 This repo is a clone application of spotify web player. It uses the official Spotify documentation of [Web API](https://developer.spotify.com/documentation/web-api) and [Web Playback SDK](https://developer.spotify.com/documentation/web-playback-sdk). It uses the [spotify-clone-backend](https://github.com/MohammadAfandy/spotify-clone-backend) to manage the authentication/authorization.
 
+## Mobile Device
+Currently the Web Playback SDK doesn't support mobile browser (Android / IOS) as stated in the official [Documentation](https://developer.spotify.com/documentation/web-playback-sdk/#supported-browsers).
+
 ## Made with
 * Typescript
 * React.js
@@ -52,7 +55,7 @@ npm run build
 - [ ] Edit user profile
 - [ ] Detail page of another user
 - [ ] Refractor error handling
-- [ ] Fully responsive design on mobile
+- [x] Fully responsive design on mobile
 - [ ] Handle non premium user
 - [ ] Refractor web player sdk lifecycle
 

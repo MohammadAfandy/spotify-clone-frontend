@@ -77,7 +77,7 @@ const ShowPage: React.FC = () => {
             type="PODCAST"
             footer={[show.publisher, `${show.total_episodes} episodes`]}
           />
-          <div className="flex items-center mb-8">
+          <div className="flex items-center mb-8 justify-center sm:justify-start">
             <FolllowButton
               isFollowed={isFollowed}
               onClick={handleFollow}

@@ -14,6 +14,7 @@ import PlayerListHeader from '../Components/PlayerList/PlayerListHeader';
 import PlayerListTrack from '../Components/PlayerList/PlayerListTrack';
 import TextLink from '../Components/Link/TextLink';
 import FolllowButton from '../Components/Button/FollowButton';
+import GridWrapper from '../Components/Grid/GridWrapper';
 
 const ArtistPage: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -104,7 +105,7 @@ const ArtistPage: React.FC = () => {
             name={artist.name}
             type={artist.type}
           />
-          <div className="flex items-center">
+          <div className="flex items-center justify-center sm:justify-start">
             <PlayButton className="w-16 h-16 mr-6" onClick={handlePlay} />
             <FolllowButton
               isFollowed={isFollowed}
@@ -126,14 +127,14 @@ const ArtistPage: React.FC = () => {
             {!isShowMore ? 'See More' : 'See Less'}
           </span>
           <div className="mb-4">
-            <div className="mb-4 flex justify-between items-end mr-8 font-bold">
+            <div className="mb-4 flex justify-between items-end font-bold w-full">
               <div className="text-2xl">Albums</div>
               <TextLink
                 text="See All"
                 url={'/artist/' + params.id + '/albums'}
               />
             </div>
-            <div className="grid grid-cols-5 gap-4">
+            <GridWrapper>
               {albums.map((album) => (
                 <CardItem
                   key={album.id}
@@ -144,18 +145,18 @@ const ArtistPage: React.FC = () => {
                   href={'/album/' + album.id}
                 />
               ))}
-            </div>
+            </GridWrapper>
           </div>
 
           <div className="mb-4">
-            <div className="mb-4 flex justify-between items-end mr-8 font-bold">
+            <div className="mb-4 flex justify-between items-end font-bold w-full">
               <div className="text-2xl">Fans Also Like</div>
               <TextLink
                 text="See All"
                 url={'/artist/' + params.id + '/related'}
               />
             </div>
-            <div className="grid grid-cols-5 gap-4">
+            <GridWrapper>
               {relatedAtists.slice(0, 5).map((artist) => (
                 <CardItem
                   key={artist.id}
@@ -168,7 +169,7 @@ const ArtistPage: React.FC = () => {
                   href={'/artist/' + artist.id}
                 />
               ))}
-            </div>
+            </GridWrapper>
           </div>
         </div>
       ) : (

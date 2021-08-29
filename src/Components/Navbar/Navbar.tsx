@@ -10,7 +10,12 @@ import NavbarItem from './NavbarItem';
 import Modal from '../Modal/Modal';
 import Button from '../Button/Button';
 
-const Navbar: React.FC = () => {
+type NavbarProps = {
+  isNavOpen: boolean;
+  handleIsNavOpen: (state: boolean) => void;
+};
+
+const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   // form playlist
@@ -160,31 +165,56 @@ const Navbar: React.FC = () => {
     </>
   );
 
+  const getNavClass = () => {
+    let navClass = 'hidden sm:flex content-area fixed flex-col bg-black w-52 pr-2 pt-5 h-full animate-slide sm:animate-none';
+    if (isNavOpen) {
+      navClass = 'flex content-area fixed flex-col bg-black w-52 pr-2 pt-5 h-full animate-slide sm:animate-none z-20';
+    }
+    return navClass;
+  };
+
   return (
+    // <nav class="hidden sm:flex fixed top-0 flex-col bg-light-black w-52 pr-2 pt-5 h-full animate-slide sm:animate-none">
+    // <nav
+    //   className="fixed top-0 flex flex-col bg-black w-52 pr-2 pt-5 content-area"
+    // >
     <nav
-      className="fixed flex flex-col bg-black w-52 pr-2 pt-5"
-      style={{ height: 'calc(100vh - 6rem)' }}
+      // className="hidden sm:flex content-area fixed flex-col bg-black w-52 pr-2 pt-5 h-full animate-slide sm:animate-none"
+      className={getNavClass()}
     >
       <div className="px-6 mb-8 text-2xl">Spotify Clone</div>
       <div className="mb-4">
         <ul>
-          <NavbarLink to="/" Icon={<Home />} text="Home" />
-          <NavbarLink to="/search" Icon={<Search />} text="Search" />
+          <NavbarLink
+            to="/"
+            Icon={<Home />}
+            text="Home"
+            onClick={() => handleIsNavOpen(false)}
+          />
+          <NavbarLink
+            to="/search"
+            Icon={<Search />}
+            text="Search"
+            onClick={() => handleIsNavOpen(false)}
+          />
           <div
             data-tip="library"
             data-for="login-tooltip"
             data-event="click"
+            data-place="right"
           >
             {isLoggedIn ? (
               <NavbarLink
                 to="/collection/playlists"
                 Icon={<List />}
                 text="Your Library"
+                onClick={() => handleIsNavOpen(false)}
               />
             ) : (
               <NavbarItem
                 Icon={<List />}
                 text="Your Library"
+                onClick={() => handleIsNavOpen(false)}
               />
             )}
           </div>
@@ -196,28 +226,35 @@ const Navbar: React.FC = () => {
             data-tip="create-playlist"
             data-for="login-tooltip"
             data-event="click"
+            data-place="right"
           >
             <NavbarItem
               Icon={<Plus />}
               text="Create Playlist"
-              onClick={() => setIsOpenModal(true)}
+              onClick={() => {
+                setIsOpenModal(true);
+                handleIsNavOpen(false);
+              }}
             />
           </div>
           <div
             data-tip="collection"
             data-for="login-tooltip"
             data-event="click"
+            data-place="right"
           >
             {isLoggedIn ? (
               <NavbarLink
                 to="/collection/tracks"
                 image={LIKED_SONG_IMAGE}
                 text="Liked Song"
+                onClick={() => handleIsNavOpen(false)}
               />
             ) : (
               <NavbarItem
                 image={LIKED_SONG_IMAGE}
                 text="Liked Song"
+                onClick={() => handleIsNavOpen(false)}
               />
             )}
           </div>
@@ -225,17 +262,20 @@ const Navbar: React.FC = () => {
             data-tip="collection"
             data-for="login-tooltip"
             data-event="click"
+            data-place="right"
           >
             {isLoggedIn ? (
               <NavbarLink
                 to="/collection/episodes"
                 image={EPISODE_LOGO_IMAGE}
                 text="Your Episode"
+                onClick={() => handleIsNavOpen(false)}
               />
             ) : (
               <NavbarItem
                 image={EPISODE_LOGO_IMAGE}
                 text="Your Episode"
+                onClick={() => handleIsNavOpen(false)}
               />
             )}
           </div>
@@ -251,6 +291,7 @@ const Navbar: React.FC = () => {
               text={playlist.name}
               onClickEdit={(e) => handleEditPlaylist(e, playlist.id)}
               editable={playlist.owner.id === user.id}
+              onClick={() => handleIsNavOpen(false)}
             />
           ))}
         </ul>

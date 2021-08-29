@@ -6,6 +6,7 @@ import { getHighestImage } from '../utils/helpers';
 
 import CardItem from '../Components/Card/CardItem';
 import CardCollection from '../Components/Card/CardCollection';
+import GridWrapper from '../Components/Grid/GridWrapper';
 
 const CollectionPodcastPage: React.FC = () => {
   const [podcasts, setPodcasts] = useState<Show[]>([]);
@@ -44,7 +45,7 @@ const CollectionPodcastPage: React.FC = () => {
   return (
     <div className="flex flex-col px-4 py-4">
       <div className="text-2xl mb-4 font-bold">PODCASTS</div>
-      <div className="grid grid-cols-5 gap-4">
+      <GridWrapper>
         <div className="col-span-2">
           <CardCollection
             className="bg-gradient-to-b from-green-300 to-green-800"
@@ -66,7 +67,7 @@ const CollectionPodcastPage: React.FC = () => {
             href={'/show/' + show.id}
           />
         ))}
-      </div>
+      </GridWrapper>
     </div>
   );
 };

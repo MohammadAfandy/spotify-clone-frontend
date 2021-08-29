@@ -138,7 +138,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
       </div>
       {showAlbum && track.album && (
         <div
-          className="flex items-center min-w-0 mr-2"
+          className="hidden lg:flex items-center min-w-0 mr-2"
           style={{ flexBasis: '30%' }}
         >
           <TextLink
@@ -149,7 +149,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
         </div>
       )}
       {showDateAdded && (
-        <div className="flex items-center mr-2" style={{ flexBasis: '15%' }}>
+        <div className="hidden md:flex items-center mr-2" style={{ flexBasis: '15%' }}>
           {fromNow(track.added_at)}
         </div>
       )}

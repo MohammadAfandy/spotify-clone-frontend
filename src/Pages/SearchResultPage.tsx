@@ -13,6 +13,7 @@ import { makeRequest, getArtistNames, removeNull } from '../utils/helpers';
 import PlayerListTrackMini from '../Components/PlayerList/PlayerListTrackMini';
 import CardItem from '../Components/Card/CardItem';
 import TextLink from '../Components/Link/TextLink';
+import GridWrapper from '../Components/Grid/GridWrapper';
 
 const SearchResultPage: React.FC = () => {
   const history = useHistory();
@@ -59,7 +60,7 @@ const SearchResultPage: React.FC = () => {
     <div className="flex flex-col px-4 py-4">
       {tracks.length > 0 && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-end mr-8 font-bold">
+          <div className="mb-4 flex justify-between items-end font-bold w-full">
             <div className="text-2xl">Songs</div>
             <div
               className="text-md cursor-pointer hover:underline"
@@ -79,11 +80,11 @@ const SearchResultPage: React.FC = () => {
 
       {artists.length > 0 && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-end mr-8 font-bold">
+          <div className="mb-4 flex justify-between items-end font-bold w-full">
             <div className="text-2xl">Artists</div>
             <TextLink text="See All" url={location.pathname + '/artist'} />
           </div>
-          <div className="grid grid-cols-5 gap-4">
+          <GridWrapper>
             {artists.map((artist) => (
               <CardItem
                 key={artist.id}
@@ -96,17 +97,17 @@ const SearchResultPage: React.FC = () => {
                 href={'/artist/' + artist.id}
               />
             ))}
-          </div>
+          </GridWrapper>
         </div>
       )}
 
       {albums.length > 0 && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-end mr-8 font-bold">
+          <div className="mb-4 flex justify-between items-end font-bold w-full">
             <div className="text-2xl">Albums</div>
             <TextLink text="See All" url={location.pathname + '/album'} />
           </div>
-          <div className="grid grid-cols-5 gap-4">
+          <GridWrapper>
             {albums.map((album) => (
               <CardItem
                 key={album.id}
@@ -117,17 +118,17 @@ const SearchResultPage: React.FC = () => {
                 href={'/album/' + album.id}
               />
             ))}
-          </div>
+          </GridWrapper>
         </div>
       )}
 
       {playlists.length > 0 && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-end mr-8 font-bold">
+          <div className="mb-4 flex justify-between items-end font-bold w-full">
             <div className="text-2xl">Playlists</div>
             <TextLink text="See All" url={location.pathname + '/playlist'} />
           </div>
-          <div className="grid grid-cols-5 gap-4">
+          <GridWrapper>
             {playlists.map((playlist) => (
               <CardItem
                 key={playlist.id}
@@ -142,17 +143,17 @@ const SearchResultPage: React.FC = () => {
                 href={'/playlist/' + playlist.id}
               />
             ))}
-          </div>
+          </GridWrapper>
         </div>
       )}
 
       {shows.length > 0 && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-end mr-8 font-bold">
+          <div className="mb-4 flex justify-between items-end font-bold w-full">
             <div className="text-2xl">Podcasts</div>
             <TextLink text="See All" url={location.pathname + '/show'} />
           </div>
-          <div className="grid grid-cols-5 gap-4">
+          <GridWrapper>
             {shows.map((show) => (
               <CardItem
                 key={show.id}
@@ -163,17 +164,17 @@ const SearchResultPage: React.FC = () => {
                 href={'/show/' + show.id}
               />
             ))}
-          </div>
+          </GridWrapper>
         </div>
       )}
 
       {episodes.length > 0 && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-end mr-8 font-bold">
+          <div className="mb-4 flex justify-between items-end font-bold w-full">
             <div className="text-2xl">Episodes</div>
             <TextLink text="See All" url={location.pathname + '/episode'} />
           </div>
-          <div className="grid grid-cols-5 gap-4">
+          <GridWrapper>
             {episodes.map((episode) => (
               <CardItem
                 key={episode.id}
@@ -186,7 +187,7 @@ const SearchResultPage: React.FC = () => {
                 href={'/episode/' + episode.id}
               />
             ))}
-          </div>
+          </GridWrapper>
         </div>
       )}
     </div>

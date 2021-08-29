@@ -5,6 +5,7 @@ import Artist from '../types/Artist';
 import Album from '../types/Album';
 
 import CardItem from '../Components/Card/CardItem';
+import GridWrapper from '../Components/Grid/GridWrapper';
 
 const AritstAllPage: React.FC = () => {
   const history = useHistory();
@@ -48,7 +49,7 @@ const AritstAllPage: React.FC = () => {
         {type === 'albums' && 'Albums'}
       </div>
       {type === 'related' && (
-        <div className="grid grid-cols-5 gap-4">
+        <GridWrapper>
           {relatedArtists.map((artist) => (
             <CardItem
               key={artist.id}
@@ -59,10 +60,10 @@ const AritstAllPage: React.FC = () => {
               href={'/artist/' + artist.id}
             />
           ))}
-        </div>
+        </GridWrapper>
       )}
       {type === 'albums' && (
-        <div className="grid grid-cols-5 gap-4">
+        <GridWrapper>
           {albums.map((album) => (
             <CardItem
               key={album.id}
@@ -73,7 +74,7 @@ const AritstAllPage: React.FC = () => {
               href={'/album/' + album.id}
             />
           ))}
-        </div>
+        </GridWrapper>
       )}
     </div>
   );

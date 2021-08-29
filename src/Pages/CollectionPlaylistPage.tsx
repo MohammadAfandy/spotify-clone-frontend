@@ -10,6 +10,7 @@ import { EPISODE_LOGO_IMAGE } from '../utils/constants';
 
 import CardItem from '../Components/Card/CardItem';
 import CardCollection from '../Components/Card/CardCollection';
+import GridWrapper from '../Components/Grid/GridWrapper';
 
 const CollectionPlaylistPage: React.FC = () => {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -63,7 +64,7 @@ const CollectionPlaylistPage: React.FC = () => {
   return (
     <div className="flex flex-col px-4 py-4">
       <div className="text-2xl mb-4 font-bold">PLAYLISTS</div>
-      <div className="grid grid-cols-5 gap-4">
+      <GridWrapper>
         <div className="col-span-2">
           <CardCollection
             uris={[`spotify:user:${user.id}:collection`]}
@@ -93,7 +94,7 @@ const CollectionPlaylistPage: React.FC = () => {
             href={'/playlist/' + playlist.id}
           />
         ))}
-      </div>
+      </GridWrapper>
     </div>
   );
 };

@@ -4,6 +4,7 @@ import ApiSpotify from '../utils/api-spotify';
 import { getArtistNames, getHighestImage } from '../utils/helpers';
 
 import CardItem from '../Components/Card/CardItem';
+import GridWrapper from '../Components/Grid/GridWrapper';
 
 const CollectionAlbumPage: React.FC = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -28,7 +29,7 @@ const CollectionAlbumPage: React.FC = () => {
   return (
     <div className="flex flex-col px-4 py-4">
       <div className="text-2xl mb-4 font-bold">ALBUMS</div>
-      <div className="grid grid-cols-5 gap-4">
+      <GridWrapper>
         {albums.map((album) => (
           <div>
             <CardItem
@@ -41,7 +42,7 @@ const CollectionAlbumPage: React.FC = () => {
             />
           </div>
         ))}
-      </div>
+      </GridWrapper>
     </div>
   );
 };

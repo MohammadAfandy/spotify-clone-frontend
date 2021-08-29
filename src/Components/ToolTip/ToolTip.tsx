@@ -1,4 +1,4 @@
-import ReactToolTip, { Place } from 'react-tooltip';
+import ReactToolTip from 'react-tooltip';
 import { BACKEND_URI } from '../../utils/constants';
 
 import Button from '../Button/Button';
@@ -6,7 +6,6 @@ import Button from '../Button/Button';
 type ToolTipProps = {
   className?: string;
   id: string;
-  place: Place;
   disable?: boolean;
   isCapture?: boolean;
   backgroundColor: string;
@@ -15,7 +14,6 @@ type ToolTipProps = {
 const defaultProps: ToolTipProps = {
   className: '',
   id: '',
-  place: 'bottom',
   disable: false,
   isCapture: false,
   backgroundColor: '',
@@ -24,7 +22,6 @@ const defaultProps: ToolTipProps = {
 const ToolTip: React.FC<ToolTipProps> = ({
   className,
   id,
-  place,
   disable,
   isCapture,
   backgroundColor,
@@ -39,7 +36,7 @@ const ToolTip: React.FC<ToolTipProps> = ({
       className={className}
       id={id}
       disable={disable}
-      place={place}
+      place="bottom"
       backgroundColor={backgroundColor}
       getContent={(dataTip) => {
         ReactToolTip.rebuild();

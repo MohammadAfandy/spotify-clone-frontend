@@ -9,6 +9,7 @@ import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 
 import CardItem from '../Components/Card/CardItem';
 import TextLink from '../Components/Link/TextLink';
+import GridWrapper from '../Components/Grid/GridWrapper';
 
 const HomePage: React.FC = () => {
   const [topTracks, setTopTracks] = useState<Track[]>([]);
@@ -52,11 +53,11 @@ const HomePage: React.FC = () => {
     <div className="flex flex-col px-4 py-4">
       {featuredPlaylists.length > 0 && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-end mr-8 font-bold">
+          <div className="mb-4 flex justify-between items-end font-bold w-full">
             <div className="text-2xl">{message}</div>
             <TextLink text="See All" url="/genre/featured-playlists" />
           </div>
-          <div className="grid grid-cols-5 gap-4">
+          <GridWrapper>
             {featuredPlaylists.map((playlist) => (
               <CardItem
                 key={playlist.id}
@@ -67,17 +68,17 @@ const HomePage: React.FC = () => {
                 href={'/playlist/' + playlist.id}
               />
             ))}
-          </div>
+          </GridWrapper>
         </div>
       )}
 
       {isLoggedIn && topTracks.length > 0 && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-end mr-8 font-bold">
+          <div className="mb-4 flex justify-between items-end font-bold w-full">
             <div className="text-2xl">Your Top Tracks</div>
             <TextLink text="See All" url="genre/top-tracks" />
           </div>
-          <div className="grid grid-cols-5 gap-4">
+          <GridWrapper>
             {topTracks.map((track) => (
               <CardItem
                 key={track.id}
@@ -87,17 +88,17 @@ const HomePage: React.FC = () => {
                 href={'/album/' + track.album.id}
               />
             ))}
-          </div>
+          </GridWrapper>
         </div>
       )}
 
       {isLoggedIn && topArtists.length > 0 && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-end mr-8 font-bold">
+          <div className="mb-4 flex justify-between items-end font-bold w-full">
             <div className="text-2xl">Your Top Artists</div>
             <TextLink text="See All" url="genre/top-artists" />
           </div>
-          <div className="grid grid-cols-5 gap-4">
+          <GridWrapper>
             {topArtists.map((artist) => (
               <CardItem
                 key={artist.id}
@@ -108,17 +109,17 @@ const HomePage: React.FC = () => {
                 href={'/artist/' + artist.id}
               />
             ))}
-          </div>
+          </GridWrapper>
         </div>
       )}
 
       {newReleases.length > 0 && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-end mr-8 font-bold">
+          <div className="mb-4 flex justify-between items-end font-bold w-full">
             <div className="text-2xl">New Releases</div>
             <TextLink text="See All" url="genre/new-releases" />
           </div>
-          <div className="grid grid-cols-5 gap-4">
+          <GridWrapper>
             {newReleases.map((album) => (
               <CardItem
                 key={album.id}
@@ -129,7 +130,7 @@ const HomePage: React.FC = () => {
                 href={'/album/' + album.id}
               />
             ))}
-          </div>
+          </GridWrapper>
         </div>
       )}
     </div>

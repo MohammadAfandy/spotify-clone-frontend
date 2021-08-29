@@ -26,7 +26,7 @@ const MainContent: React.FC = () => {
   return (
     <div
       id="main-container"
-      className="main-content overflow-auto flex flex-col w-full ml-52 mt-14"
+      className="relative main-content overflow-auto flex flex-col w-full sm:ml-52 mt-16"
     >
       <Switch>
         <Route

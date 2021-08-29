@@ -76,7 +76,7 @@ const EpisodePage: React.FC = () => {
               />,
             ]}
           />
-          <div className="flex items-center mb-8">
+          <div className="flex items-center mb-8 justify-center sm:justify-start">
             <PlayButton
               className="w-16 h-16 mr-6"
               onClick={handlePlayEpisode}

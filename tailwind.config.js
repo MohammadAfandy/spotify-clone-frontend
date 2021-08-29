@@ -17,6 +17,18 @@ module.exports = {
       inset: {
         '1/12': '8.333333%',
       },
+      keyframes: {
+        slide: {
+          '0%': { transform: 'translateX(-13rem)' },
+          '100%': { transform: 'translateY(0)' }
+        }
+      },
+      animation: {
+        slide: 'slide 400ms ease-in-out',
+      },
+      zIndex: {
+        '-1': '-1',
+      },
     },
   },
   variants: {

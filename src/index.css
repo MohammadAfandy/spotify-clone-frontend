@@ -28,6 +28,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.content-area {
+  height: calc(100vh - theme('spacing.24'));
+}
+
 /* width */
 ::-webkit-scrollbar {
   width: 10px;

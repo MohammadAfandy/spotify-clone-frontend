@@ -21,7 +21,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
 }) => {
   return (
     <div
-      className={`rounded-md flex items-center bg-white text-black py-1 px-3 w-80 ${className}`}
+      className={`rounded-md flex items-center bg-white text-black py-1 px-3 ${className}`}
     >
       <Search className="mr-4" />
       <input

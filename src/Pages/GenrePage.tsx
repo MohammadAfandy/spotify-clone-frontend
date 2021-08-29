@@ -9,6 +9,7 @@ import { AuthContext } from '../context/auth-context';
 import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 
 import CardItem from '../Components/Card/CardItem';
+import GridWrapper from '../Components/Grid/GridWrapper';
 
 const GenrePage: React.FC = () => {
   const { type } = useParams<{ query: string; type: string }>();
@@ -60,7 +61,7 @@ const GenrePage: React.FC = () => {
     <div className="flex flex-col px-4 py-4">
       <div className="text-2xl mb-4">{typeText}</div>
       {type === 'featured-playlists' && (
-        <div className="grid grid-cols-5 gap-4">
+        <GridWrapper>
           {featuredPlaylists.map((playlist) => (
             <CardItem
               key={playlist.id}
@@ -71,10 +72,10 @@ const GenrePage: React.FC = () => {
               href={'/playlist/' + playlist.id}
             />
           ))}
-        </div>
+        </GridWrapper>
       )}
       {type === 'top-tracks' && (
-        <div className="grid grid-cols-5 gap-4">
+        <GridWrapper>
           {topTracks.map((track) => (
             <CardItem
               key={track.id}
@@ -84,10 +85,10 @@ const GenrePage: React.FC = () => {
               href={'/album/' + track.album.id}
             />
           ))}
-        </div>
+        </GridWrapper>
       )}
       {type === 'top-artists' && (
-        <div className="grid grid-cols-5 gap-4">
+        <GridWrapper>
           {topArtists.map((artist) => (
             <CardItem
               key={artist.id}
@@ -98,10 +99,10 @@ const GenrePage: React.FC = () => {
               href={'/artist/' + artist.id}
             />
           ))}
-        </div>
+        </GridWrapper>
       )}
       {type === 'new-releases' && (
-        <div className="grid grid-cols-5 gap-4">
+        <GridWrapper>
           {newReleases.map((album) => (
             <CardItem
               key={album.id}
@@ -112,7 +113,7 @@ const GenrePage: React.FC = () => {
               href={'/album/' + album.id}
             />
           ))}
-        </div>
+        </GridWrapper>
       )}
     </div>
   );
