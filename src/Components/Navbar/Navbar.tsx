@@ -228,7 +228,7 @@ const Navbar: React.FC = () => {
           >
             {isLoggedIn ? (
               <NavbarLink
-                to="/collection/episodes:"
+                to="/collection/episodes"
                 image={EPISODE_LOGO_IMAGE}
                 text="Your Episode"
               />
