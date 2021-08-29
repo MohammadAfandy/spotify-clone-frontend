@@ -83,7 +83,7 @@ const AlbumPage: React.FC = () => {
       {album.id ? (
         <div className="px-4 py-4">
           <PlayerListHeader
-            image={album.images && album.images[0].url}
+            image={album.images && album.images[0]?.url}
             name={album.name}
             type={album.album_type?.toUpperCase()}
             footer={[

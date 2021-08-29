@@ -1,5 +1,6 @@
 import { Route, Switch } from 'react-router-dom';
 
+import PrivateRoute from '../PrivateRoute/PrivateRoute';
 import HomePage from '../../Pages/HomePage';
 import GenrePage from '../../Pages/GenrePage';
 import SearchPage from '../../Pages/SearchPage';
@@ -7,8 +8,8 @@ import SearchResultPage from '../../Pages/SearchResultPage';
 import SearchResultAllPage from '../../Pages/SearchResultAllPage';
 import SearchResultAllTrackPage from '../../Pages/SearchResultAllTrackPage';
 import CategoryDetailPage from '../../Pages/CategoryDetailPage';
-import AlbumPagePage from '../../Pages/AlbumPage';
-import ArtistPagePage from '../../Pages/ArtistPage';
+import AlbumPage from '../../Pages/AlbumPage';
+import ArtistPage from '../../Pages/ArtistPage';
 import ArtistAllPage from '../../Pages/ArtistAllPage';
 import PlaylistPage from '../../Pages/PlaylistPage';
 import ShowPage from '../../Pages/ShowPage';
@@ -19,6 +20,7 @@ import CollectionArtistPage from '../../Pages/CollectionArtistPage';
 import CollectionAlbumPage from '../../Pages/CollectionAlbumPage';
 import CollectionTrackPage from '../../Pages/CollectionTrackPage';
 import CollectionEpisodePage from '../../Pages/CollectionEpisodePage';
+import NotFoundPage from '../../Pages/NotFoundPage';
 
 const MainContent: React.FC = () => {
   return (
@@ -27,65 +29,26 @@ const MainContent: React.FC = () => {
       className="main-content overflow-auto flex flex-col w-full ml-52 mt-14"
     >
       <Switch>
-        <Route path="/" exact>
-          <HomePage />
-        </Route>
-        <Route path="/genre/:type" exact>
-          <GenrePage />
-        </Route>
-        <Route path="/search" exact>
-          <SearchPage />
-        </Route>
         <Route
-          path="/search/:query/track"
+          path="/"
+          exact
+          render={(props) => <HomePage />}
+        />
+        <Route
+          path="/genre/:type"
           exact
           render={(props) => (
-            <SearchResultAllTrackPage
-              key={'search-track-' + props.match.params.query}
+            <GenrePage
+              key={'genre-' + props.match.params.type}
               {...props}
             />
           )}
         />
-        <Route path="/search/:query/:type" exact>
-          <SearchResultAllPage />
-        </Route>
-        <Route path="/category/:id" exact>
-          <CategoryDetailPage />
-        </Route>
-        <Route path="/album/:id" exact>
-          <AlbumPagePage />
-        </Route>
-        <Route path="/artist/:id/:type" exact>
-          <ArtistAllPage />
-        </Route>
-        <Route path="/show/:id" exact>
-          <ShowPage />
-        </Route>
-        <Route path="/episode/:id" exact>
-          <EpisodePage />
-        </Route>
-        <Route path="/collection/playlists" exact>
-          <CollectionPlaylistPage />
-        </Route>
-        <Route path="/collection/podcasts" exact>
-          <CollectionPodcastPage />
-        </Route>
-        <Route path="/collection/albums" exact>
-          <CollectionAlbumPage />
-        </Route>
-        <Route path="/collection/artists" exact>
-          <CollectionArtistPage />
-        </Route>
-        <Route path="/collection/tracks" exact>
-          <CollectionTrackPage />
-        </Route>
-        <Route path="/collection/episodes" exact>
-          <CollectionEpisodePage />
-        </Route>
-
-        {/* This is to trigger rerender on same props but different url
-        because sometimes (as in this route list) the previous route is the same as the destination route
-        and when it happens it doesn't reset the state of the component */}
+        <Route
+          path="/search"
+          exact
+          render={(props) => <SearchPage />}
+        />
         <Route
           path="/search/:query"
           exact
@@ -100,7 +63,7 @@ const MainContent: React.FC = () => {
           path="/artist/:id"
           exact
           render={(props) => (
-            <ArtistPagePage
+            <ArtistPage
               key={'artist-' + props.match.params.id}
               {...props}
             />
@@ -116,6 +79,111 @@ const MainContent: React.FC = () => {
             />
           )}
         />
+        <Route
+          path="/search/:query/track"
+          exact
+          render={(props) => (
+            <SearchResultAllTrackPage
+              key={'search-track-' + props.match.params.query}
+              {...props}
+            />
+          )}
+        />
+        <Route
+          path="/search/:query/:type"
+          exact
+          render={(props) => (
+            <SearchResultAllPage
+              key={'search-' + props.match.params.query + '-' + props.match.params.type}
+              {...props}
+            />
+          )}
+        />
+        <Route
+          path="/category/:id"
+          exact
+          render={(props) => (
+            <CategoryDetailPage
+              key={'category-' + props.match.params.id}
+              {...props}
+            />
+          )}
+        />
+        <Route
+          path="/album/:id"
+          exact
+          render={(props) => (
+            <AlbumPage
+              key={'album-' + props.match.params.id}
+              {...props}
+            />
+          )}
+        />
+        <Route
+          path="/artist/:id/:type"
+          exact
+          render={(props) => (
+            <ArtistAllPage
+              key={'artist-' + props.match.params.id + '-' + props.match.params.type}
+              {...props}
+            />
+          )}
+        />
+        <Route
+          path="/show/:id"
+          exact
+          render={(props) => (
+            <ShowPage
+              key={'show-' + props.match.params.id}
+              {...props}
+            />
+          )}
+        />
+        <Route
+          path="/episode/:id"
+          exact
+          render={(props) => (
+            <EpisodePage
+              key={'episode-' + props.match.params.id}
+              {...props}
+            />
+          )}
+        />
+
+        {/* Private Route (Need Login) */}
+        <PrivateRoute
+          component={CollectionPlaylistPage}
+          path="/collection/playlists"
+          exact
+        />
+        <PrivateRoute
+          component={CollectionPodcastPage}
+          path="/collection/podcasts"
+          exact
+        />
+        <PrivateRoute
+          component={CollectionAlbumPage}
+          path="/collection/albums"
+          exact
+        />
+        <PrivateRoute
+          component={CollectionArtistPage}
+          path="/collection/artists"
+          exact
+        />
+        <PrivateRoute
+          component={CollectionTrackPage}
+          path="/collection/tracks"
+          exact
+        />
+        <PrivateRoute
+          component={CollectionEpisodePage}
+          path="/collection/episodes"
+          exact
+        />
+        <Route path='*'>
+          <NotFoundPage />
+        </Route>
       </Switch>
     </div>
   );

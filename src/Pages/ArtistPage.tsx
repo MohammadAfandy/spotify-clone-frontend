@@ -100,7 +100,7 @@ const ArtistPage: React.FC = () => {
       {artist.id ? (
         <div className="px-4 py-4">
           <PlayerListHeader
-            image={artist.images && artist.images[0].url}
+            image={artist.images && artist.images[0]?.url}
             name={artist.name}
             type={artist.type}
           />

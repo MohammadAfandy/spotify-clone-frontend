@@ -28,7 +28,7 @@ const MainPage: React.FC = () => {
             <Player />
           ) : (
             <div className="bg-banner-gradient h-full flex justify-center items-center p-10">
-              <div className="sm:block hidden flex-grow text-justify mr-8">
+              <div className="sm:block hidden flex-grow text-justify text-sm mr-8">
                 This web player is intended for educational purpose only. All data
                 including image, song, logo, etc belong to their respective
                 copyright owners. Currently you need premium account for better
