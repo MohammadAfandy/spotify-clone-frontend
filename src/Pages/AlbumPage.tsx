@@ -7,11 +7,11 @@ import ApiSpotify from '../utils/api-spotify';
 import { duration, makeRequest } from '../utils/helpers';
 import useFetchTracks from '../hooks/useFetchTracks';
 
-import PlayerListHeader from '../Components/PlayerList/PlayerListHeader';
-import PlayerListTrack from '../Components/PlayerList/PlayerListTrack';
-import PlayButton from '../Components/Button/PlayButton';
-import TextLink from '../Components/Link/TextLink';
-import FolllowButton from '../Components/Button/FollowButton';
+import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
+import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
+import PlayButton from '../components/Button/PlayButton';
+import TextLink from '../components/Link/TextLink';
+import FolllowButton from '../components/Button/FollowButton';
 
 const AlbumPage: React.FC = () => {
   const params = useParams<{ id: string }>();

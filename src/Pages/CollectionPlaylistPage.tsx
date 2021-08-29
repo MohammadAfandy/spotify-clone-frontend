@@ -8,9 +8,9 @@ import ApiSpotify from '../utils/api-spotify';
 import { getHighestImage } from '../utils/helpers';
 import { EPISODE_LOGO_IMAGE } from '../utils/constants';
 
-import CardItem from '../Components/Card/CardItem';
-import CardCollection from '../Components/Card/CardCollection';
-import GridWrapper from '../Components/Grid/GridWrapper';
+import CardItem from '../components/Card/CardItem';
+import CardCollection from '../components/Card/CardCollection';
+import GridWrapper from '../components/Grid/GridWrapper';
 
 const CollectionPlaylistPage: React.FC = () => {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);

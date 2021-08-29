@@ -5,9 +5,9 @@ import useFetchTracks from '../hooks/useFetchTracks';
 import { LIKED_SONG_IMAGE } from '../utils/constants';
 import { duration } from '../utils/helpers';
 
-import PlayerListHeader from '../Components/PlayerList/PlayerListHeader';
-import PlayerListTrack from '../Components/PlayerList/PlayerListTrack';
-import PlayButton from '../Components/Button/PlayButton';
+import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
+import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
+import PlayButton from '../components/Button/PlayButton';
 
 const CollectionTrackPage: React.FC = () => {
   const { user } = useContext(AuthContext);

@@ -1,26 +1,26 @@
 import { Route, Switch } from 'react-router-dom';
 
 import PrivateRoute from '../PrivateRoute/PrivateRoute';
-import HomePage from '../../Pages/HomePage';
-import GenrePage from '../../Pages/GenrePage';
-import SearchPage from '../../Pages/SearchPage';
-import SearchResultPage from '../../Pages/SearchResultPage';
-import SearchResultAllPage from '../../Pages/SearchResultAllPage';
-import SearchResultAllTrackPage from '../../Pages/SearchResultAllTrackPage';
-import CategoryDetailPage from '../../Pages/CategoryDetailPage';
-import AlbumPage from '../../Pages/AlbumPage';
-import ArtistPage from '../../Pages/ArtistPage';
-import ArtistAllPage from '../../Pages/ArtistAllPage';
-import PlaylistPage from '../../Pages/PlaylistPage';
-import ShowPage from '../../Pages/ShowPage';
-import EpisodePage from '../../Pages/EpisodePage';
-import CollectionPodcastPage from '../../Pages/CollectionPodcastPage';
-import CollectionPlaylistPage from '../../Pages/CollectionPlaylistPage';
-import CollectionArtistPage from '../../Pages/CollectionArtistPage';
-import CollectionAlbumPage from '../../Pages/CollectionAlbumPage';
-import CollectionTrackPage from '../../Pages/CollectionTrackPage';
-import CollectionEpisodePage from '../../Pages/CollectionEpisodePage';
-import NotFoundPage from '../../Pages/NotFoundPage';
+import HomePage from '../../pages/HomePage';
+import GenrePage from '../../pages/GenrePage';
+import SearchPage from '../../pages/SearchPage';
+import SearchResultPage from '../../pages/SearchResultPage';
+import SearchResultAllPage from '../../pages/SearchResultAllPage';
+import SearchResultAllTrackPage from '../../pages/SearchResultAllTrackPage';
+import CategoryDetailPage from '../../pages/CategoryDetailPage';
+import AlbumPage from '../../pages/AlbumPage';
+import ArtistPage from '../../pages/ArtistPage';
+import ArtistAllPage from '../../pages/ArtistAllPage';
+import PlaylistPage from '../../pages/PlaylistPage';
+import ShowPage from '../../pages/ShowPage';
+import EpisodePage from '../../pages/EpisodePage';
+import CollectionPodcastPage from '../../pages/CollectionPodcastPage';
+import CollectionPlaylistPage from '../../pages/CollectionPlaylistPage';
+import CollectionArtistPage from '../../pages/CollectionArtistPage';
+import CollectionAlbumPage from '../../pages/CollectionAlbumPage';
+import CollectionTrackPage from '../../pages/CollectionTrackPage';
+import CollectionEpisodePage from '../../pages/CollectionEpisodePage';
+import NotFoundPage from '../../pages/NotFoundPage';
 
 const MainContent: React.FC = () => {
   return (

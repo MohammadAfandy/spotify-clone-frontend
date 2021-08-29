@@ -2,11 +2,11 @@ import { useContext, useState } from 'react';
 import { AuthContext } from '../context/auth-context';
 import PlayerProvider from '../context/player-context';
 
-import Navbar from '../Components/Navbar/Navbar';
-import ToolBar from '../Components/Toolbar/ToolBar';
-import MainContent from '../Components/MainContent/MainContent';
-import ToolTip from '../Components/ToolTip/ToolTip';
-import Footer from '../Components/Footer/Footer';
+import Navbar from '../components/Navbar/Navbar';
+import ToolBar from '../components/Toolbar/ToolBar';
+import MainContent from '../components/MainContent/MainContent';
+import ToolTip from '../components/ToolTip/ToolTip';
+import Footer from '../components/Footer/Footer';
 
 const MainPage: React.FC = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);

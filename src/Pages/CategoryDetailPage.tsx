@@ -5,8 +5,8 @@ import Playlist from '../types/Playlist';
 import { AuthContext } from '../context/auth-context';
 import { makeRequest } from '../utils/helpers';
 
-import CardItem from '../Components/Card/CardItem';
-import GridWrapper from '../Components/Grid/GridWrapper';
+import CardItem from '../components/Card/CardItem';
+import GridWrapper from '../components/Grid/GridWrapper';
 
 const CategoryDetailPage: React.FC = () => {
   const params = useParams<{ id: string }>();

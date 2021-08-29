@@ -1,6 +1,6 @@
 import AuthProvider from './context/auth-context';
 
-import MainPage from './Pages/MainPage';
+import MainPage from './pages/MainPage';
 
 function App() {
   return (

@@ -6,9 +6,9 @@ import { AuthContext } from '../context/auth-context';
 import { PlayerContext } from '../context/player-context';
 import useFetchEpisodes from '../hooks/useFetchEpisodes';
 
-import PlayerListHeader from '../Components/PlayerList/PlayerListHeader';
-import PlayerListEpisode from '../Components/PlayerList/PlayerListEpisode';
-import FolllowButton from '../Components/Button/FollowButton';
+import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
+import PlayerListEpisode from '../components/PlayerList/PlayerListEpisode';
+import FolllowButton from '../components/Button/FollowButton';
 
 const ShowPage: React.FC = () => {
   const params = useParams<{ id: string }>();

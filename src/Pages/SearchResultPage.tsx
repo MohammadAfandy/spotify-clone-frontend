@@ -10,10 +10,10 @@ import { PlayerContext } from '../context/player-context';
 import { AuthContext } from '../context/auth-context';
 import { makeRequest, getArtistNames, removeNull } from '../utils/helpers';
 
-import PlayerListTrackMini from '../Components/PlayerList/PlayerListTrackMini';
-import CardItem from '../Components/Card/CardItem';
-import TextLink from '../Components/Link/TextLink';
-import GridWrapper from '../Components/Grid/GridWrapper';
+import PlayerListTrackMini from '../components/PlayerList/PlayerListTrackMini';
+import CardItem from '../components/Card/CardItem';
+import TextLink from '../components/Link/TextLink';
+import GridWrapper from '../components/Grid/GridWrapper';
 
 const SearchResultPage: React.FC = () => {
   const history = useHistory();

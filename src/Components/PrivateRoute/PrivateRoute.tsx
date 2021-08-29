@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { Route } from "react-router-dom";
 import { AuthContext } from '../../context/auth-context';
 
-import UnauthorizedPage from '../../Pages/UnauthorizedPage';
+import UnauthorizedPage from '../../pages/UnauthorizedPage';
 
 type PrivateRouteProps = {
   component: React.ElementType;

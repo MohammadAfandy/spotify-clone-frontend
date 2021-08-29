@@ -4,7 +4,7 @@ import Category from '../types/Category';
 import { AuthContext } from '../context/auth-context';
 import { makeRequest } from '../utils/helpers';
 
-import GridWrapper from '../Components/Grid/GridWrapper';
+import GridWrapper from '../components/Grid/GridWrapper';
 
 const SearchPage: React.FC = () => {
   const history = useHistory();

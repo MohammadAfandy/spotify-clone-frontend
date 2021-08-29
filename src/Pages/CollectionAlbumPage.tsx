@@ -3,8 +3,8 @@ import Album from '../types/Album';
 import ApiSpotify from '../utils/api-spotify';
 import { getArtistNames, getHighestImage } from '../utils/helpers';
 
-import CardItem from '../Components/Card/CardItem';
-import GridWrapper from '../Components/Grid/GridWrapper';
+import CardItem from '../components/Card/CardItem';
+import GridWrapper from '../components/Grid/GridWrapper';
 
 const CollectionAlbumPage: React.FC = () => {
   const [albums, setAlbums] = useState<Album[]>([]);

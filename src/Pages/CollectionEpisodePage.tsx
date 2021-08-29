@@ -4,9 +4,9 @@ import { AuthContext } from '../context/auth-context';
 import { PlayerContext } from '../context/player-context';
 import { EPISODE_LOGO_IMAGE } from '../utils/constants';
 
-import PlayerListHeader from '../Components/PlayerList/PlayerListHeader';
-import PlayerListEpisode from '../Components/PlayerList/PlayerListEpisode';
-import PlayButton from '../Components/Button/PlayButton';
+import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
+import PlayerListEpisode from '../components/PlayerList/PlayerListEpisode';
+import PlayButton from '../components/Button/PlayButton';
 
 const CollectionEpisodePage: React.FC = () => {
   const { user } = useContext(AuthContext);

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { PlayerContext } from '../context/player-context';
 import useFetchTracks from '../hooks/useFetchTracks';
 
-import PlayerListTrack from '../Components/PlayerList/PlayerListTrack';
+import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
 
 const SearchResultAllTrackPage: React.FC = () => {
   const { query } = useParams<{ query: string }>();

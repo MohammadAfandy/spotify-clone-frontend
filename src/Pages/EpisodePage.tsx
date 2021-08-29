@@ -6,10 +6,10 @@ import { AuthContext } from '../context/auth-context';
 import { PlayerContext } from '../context/player-context';
 import { PlusCircle, Check } from 'react-feather';
 
-import PlayerListHeader from '../Components/PlayerList/PlayerListHeader';
-import PlayButton from '../Components/Button/PlayButton';
-import Button from '../Components/Button/Button';
-import TextLink from '../Components/Link/TextLink';
+import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
+import PlayButton from '../components/Button/PlayButton';
+import Button from '../components/Button/Button';
+import TextLink from '../components/Link/TextLink';
 
 const EpisodePage: React.FC = () => {
   const params = useParams<{ id: string }>();

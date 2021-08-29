@@ -4,8 +4,8 @@ import ApiSpotify from '../utils/api-spotify';
 import Artist from '../types/Artist';
 import Album from '../types/Album';
 
-import CardItem from '../Components/Card/CardItem';
-import GridWrapper from '../Components/Grid/GridWrapper';
+import CardItem from '../components/Card/CardItem';
+import GridWrapper from '../components/Grid/GridWrapper';
 
 const AritstAllPage: React.FC = () => {
   const history = useHistory();

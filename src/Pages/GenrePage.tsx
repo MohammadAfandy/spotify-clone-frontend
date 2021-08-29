@@ -8,8 +8,8 @@ import ApiSpotify from '../utils/api-spotify';
 import { AuthContext } from '../context/auth-context';
 import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 
-import CardItem from '../Components/Card/CardItem';
-import GridWrapper from '../Components/Grid/GridWrapper';
+import CardItem from '../components/Card/CardItem';
+import GridWrapper from '../components/Grid/GridWrapper';
 
 const GenrePage: React.FC = () => {
   const { type } = useParams<{ query: string; type: string }>();

@@ -9,12 +9,12 @@ import { PlayerContext } from '../context/player-context';
 import { getHighestImage, duration, makeRequest } from '../utils/helpers';
 import useFetchTracks from '../hooks/useFetchTracks';
 
-import PlayerListHeader from '../Components/PlayerList/PlayerListHeader';
-import PlayerListTrack from '../Components/PlayerList/PlayerListTrack';
-import PlayerListTrackMini from '../Components/PlayerList/PlayerListTrackMini';
-import PlayButton from '../Components/Button/PlayButton';
-import LikeButton from '../Components/Button/LikeButton';
-import SearchInput from '../Components/Input/SearchInput';
+import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
+import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
+import PlayerListTrackMini from '../components/PlayerList/PlayerListTrackMini';
+import PlayButton from '../components/Button/PlayButton';
+import LikeButton from '../components/Button/LikeButton';
+import SearchInput from '../components/Input/SearchInput';
 
 const PlaylistPage: React.FC = () => {
   const params = useParams<{ id: string }>();
