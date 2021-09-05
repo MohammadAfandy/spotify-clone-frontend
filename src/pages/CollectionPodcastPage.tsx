@@ -9,38 +9,52 @@ import CardCollection from '../components/Card/CardCollection';
 import GridWrapper from '../components/Grid/GridWrapper';
 
 const CollectionPodcastPage: React.FC = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [podcasts, setPodcasts] = useState<Show[]>([]);
   const [playlistEpisodes, setPlaylistEpisodes] = useState<Episode[]>([]);
   const [playlistTotalEpisode, setplaylistTotalEpisode] = useState<number>(0);
 
   useEffect(() => {
     const fetchCollectionPodcast = async () => {
-      const paramsPodcast = { limit: 50 };
-      const paramsEpisode = { limit: 5 };
-      const [dataPodcast, dataPlaylistEpisode] = await Promise.all([
-        ApiSpotify.get('/me/shows', { params: paramsPodcast }),
-        ApiSpotify.get('/me/episodes', { params: paramsEpisode }),
-      ]);
-
-      setPodcasts(
-        dataPodcast.data.items.map((item: { added_at: Date; show: Show }) => ({
-          ...item.show,
-          added_at: item.added_at,
-        }))
-      );
-      setPlaylistEpisodes(
-        dataPlaylistEpisode.data.items.map(
-          (item: { added_at: Date; episode: Episode }) => ({
-            ...item.episode,
+      try {
+        setIsLoading(true);
+        const paramsPodcast = { limit: 50 };
+        const paramsEpisode = { limit: 5 };
+        const [dataPodcast, dataPlaylistEpisode] = await Promise.all([
+          ApiSpotify.get('/me/shows', { params: paramsPodcast }),
+          ApiSpotify.get('/me/episodes', { params: paramsEpisode }),
+        ]);
+  
+        setPodcasts(
+          dataPodcast.data.items.map((item: { added_at: Date; show: Show }) => ({
+            ...item.show,
             added_at: item.added_at,
-          })
-        )
-      );
-      setplaylistTotalEpisode(dataPlaylistEpisode.data.total);
+          }))
+        );
+        setPlaylistEpisodes(
+          dataPlaylistEpisode.data.items.map(
+            (item: { added_at: Date; episode: Episode }) => ({
+              ...item.episode,
+              added_at: item.added_at,
+            })
+          )
+        );
+        setplaylistTotalEpisode(dataPlaylistEpisode.data.total);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchCollectionPodcast();
   }, []);
+
+  const CardLoading = (
+    [...Array(5)].map((_, idx) => (
+      <CardItem key={idx} isLoading />
+    ))
+  );
 
   return (
     <div className="flex flex-col px-4 py-4">
@@ -55,9 +69,11 @@ const CollectionPodcastPage: React.FC = () => {
             type="episode"
             total={playlistTotalEpisode}
             href="/collection/episodes"
+            isLoading={isLoading}
           />
         </div>
-        {podcasts.map((show) => (
+        {isLoading && CardLoading}
+        {!isLoading && podcasts.map((show) => (
           <CardItem
             key={show.id}
             name={show.name}

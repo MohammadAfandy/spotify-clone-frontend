@@ -15,32 +15,46 @@ const AritstAllPage: React.FC = () => {
     history.replace('/');
   }
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [relatedArtists, setRelatedArtists] = useState<Artist[]>([]);
   const [albums, setAlbums] = useState<Album[]>([]);
 
   useEffect(() => {
     const fetchArtistAll = async () => {
-      let uri = '';
-      if (type === 'albums') {
-        uri = 'albums';
-      } else if (type === 'related') {
-        uri = 'related-artists';
-      }
-      const response = await ApiSpotify.get('/artists/' + id + '/' + uri, {
-        params: {
-          limit: 50,
-        },
-      });
-
-      if (type === 'related') {
-        setRelatedArtists(response.data.artists);
-      } else if (type === 'albums') {
-        setAlbums(response.data.items);
+      try {
+        setIsLoading(true);
+        let uri = '';
+        if (type === 'albums') {
+          uri = 'albums';
+        } else if (type === 'related') {
+          uri = 'related-artists';
+        }
+        const response = await ApiSpotify.get('/artists/' + id + '/' + uri, {
+          params: {
+            limit: 50,
+          },
+        });
+  
+        if (type === 'related') {
+          setRelatedArtists(response.data.artists);
+        } else if (type === 'albums') {
+          setAlbums(response.data.items);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchArtistAll();
   }, [type, id]);
+
+  const CardLoading = (
+    [...Array(20)].map((_, idx) => (
+      <CardItem key={idx} isLoading />
+    ))
+  );
 
   return (
     <div className="flex flex-col px-4 py-4">
@@ -50,7 +64,8 @@ const AritstAllPage: React.FC = () => {
       </div>
       {type === 'related' && (
         <GridWrapper>
-          {relatedArtists.map((artist) => (
+          {isLoading && CardLoading}
+          {!isLoading && relatedArtists.map((artist) => (
             <CardItem
               key={artist.id}
               name={artist.name}
@@ -64,7 +79,8 @@ const AritstAllPage: React.FC = () => {
       )}
       {type === 'albums' && (
         <GridWrapper>
-          {albums.map((album) => (
+          {isLoading && CardLoading}
+          {!isLoading && albums.map((album) => (
             <CardItem
               key={album.id}
               name={album.name}

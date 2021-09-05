@@ -5,31 +5,43 @@ import { AuthContext } from '../context/auth-context';
 import { makeRequest } from '../utils/helpers';
 
 import GridWrapper from '../components/Grid/GridWrapper';
+import CardItem from '../components/Card/CardItem';
 
 const SearchPage: React.FC = () => {
   const history = useHistory();
   const [categories, setCategories] = useState<Category[]>([]);
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { isLoggedIn } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        setIsLoading(true);
         const params = { limit: 50 };
         const response = await makeRequest('/browse/categories', { params }, isLoggedIn);
         setCategories(response.data.categories.items);
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchCategories();
   }, [isLoggedIn]);
 
+  const CardLoading = (
+    [...Array(20)].map((_, idx) => (
+      <CardItem key={idx} isLoading />
+    ))
+  );
+
   return (
     <div className="px-4 py-4">
       <GridWrapper>
-        {categories.map((category) => (
+        {isLoading && CardLoading}
+        {!isLoading && categories.map((category) => (
           <div
             key={category.id}
             className="relative cursor-pointer transition duration-300 ease-in-out transform hover:scale-105"

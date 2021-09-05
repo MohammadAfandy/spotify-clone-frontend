@@ -10,10 +10,12 @@ import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 
 import CardItem from '../components/Card/CardItem';
 import GridWrapper from '../components/Grid/GridWrapper';
+import Skeleton from 'react-loading-skeleton';
 
 const GenrePage: React.FC = () => {
   const { type } = useParams<{ query: string; type: string }>();
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [topTracks, setTopTracks] = useState<Track[]>([]);
   const [topArtists, setTopArtists] = useState<Artist[]>([]);
   const [newReleases, setNewReleases] = useState<Album[]>([]);
@@ -25,43 +27,59 @@ const GenrePage: React.FC = () => {
 
   useEffect(() => {
     const fetchGenre = async () => {
-      const params = { limit: 50 };
-
-      if (type === 'featured-playlists') {
-        const response = await makeRequest('/browse/featured-playlists', {
-          params,
-        }, isLoggedIn);
-        setFeaturedPlaylists(response.data.playlists.items);
-        setTypeText(response.data.message);
-      } else if (type === 'top-tracks') {
-        const response = await ApiSpotify.get('/me/top/tracks', {
-          params: { ...params, country: undefined },
-        });
-        setTopTracks(response.data.items);
-        setTypeText('Your Top Tracks');
-      } else if (type === 'top-artists') {
-        const response = await ApiSpotify.get('/me/top/artists', {
-          params: { ...params, country: undefined },
-        });
-        setTopArtists(response.data.items);
-        setTypeText('Your Top Artists');
-      } else if (type === 'new-releases') {
-        const response = await makeRequest('/browse/new-releases', {
-          params,
-        }, isLoggedIn);
-        setNewReleases(response.data.albums.items);
-        setTypeText('New Releases');
+      try {
+        setIsLoading(true);
+        const params = { limit: 50 };
+  
+        if (type === 'featured-playlists') {
+          const response = await makeRequest('/browse/featured-playlists', {
+            params,
+          }, isLoggedIn);
+          setFeaturedPlaylists(response.data.playlists.items);
+          setTypeText(response.data.message);
+        } else if (type === 'top-tracks') {
+          const response = await ApiSpotify.get('/me/top/tracks', {
+            params: { ...params, country: undefined },
+          });
+          setTopTracks(response.data.items);
+          setTypeText('Your Top Tracks');
+        } else if (type === 'top-artists') {
+          const response = await ApiSpotify.get('/me/top/artists', {
+            params: { ...params, country: undefined },
+          });
+          setTopArtists(response.data.items);
+          setTypeText('Your Top Artists');
+        } else if (type === 'new-releases') {
+          const response = await makeRequest('/browse/new-releases', {
+            params,
+          }, isLoggedIn);
+          setNewReleases(response.data.albums.items);
+          setTypeText('New Releases');
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchGenre();
   }, [type, isLoggedIn]);
 
+  const CardLoading = (
+    [...Array(20)].map((_, idx) => (
+      <CardItem key={idx} isLoading />
+    ))
+  );
+
   return (
     <div className="flex flex-col px-4 py-4">
-      <div className="text-2xl mb-4">{typeText}</div>
+      <div className="text-2xl mb-4">
+        {typeText || <Skeleton width={200} />}
+      </div>
       {type === 'featured-playlists' && (
         <GridWrapper>
+          {isLoading && CardLoading}
           {featuredPlaylists.map((playlist) => (
             <CardItem
               key={playlist.id}
@@ -76,7 +94,8 @@ const GenrePage: React.FC = () => {
       )}
       {type === 'top-tracks' && (
         <GridWrapper>
-          {topTracks.map((track) => (
+          {isLoading && CardLoading}
+          {!isLoading && topTracks.map((track) => (
             <CardItem
               key={track.id}
               name={track.name}
@@ -89,7 +108,8 @@ const GenrePage: React.FC = () => {
       )}
       {type === 'top-artists' && (
         <GridWrapper>
-          {topArtists.map((artist) => (
+          {isLoading && CardLoading}
+          {!isLoading && topArtists.map((artist) => (
             <CardItem
               key={artist.id}
               name={artist.name}
@@ -103,7 +123,8 @@ const GenrePage: React.FC = () => {
       )}
       {type === 'new-releases' && (
         <GridWrapper>
-          {newReleases.map((album) => (
+          {isLoading && CardLoading}
+          {!isLoading && newReleases.map((album) => (
             <CardItem
               key={album.id}
               name={album.name}

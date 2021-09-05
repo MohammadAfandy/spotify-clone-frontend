@@ -18,6 +18,7 @@ import GridWrapper from '../components/Grid/GridWrapper';
 
 const ArtistPage: React.FC = () => {
   const params = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [artist, setArtist] = useState<Artist>(Object);
   const [albums, setAlbums] = useState<Album[]>([]);
   const [relatedAtists, setRelatedArtists] = useState<Artist[]>([]);
@@ -33,31 +34,38 @@ const ArtistPage: React.FC = () => {
 
   useEffect(() => {
     const fetchArtist = async () => {
-      const dataArtist = await makeRequest('/artists/' + params.id, {}, isLoggedIn);
-      setArtist(dataArtist.data);
-
-      const dataAlbums = await makeRequest('/artists/' + params.id + '/albums', {
-        params: {
-          limit: 5,
-        },
-      }, isLoggedIn);
-      setAlbums(dataAlbums.data.items);
-
-      const dataRelatedArtists = await makeRequest('/artists/' + params.id + '/related-artists', {
-        params: {
-          limit: 5,
-        },
-      }, isLoggedIn);
-      setRelatedArtists(dataRelatedArtists.data.artists);
-
-      if (isLoggedIn) {
-        const dataFollowed = await ApiSpotify.get('/me/following/contains', {
+      try {
+        setIsLoading(true);
+        const dataArtist = await makeRequest('/artists/' + params.id, {}, isLoggedIn);
+        setArtist(dataArtist.data);
+  
+        const dataAlbums = await makeRequest('/artists/' + params.id + '/albums', {
           params: {
-            type: 'artist',
-            ids: params.id,
+            limit: 5,
           },
-        });
-        setIsFollowed(dataFollowed.data[0]);
+        }, isLoggedIn);
+        setAlbums(dataAlbums.data.items);
+  
+        const dataRelatedArtists = await makeRequest('/artists/' + params.id + '/related-artists', {
+          params: {
+            limit: 5,
+          },
+        }, isLoggedIn);
+        setRelatedArtists(dataRelatedArtists.data.artists);
+  
+        if (isLoggedIn) {
+          const dataFollowed = await ApiSpotify.get('/me/following/contains', {
+            params: {
+              type: 'artist',
+              ids: params.id,
+            },
+          });
+          setIsFollowed(dataFollowed.data[0]);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchArtist();
@@ -95,6 +103,12 @@ const ArtistPage: React.FC = () => {
   ) => {
     togglePlay([artist.uri], selectedOffset, selectedPositionMs);
   };
+
+  const CardLoading = (
+    [...Array(5)].map((_, idx) => (
+      <CardItem key={idx} isLoading />
+    ))
+  );
 
   return (
     <div className="px-4 py-4">
@@ -135,7 +149,8 @@ const ArtistPage: React.FC = () => {
               />
             </div>
             <GridWrapper>
-              {albums.map((album) => (
+              {isLoading && CardLoading}
+              {!isLoading && albums.map((album) => (
                 <CardItem
                   key={album.id}
                   name={album.name}
@@ -157,7 +172,8 @@ const ArtistPage: React.FC = () => {
               />
             </div>
             <GridWrapper>
-              {relatedAtists.slice(0, 5).map((artist) => (
+              {isLoading && CardLoading}
+              {!isLoading && relatedAtists.slice(0, 5).map((artist) => (
                 <CardItem
                   key={artist.id}
                   name={artist.name}

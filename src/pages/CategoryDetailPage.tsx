@@ -10,34 +10,46 @@ import GridWrapper from '../components/Grid/GridWrapper';
 
 const CategoryDetailPage: React.FC = () => {
   const params = useParams<{ id: string }>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [category, setCategory] = useState<Category>(Object);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
   const { isLoggedIn } = useContext(AuthContext);
 
   useEffect(() => {
-    const fetchCategory = async () => {
-      const response = await makeRequest('/browse/categories/' + params.id, {}, isLoggedIn);
-      setCategory(response.data);
-    };
-    const fetchPlayList = async () => {
-      const response = await makeRequest(
-        '/browse/categories/' + params.id + '/playlists',
-        {},
-        isLoggedIn,
-      );
-      setPlaylists(response.data.playlists.items);
+    const fetchCategories = async () => {
+      try {
+        setIsLoading(true);
+        const dataCategories = await makeRequest('/browse/categories/' + params.id, {}, isLoggedIn);
+        setCategory(dataCategories.data);
+        const dataPlaylist = await makeRequest(
+          '/browse/categories/' + params.id + '/playlists',
+          {},
+          isLoggedIn,
+        );
+        setPlaylists(dataPlaylist.data.playlists.items);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    fetchCategory();
-    fetchPlayList();
+    fetchCategories();
   }, [params.id, isLoggedIn]);
+
+  const CardLoading = (
+    [...Array(20)].map((_, idx) => (
+      <CardItem key={idx} isLoading />
+    ))
+  );
 
   return (
     <div className="flex flex-col px-4 py-4">
       <div className="w-full text-4xl font-bold mb-5">{category.name}</div>
       <GridWrapper>
-        {playlists.map((playlist) => (
+        {isLoading && CardLoading}
+        {!isLoading && playlists.map((playlist) => (
           <CardItem
             key={playlist.id}
             name={playlist.name}

@@ -21,6 +21,7 @@
     "react-feather": "^2.0.9",
     "react-helmet": "^6.1.0",
     "react-infinite-scroll-component": "^6.1.0",
+    "react-loading-skeleton": "^2.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-tooltip": "^4.2.21",

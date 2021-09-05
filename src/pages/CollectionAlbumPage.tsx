@@ -7,30 +7,45 @@ import CardItem from '../components/Card/CardItem';
 import GridWrapper from '../components/Grid/GridWrapper';
 
 const CollectionAlbumPage: React.FC = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [albums, setAlbums] = useState<Album[]>([]);
 
   useEffect(() => {
     const fetchCollectionAlbum = async () => {
-      const response = await ApiSpotify.get('/me/albums', {
-        params: { limit: 50 },
-      });
-
-      setAlbums(
-        response.data.items.map((item: { added_at: Date; album: Album }) => ({
-          ...item.album,
-          added_at: item.added_at,
-        }))
-      );
+      try {
+        setIsLoading(true);
+        const response = await ApiSpotify.get('/me/albums', {
+          params: { limit: 50 },
+        });
+  
+        setAlbums(
+          response.data.items.map((item: { added_at: Date; album: Album }) => ({
+            ...item.album,
+            added_at: item.added_at,
+          }))
+        );
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchCollectionAlbum();
   }, []);
 
+  const CardLoading = (
+    [...Array(5)].map((_, idx) => (
+      <CardItem key={idx} isLoading />
+    ))
+  );
+
   return (
     <div className="flex flex-col px-4 py-4">
       <div className="text-2xl mb-4 font-bold">ALBUMS</div>
       <GridWrapper>
-        {albums.map((album) => (
+        {isLoading && CardLoading}
+        {!isLoading && albums.map((album) => (
           <div>
             <CardItem
               key={album.id}

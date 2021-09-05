@@ -51,10 +51,10 @@ const PlayerListTrackMini: React.FC<PlayerListTrackMiniProps> = ({
         <div className="font-light">
           {track.artists &&
             track.artists.map((artist, idx) => (
-              <>
+              <div key={idx}>
                 <TextLink text={artist.name} url={'/artist/' + artist.id} />
                 {idx !== track.artists.length - 1 && ', '}
-              </>
+              </div>
             ))}
         </div>
       </div>

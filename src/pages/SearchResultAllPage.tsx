@@ -25,6 +25,7 @@ const SearchResultAllPage: React.FC = () => {
     history.replace('/');
   }
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [artists, setArtists] = useState<Artist[]>([]);
   const [albums, setAlbums] = useState<Album[]>([]);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -33,29 +34,42 @@ const SearchResultAllPage: React.FC = () => {
 
   useEffect(() => {
     const fetchSearchDetail = async () => {
-      const response = await makeRequest('/search', {
-        params: {
-          q: query,
-          type: type,
-          limit: 50,
-        },
-      }, isLoggedIn);
-
-      if (type === 'album') {
-        setAlbums(response.data.albums.items.filter(removeNull));
-      } else if (type === 'artist') {
-        setArtists(response.data.artists.items.filter(removeNull));
-      } else if (type === 'playlist') {
-        setPlaylists(response.data.playlists.items.filter(removeNull));
-      } else if (type === 'show') {
-        setShows(response.data.shows.items.filter(removeNull));
-      } else if (type === 'episode') {
-        setEpisodes(response.data.episodes.items.filter(removeNull));
+      try {
+        setIsLoading(true);
+        const response = await makeRequest('/search', {
+          params: {
+            q: query,
+            type: type,
+            limit: 50,
+          },
+        }, isLoggedIn);
+  
+        if (type === 'album') {
+          setAlbums(response.data.albums.items.filter(removeNull));
+        } else if (type === 'artist') {
+          setArtists(response.data.artists.items.filter(removeNull));
+        } else if (type === 'playlist') {
+          setPlaylists(response.data.playlists.items.filter(removeNull));
+        } else if (type === 'show') {
+          setShows(response.data.shows.items.filter(removeNull));
+        } else if (type === 'episode') {
+          setEpisodes(response.data.episodes.items.filter(removeNull));
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchSearchDetail();
   }, [type, query, isLoggedIn]);
+
+  const CardLoading = (
+    [...Array(20)].map((_, idx) => (
+      <CardItem key={idx} isLoading />
+    ))
+  );
 
   return (
     <div className="flex flex-col px-4 py-4">
@@ -64,7 +78,8 @@ const SearchResultAllPage: React.FC = () => {
       </div>
       {type === 'artist' && (
         <GridWrapper>
-          {artists.map((artist) => (
+          {isLoading && CardLoading}
+          {!isLoading && artists.map((artist) => (
             <CardItem
               key={artist.id}
               name={artist.name}
@@ -78,7 +93,8 @@ const SearchResultAllPage: React.FC = () => {
       )}
       {type === 'album' && (
         <GridWrapper>
-          {albums.map((album) => (
+          {isLoading && CardLoading}
+          {!isLoading && albums.map((album) => (
             <CardItem
               key={album.id}
               name={album.name}
@@ -92,7 +108,8 @@ const SearchResultAllPage: React.FC = () => {
       )}
       {type === 'playlist' && (
         <GridWrapper>
-          {playlists.map((playlist) => (
+          {isLoading && CardLoading}
+          {!isLoading && playlists.map((playlist) => (
             <CardItem
               key={playlist.id}
               name={playlist.name}
@@ -108,7 +125,8 @@ const SearchResultAllPage: React.FC = () => {
       )}
       {type === 'show' && (
         <GridWrapper>
-          {shows.map((show) => (
+          {isLoading && CardLoading}
+          {!isLoading && shows.map((show) => (
             <CardItem
               key={show.id}
               name={show.name}
@@ -122,7 +140,8 @@ const SearchResultAllPage: React.FC = () => {
       )}
       {type === 'episode' && (
         <GridWrapper>
-          {episodes.map((episode) => (
+          {isLoading && CardLoading}
+          {!isLoading && episodes.map((episode) => (
             <CardItem
               key={episode.id}
               name={episode.name}

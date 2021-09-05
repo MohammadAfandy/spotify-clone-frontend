@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
+import Skeleton from 'react-loading-skeleton';
 import Track from '../types/Track';
 import Artist from '../types/Artist';
 import Album from '../types/Album';
@@ -12,6 +13,7 @@ import TextLink from '../components/Link/TextLink';
 import GridWrapper from '../components/Grid/GridWrapper';
 
 const HomePage: React.FC = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [topTracks, setTopTracks] = useState<Track[]>([]);
   const [topArtists, setTopArtists] = useState<Artist[]>([]);
   const [newReleases, setNewReleases] = useState<Album[]>([]);
@@ -23,63 +25,77 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     const fetchHome = async () => {
-      const params = { limit: 5 };
-      const promises = [
-        makeRequest('/browse/new-releases', { params }, isLoggedIn),
-        makeRequest('/browse/featured-playlists', { params }, isLoggedIn)
-      ];
-      if (isLoggedIn) {
-        promises.push(
-          ApiSpotify.get('/me/top/tracks', { params }),
-          ApiSpotify.get('/me/top/artists', { params })
-        );
-      }
-      const response = await Promise.all(promises);
-
-      setNewReleases(response[0].data.albums.items);
-      setFeaturedPlaylists(response[1].data.playlists.items);
-      setMessage(response[1].data.message);
-
-      if (isLoggedIn) {
-        setTopTracks(response[2].data.items);
-        setTopArtists(response[3].data.items);
+      try {
+        setIsLoading(true);
+        const params = { limit: 5 };
+        const promises = [
+          makeRequest('/browse/new-releases', { params }, isLoggedIn),
+          makeRequest('/browse/featured-playlists', { params }, isLoggedIn)
+        ];
+        if (isLoggedIn) {
+          promises.push(
+            ApiSpotify.get('/me/top/tracks', { params }),
+            ApiSpotify.get('/me/top/artists', { params })
+          );
+        }
+        const response = await Promise.all(promises);
+  
+        setNewReleases(response[0].data.albums.items);
+        setFeaturedPlaylists(response[1].data.playlists.items);
+        setMessage(response[1].data.message);
+  
+        if (isLoggedIn) {
+          setTopTracks(response[2].data.items);
+          setTopArtists(response[3].data.items);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchHome();
   }, [isLoggedIn]);
 
+  const CardLoading = (
+    [...Array(5)].map((_, idx) => (
+      <CardItem key={idx} isLoading />
+    ))
+  );
+
   return (
     <div className="flex flex-col px-4 py-4">
-      {featuredPlaylists.length > 0 && (
-        <div className="mb-8">
-          <div className="mb-4 flex justify-between items-end font-bold w-full">
-            <div className="text-2xl">{message}</div>
-            <TextLink text="See All" url="/genre/featured-playlists" />
-          </div>
-          <GridWrapper>
-            {featuredPlaylists.map((playlist) => (
-              <CardItem
-                key={playlist.id}
-                name={playlist.name}
-                description={playlist.owner.name}
-                image={getHighestImage(playlist.images)}
-                uri={playlist.uri}
-                href={'/playlist/' + playlist.id}
-              />
-            ))}
-          </GridWrapper>
+      <div className="mb-8">
+        <div className="mb-4 flex justify-between items-end font-bold w-full">
+          {isLoading && <Skeleton width={200} height={30} />}
+          {!isLoading && <div className="text-2xl">{message}</div>}
+          <TextLink text="See All" url="/genre/featured-playlists" />
         </div>
-      )}
+        <GridWrapper>
+          {isLoading && CardLoading}
+          {!isLoading && featuredPlaylists.map((playlist) => (
+            <CardItem
+              key={playlist.id}
+              name={playlist.name}
+              description={playlist.owner.name}
+              image={getHighestImage(playlist.images)}
+              uri={playlist.uri}
+              href={'/playlist/' + playlist.id}
+            />
+          ))}
+        </GridWrapper>
+      </div>
 
-      {isLoggedIn && topTracks.length > 0 && (
+      {isLoggedIn && (
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-end font-bold w-full">
             <div className="text-2xl">Your Top Tracks</div>
             <TextLink text="See All" url="genre/top-tracks" />
           </div>
           <GridWrapper>
-            {topTracks.map((track) => (
+            {isLoading && CardLoading}
+            {!isLoading && topTracks.map((track) => (
               <CardItem
                 key={track.id}
                 name={track.name}
@@ -92,14 +108,15 @@ const HomePage: React.FC = () => {
         </div>
       )}
 
-      {isLoggedIn && topArtists.length > 0 && (
+      {isLoggedIn && (
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-end font-bold w-full">
             <div className="text-2xl">Your Top Artists</div>
             <TextLink text="See All" url="genre/top-artists" />
           </div>
           <GridWrapper>
-            {topArtists.map((artist) => (
+            {isLoading && CardLoading}
+            {!isLoading && topArtists.map((artist) => (
               <CardItem
                 key={artist.id}
                 name={artist.name}
@@ -113,26 +130,25 @@ const HomePage: React.FC = () => {
         </div>
       )}
 
-      {newReleases.length > 0 && (
-        <div className="mb-8">
-          <div className="mb-4 flex justify-between items-end font-bold w-full">
-            <div className="text-2xl">New Releases</div>
-            <TextLink text="See All" url="genre/new-releases" />
-          </div>
-          <GridWrapper>
-            {newReleases.map((album) => (
-              <CardItem
-                key={album.id}
-                name={album.name}
-                description={getArtistNames(album.artists)}
-                image={getHighestImage(album.images)}
-                uri={album.uri}
-                href={'/album/' + album.id}
-              />
-            ))}
-          </GridWrapper>
+      <div className="mb-8">
+        <div className="mb-4 flex justify-between items-end font-bold w-full">
+          <div className="text-2xl">New Releases</div>
+          <TextLink text="See All" url="genre/new-releases" />
         </div>
-      )}
+        <GridWrapper>
+          {isLoading && CardLoading}
+          {!isLoading && newReleases.map((album) => (
+            <CardItem
+              key={album.id}
+              name={album.name}
+              description={getArtistNames(album.artists)}
+              image={getHighestImage(album.images)}
+              uri={album.uri}
+              href={'/album/' + album.id}
+            />
+          ))}
+        </GridWrapper>
+      </div>
     </div>
   );
 };
