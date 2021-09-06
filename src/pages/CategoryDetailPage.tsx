@@ -7,6 +7,7 @@ import { makeRequest } from '../utils/helpers';
 
 import CardItem from '../components/Card/CardItem';
 import GridWrapper from '../components/Grid/GridWrapper';
+import Skeleton from 'react-loading-skeleton';
 
 const CategoryDetailPage: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -46,7 +47,10 @@ const CategoryDetailPage: React.FC = () => {
 
   return (
     <div className="flex flex-col px-4 py-4">
-      <div className="w-full text-4xl font-bold mb-5">{category.name}</div>
+      <div className="w-full text-4xl font-bold mb-5">
+        {isLoading && <Skeleton width={200} height={30} />}
+        {!isLoading && category.name}
+      </div>
       <GridWrapper>
         {isLoading && CardLoading}
         {!isLoading && playlists.map((playlist) => (

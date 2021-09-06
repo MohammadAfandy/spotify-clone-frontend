@@ -22,6 +22,7 @@ import CollectionAlbumPage from '../../pages/CollectionAlbumPage';
 import CollectionTrackPage from '../../pages/CollectionTrackPage';
 import CollectionEpisodePage from '../../pages/CollectionEpisodePage';
 import NotFoundPage from '../../pages/NotFoundPage';
+import ScrollToTop from '../Scroll/ScrollToTop';
 
 const MainContent: React.FC = () => {
   return (
@@ -30,6 +31,7 @@ const MainContent: React.FC = () => {
       className="relative main-content overflow-auto flex flex-col w-full sm:ml-52 mt-16"
     >
       <SkeletonTheme color="#202020" highlightColor="#444">
+        <ScrollToTop />
         <Switch>
           <Route
             path="/"

@@ -74,7 +74,7 @@ const SearchResultPage: React.FC = () => {
       <div className="mb-8">
         <div className="mb-4 flex justify-between items-end font-bold w-full">
           <div className="text-2xl">Songs</div>
-          {tracks.length > 0 && <TextLink text="See All" url={location.pathname + '/tracks'} />}
+          {tracks.length > 0 && <TextLink text="See All" url={location.pathname + '/track'} />}
         </div>
         {!isLoading && tracks.map((track) => (
           <PlayerListTrackMini

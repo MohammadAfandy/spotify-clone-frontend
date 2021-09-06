@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import ApiSpotify from '../utils/api-spotify';
 import Track from '../types/Track';
+import Episode from '../types/Episode';
 import Page from '../types/Page';
 import { AuthContext } from '../context/auth-context';
 import { ITEM_LIST_LIMIT } from '../utils/constants';
@@ -10,7 +11,7 @@ const useFetchTracks = (url: string) => {
   const [nextUrl, setNextUrl] = useState<string | null>(null);
   const [increment, setIncrement] = useState(0);
   const [pageData, setPageData] = useState<Page>({} as Page);
-  const [tracks, setTracks] = useState<Track[]>([]);
+  const [tracks, setTracks] = useState<Track[] & Episode[]>([]);
   const [error, setError] = useState<Error | null>(null);
 
   const { isLoggedIn } = useContext(AuthContext);
@@ -33,7 +34,7 @@ const useFetchTracks = (url: string) => {
           response = await makeRequest(url, { params }, isLoggedIn);
         }
 
-        let trackList: Track[] = [];
+        let trackList: Track[] & Episode[] = [];
 
         // sometime, track array object is under 'tracks' object
         if ('tracks' in response.data) {
@@ -104,7 +105,7 @@ const useFetchTracks = (url: string) => {
           }
         }
 
-        let finalResult: Track[] = [];
+        let finalResult: Track[] & Episode[] = [];
         for (const trackLs of trackList) {
           let current = trackListContain.find((v) => v.id === trackLs.id);
           if (!current) {
@@ -121,7 +122,7 @@ const useFetchTracks = (url: string) => {
           setTracks(finalResult);
         }
       } catch (error) {
-        setError(error);
+        setError(error as Error);
       }
     };
 

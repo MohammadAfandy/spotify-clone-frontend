@@ -4,7 +4,7 @@ import Show from '../types/Show';
 import ApiSpotify from '../utils/api-spotify';
 import { AuthContext } from '../context/auth-context';
 import { PlayerContext } from '../context/player-context';
-import useFetchEpisodes from '../hooks/useFetchEpisodes';
+import useFetchTracks from '../hooks/useFetchTracks';
 
 import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
 import PlayerListEpisode from '../components/PlayerList/PlayerListEpisode';
@@ -35,7 +35,7 @@ const ShowPage: React.FC = () => {
     fetchShow();
   }, [params.id, user.id]);
 
-  const { setNextUrl, episodes, pageData } = useFetchEpisodes(
+  const { setNextUrl, tracks: episodes, pageData } = useFetchTracks(
     '/shows/' + params.id + '/episodes'
   );
 

@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import useFetchEpisodes from '../hooks/useFetchEpisodes';
+import useFetchTracks from '../hooks/useFetchTracks';
 import { AuthContext } from '../context/auth-context';
 import { PlayerContext } from '../context/player-context';
 import { EPISODE_LOGO_IMAGE } from '../utils/constants';
@@ -13,7 +13,7 @@ const CollectionEpisodePage: React.FC = () => {
 
   const { togglePlay } = useContext(PlayerContext);
 
-  const { setNextUrl, episodes, pageData } = useFetchEpisodes('/me/episodes');
+  const { setNextUrl, tracks: episodes, pageData } = useFetchTracks('/me/episodes');
 
   const handlePlayFromStart = () => {
     const episodeUris = episodes.map((v) => v.uri);
