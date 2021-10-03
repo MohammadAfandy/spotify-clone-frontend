@@ -378,45 +378,57 @@ const WebPlayback: React.FC = () => {
       )}
       {!error && deviceId && isPlayerActive && isMobile && (
         <div className="flex flex-col m-2 h-full">
-          <div className="flex items-end h-full mb-4">
-            <img
-              src={getSmallestImage(currentTrack.album.images)}
-              alt={currentTrack.album.name}
-              className="mr-4 w-12"
-            />
-            <div className="flex flex-col mr-6 w-60">
-              {currentTrack.type === 'track' && (
-                <div className="font-semibold truncate">
-                  {currentTrack.name}
+          <div className="flex justify-center items-center">
+            <div className="flex items-end mb-4 h-full">
+              <img
+                src={getSmallestImage(currentTrack.album.images)}
+                alt={currentTrack.album.name}
+                className="mr-4 w-12"
+              />
+              <div className="flex flex-col w-40">
+                {currentTrack.type === 'track' && (
+                  <div className="font-semibold truncate">
+                    {currentTrack.name}
+                  </div>
+                )}
+                {currentTrack.type === 'episode' && (
+                  <TextLink
+                    className="font-semibold truncate"
+                    text={currentTrack.name}
+                    url={'/episode/' + currentTrack.id}
+                  />
+                )}
+                <div className="font-light truncate">
+                  {currentTrack.artists.map((artist, idx) => (
+                    <Fragment key={artist.uri}>
+                      <TextLink
+                        text={artist.name}
+                        url={
+                          (currentTrack.type === 'track'
+                            ? '/artist/'
+                            : '/show/') + artist.uri.split(':')[2]
+                        }
+                      />
+                      {idx !== currentTrack.artists.length - 1 && ', '}
+                    </Fragment>
+                  ))}
                 </div>
-              )}
-              {currentTrack.type === 'episode' && (
-                <TextLink
-                  className="font-semibold truncate"
-                  text={currentTrack.name}
-                  url={'/episode/' + currentTrack.id}
-                />
-              )}
-              <div className="font-light truncate">
-                {currentTrack.artists.map((artist, idx) => (
-                  <Fragment key={artist.uri}>
-                    <TextLink
-                      text={artist.name}
-                      url={
-                        (currentTrack.type === 'track'
-                          ? '/artist/'
-                          : '/show/') + artist.uri.split(':')[2]
-                      }
-                    />
-                    {idx !== currentTrack.artists.length - 1 && ', '}
-                  </Fragment>
-                ))}
               </div>
             </div>
-            <PlayPauseIcon
-              className="h-8 w-8 cursor-pointer"
-              onClick={() => handlePlay()}
-            />
+            <div className="flex justify-center items-center ml-2">
+              <SkipBack
+                className="h-6 w-6 mr-2 cursor-pointer"
+                onClick={() => handlePrev()}
+              />
+              <PlayPauseIcon
+                className="h-6 w-6 mr-2 cursor-pointer"
+                onClick={() => handlePlay()}
+              />
+              <SkipForward
+                className="h-6 w-6 cursor-pointer"
+                onClick={() => handleNext()}
+              />
+            </div>
           </div>
           <div className="flex justify-center items-center w-full">
             <input
@@ -426,7 +438,7 @@ const WebPlayback: React.FC = () => {
               max={duration}
               value={positionMs}
               onChange={(e) => setPositionMs(Number(e.target.value))}
-              onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
+              onPointerUp={e =>
                 handleSeek(Number(e.currentTarget.value))
               }
             />
@@ -519,7 +531,7 @@ const WebPlayback: React.FC = () => {
                 max={duration}
                 value={positionMs}
                 onChange={(e) => setPositionMs(Number(e.target.value))}
-                onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
+                onPointerUp={(e: React.MouseEvent<HTMLInputElement>) =>
                   handleSeek(Number(e.currentTarget.value))
                 }
               />
