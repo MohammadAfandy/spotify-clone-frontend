@@ -1,39 +1,18 @@
 import { useContext } from 'react';
 import { AuthContext } from '../../context/auth-context';
-import { PlayerContext } from '../../context/player-context';
 import BannerWrapper from '../Banner/BannerWrapper';
 
 import Button from '../Button/Button';
-import Player from '../Player/Player';
+import WebPlayback from '../Playback/WebPlayback';
 
 const Footer: React.FC = ({ children }) => {
 
   const { isLoggedIn } = useContext(AuthContext);
-  const { isError } = useContext(PlayerContext);
 
   return (
     <div className="fixed bottom-0 w-full h-24">
       {isLoggedIn ? (
-        isError ? (
-          <BannerWrapper>
-            <div className="text-justify text-xs md:text-sm">
-              Currently the Web Playback SDK doesn't support mobile browser (Android / IOS)
-              as stated in the official
-              {' '}
-              <a
-                className="underline"
-                href="https://developer.spotify.com/documentation/web-playback-sdk/#supported-browsers"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Documentation
-              </a>
-              .
-            </div>
-          </BannerWrapper>
-        ) : (
-          <Player />
-        )
+          <WebPlayback />
       ) : (
         <BannerWrapper>
           <div className="flex-grow text-justify text-xs md:text-sm">

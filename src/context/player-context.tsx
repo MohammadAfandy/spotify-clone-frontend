@@ -16,8 +16,6 @@ type PlayerContextObj = {
   changeCurrentTrack: (currentTrack: Track) => void;
   isPlaying: boolean;
   changeIsPlaying: (isPlaying: boolean) => void;
-  isError: boolean;
-  changeIsError: (isError: boolean) => void;
 
   togglePlay: (uris: string[], offset: number, positionMs?: number) => void;
   togglePause: () => void;
@@ -34,8 +32,6 @@ export const PlayerContext = React.createContext<PlayerContextObj>({
   changeCurrentTrack: (currentTrack: Track) => {},
   isPlaying: false,
   changeIsPlaying: (isPlaying: boolean) => {},
-  isError: false,
-  changeIsError: (isError: boolean) => {},
 
   togglePlay: (uris: string[], offset: number, positionMs?: number) => {},
   togglePause: () => {},
@@ -47,7 +43,6 @@ const PlayerProvider: React.FC = ({ children }) => {
   const [positionMs, setPositionMs] = useState<number>(0);
   const [currentTrack, setCurrentTrack] = useState<Track>({} as Track);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [isError, setIsError] = useState<boolean>(false);
 
   const changeCurrentTrack = useCallback((currentTrack: Track) => {
     setCurrentTrack(currentTrack);
@@ -55,10 +50,6 @@ const PlayerProvider: React.FC = ({ children }) => {
 
   const changeIsPlaying = useCallback((isPlaying: boolean) => {
     setIsPlaying(isPlaying);
-  }, []);
-
-  const changeIsError = useCallback((isError: boolean) => {
-    setIsError(isError);
   }, []);
 
   const contextValue = {
@@ -72,8 +63,6 @@ const PlayerProvider: React.FC = ({ children }) => {
     changeCurrentTrack,
     isPlaying,
     changeIsPlaying,
-    isError,
-    changeIsError,
 
     togglePlay: async (uris: string[], offset: number, positionMs = 0) => {
       let newUris = [];
