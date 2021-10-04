@@ -307,7 +307,7 @@ const WebPlayback: React.FC = () => {
 
   useEffect(() => {
     if (isPlayerActive) {
-      const intervalSecond = 10 * 1000; // 1 min
+      const intervalSecond = 60 * 1000; // 1 min
       const interval = setInterval(() => {
         getUserDevices();
       }, intervalSecond);
