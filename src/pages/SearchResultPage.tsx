@@ -78,6 +78,7 @@ const SearchResultPage: React.FC = () => {
         </div>
         {!isLoading && tracks.map((track) => (
           <PlayerListTrackMini
+            key={track.id}
             track={track as Track & Episode}
             handlePlayTrack={(e) => handlePlayTrack(e, track.uri)}
           />
