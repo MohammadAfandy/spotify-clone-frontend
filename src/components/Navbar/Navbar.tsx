@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { Edit2, Home, List, Music, Plus, Search, Trash } from 'react-feather';
+import { Edit2, Home, List, Music, Plus, Search, Trash, X as Close } from 'react-feather';
 import { AuthContext } from '../../context/auth-context';
 import ApiSpotify from '../../utils/api-spotify';
 import { EPISODE_LOGO_IMAGE, LIKED_SONG_IMAGE } from '../../utils/constants';
@@ -9,6 +9,8 @@ import NavbarLink from './NavbarLink';
 import NavbarItem from './NavbarItem';
 import Modal from '../Modal/Modal';
 import Button from '../Button/Button';
+
+import styles from './Navbar.module.css';
 
 type NavbarProps = {
   isNavOpen: boolean;
@@ -165,24 +167,15 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
     </>
   );
 
-  const getNavClass = () => {
-    let navClass = 'hidden sm:flex content-area fixed flex-col bg-black w-52 pr-2 pt-5 h-full animate-slide sm:animate-none';
-    if (isNavOpen) {
-      navClass = 'flex content-area fixed flex-col bg-black w-52 pr-2 pt-5 h-full animate-slide sm:animate-none z-20';
-    }
-    return navClass;
-  };
-
   return (
-    // <nav class="hidden sm:flex fixed top-0 flex-col bg-light-black w-52 pr-2 pt-5 h-full animate-slide sm:animate-none">
-    // <nav
-    //   className="fixed top-0 flex flex-col bg-black w-52 pr-2 pt-5 content-area"
-    // >
-    <nav
-      // className="hidden sm:flex content-area fixed flex-col bg-black w-52 pr-2 pt-5 h-full animate-slide sm:animate-none"
-      className={getNavClass()}
-    >
-      <div className="px-6 mb-8 text-2xl">Spotify Clone</div>
+    <nav className={`content-area ${styles.navbar} ${isNavOpen ? styles.open : ''}`}>
+      <div className="flex items-center px-6 mb-8 text-2xl">
+        <div className="mr-auto">Spotify Clone</div>
+        <Close
+          className="block sm:hidden"
+          onClick={() => handleIsNavOpen(false)}
+        />
+      </div>
       <div className="mb-4">
         <ul>
           <NavbarLink

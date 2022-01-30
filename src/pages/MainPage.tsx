@@ -16,14 +16,6 @@ const MainPage: React.FC = () => {
     setIsNavOpen(state);
   };
 
-  const getOverlayClass = () => {
-    let overlayClass = 'fixed top-0 left-0 h-full w-full -z-1 opacity-0';
-    if (isNavOpen) {
-      overlayClass = 'fixed top-0 left-0 h-full w-full z-10 opacity-100';
-    }
-    return overlayClass;
-  };
-
   return (
     <PlayerProvider>
       <div className="flex">
@@ -42,11 +34,6 @@ const MainPage: React.FC = () => {
         isCapture={isLoggedIn}
         backgroundColor="#2e77d0"
       />
-      <div
-        className={getOverlayClass()}
-        onClick={() => setIsNavOpen(false)}
-      >
-      </div>
     </PlayerProvider>
   );
 };
