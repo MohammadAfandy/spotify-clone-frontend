@@ -28,6 +28,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+img {
+  position: relative;
+  object-fit: cover;
+  object-position: center;
+}
+
 .content-area {
   height: calc(100vh - theme('spacing.24'));
 }
