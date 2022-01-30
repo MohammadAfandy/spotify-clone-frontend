@@ -32,6 +32,9 @@ module.exports = {
       zIndex: {
         '-1': '-1',
       },
+      screens: {
+        'canhover': {'raw': '(hover: hover)'},
+      },
     },
   },
   variants: {

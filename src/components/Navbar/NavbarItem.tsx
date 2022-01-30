@@ -37,7 +37,7 @@ const NavbarItem: React.FC<NavbarItemProps> = ({
       )}
       <div className="mr-auto truncate">{text}</div>
       {editable && (
-        <div className="group-hover:block hidden">
+        <div className="hidden canhover:group-hover:block">
           <Edit2 className="w-4 h-4" onClick={onClickEdit} />
         </div>
       )}

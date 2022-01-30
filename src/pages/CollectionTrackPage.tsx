@@ -12,7 +12,7 @@ import PlayButton from '../components/Button/PlayButton';
 const CollectionTrackPage: React.FC = () => {
   const { user } = useContext(AuthContext);
 
-  const { currentTrack, togglePlay } = useContext(PlayerContext);
+  const { currentTrack, isPlaying, togglePlay, togglePause } = useContext(PlayerContext);
 
   const { setNextUrl, tracks, pageData } = useFetchTracks('/me/tracks');
 
@@ -26,6 +26,10 @@ const CollectionTrackPage: React.FC = () => {
   ) => {
     const trackUris = tracks.map((v) => v.uri);
     togglePlay(trackUris, selectedOffset, selectedPositionMs);
+  };
+
+  const handlePauseTrack = () => {
+    togglePause();
   };
 
   const totalDuration = tracks.reduce((acc, curr) => {
@@ -56,7 +60,9 @@ const CollectionTrackPage: React.FC = () => {
             showAlbum
             showDateAdded
             currentTrack={currentTrack}
+            isPlaying={isPlaying}
             handlePlayTrack={handlePlayTrack}
+            handlePauseTrack={handlePauseTrack}
             handleNext={() => setNextUrl(pageData.next)}
             hasMore={!!pageData.next}
           />

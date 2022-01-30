@@ -25,7 +25,7 @@ const ArtistPage: React.FC = () => {
   const [isShowMore, setIsShowMore] = useState(false);
   const [isFollowed, setIsFollowed] = useState(false);
 
-  const { currentTrack, togglePlay } = useContext(PlayerContext);
+  const { currentTrack, isPlaying, togglePlay, togglePause } = useContext(PlayerContext);
   const { isLoggedIn } = useContext(AuthContext);
 
   const { setNextUrl, tracks, pageData } = useFetchTracks(
@@ -104,6 +104,10 @@ const ArtistPage: React.FC = () => {
     togglePlay([artist.uri], selectedOffset, selectedPositionMs);
   };
 
+  const handlePauseTrack = () => {
+    togglePause();
+  };
+
   const CardLoading = (
     [...Array(5)].map((_, idx) => (
       <CardItem key={idx} isLoading />
@@ -130,7 +134,9 @@ const ArtistPage: React.FC = () => {
             tracks={!isShowMore ? tracks.slice(0, 5) : tracks}
             showAlbum
             currentTrack={currentTrack}
+            isPlaying={isPlaying}
             handlePlayTrack={handlePlayTrack}
+            handlePauseTrack={handlePauseTrack}
             handleNext={() => setNextUrl(pageData.next)}
             hasMore={!!pageData.next}
           />

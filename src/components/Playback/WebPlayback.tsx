@@ -196,10 +196,9 @@ const WebPlayback: React.FC = () => {
               setRepeatMode(repeat_mode);
               changeCurrentTrack(current_track);
               setIsPlayerActive(true);
-              console.log('state from player_state_changed', state);
+              // console.info('state from player_state_changed', state);
   
               initPlayer?.getVolume().then((volume) => {
-                console.log('volume', volume);
                 setVolume(volume * 100);
               });
             } catch (error) {

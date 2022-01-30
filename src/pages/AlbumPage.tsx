@@ -18,7 +18,7 @@ const AlbumPage: React.FC = () => {
   const [album, setAlbum] = useState<Album>(Object);
   const [isFollowed, setIsFollowed] = useState(false);
 
-  const { currentTrack, togglePlay } = useContext(PlayerContext);
+  const { currentTrack, isPlaying, togglePlay, togglePause } = useContext(PlayerContext);
   const { isLoggedIn } = useContext(AuthContext);
 
   const { setNextUrl, tracks, pageData } = useFetchTracks(
@@ -74,6 +74,10 @@ const AlbumPage: React.FC = () => {
     togglePlay([album.uri], selectedOffset, selectedPositionMs);
   };
 
+  const handlePauseTrack = () => {
+    togglePause();
+  };
+
   const totalDuration = tracks.reduce((acc, curr) => {
     return acc + curr.duration_ms;
   }, 0);
@@ -106,7 +110,9 @@ const AlbumPage: React.FC = () => {
           <PlayerListTrack
             tracks={tracks}
             currentTrack={currentTrack}
+            isPlaying={isPlaying}
             handlePlayTrack={handlePlayTrack}
+            handlePauseTrack={handlePauseTrack}
             handleNext={() => setNextUrl(pageData.next)}
             hasMore={!!pageData.next}
           />

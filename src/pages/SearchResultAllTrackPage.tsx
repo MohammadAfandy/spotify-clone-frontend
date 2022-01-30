@@ -8,7 +8,7 @@ import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
 const SearchResultAllTrackPage: React.FC = () => {
   const { query } = useParams<{ query: string }>();
 
-  const { currentTrack, togglePlay } = useContext(PlayerContext);
+  const { currentTrack, isPlaying, togglePlay, togglePause } = useContext(PlayerContext);
 
   const { setNextUrl, tracks, pageData } = useFetchTracks(
     `/search?q=${query}&type=track`
@@ -22,6 +22,10 @@ const SearchResultAllTrackPage: React.FC = () => {
     togglePlay(trackUris, selectedOffset, selectedPositionMs);
   };
 
+  const handlePauseTrack = () => {
+    togglePause();
+  };
+
   return (
     <div className="flex flex-col px-4 py-4">
       <div className="text-2xl mb-4">All songs for “{query}”</div>
@@ -29,7 +33,9 @@ const SearchResultAllTrackPage: React.FC = () => {
         tracks={tracks}
         showAlbum
         currentTrack={currentTrack}
+        isPlaying={isPlaying}
         handlePlayTrack={handlePlayTrack}
+        handlePauseTrack={handlePauseTrack}
         handleNext={() => setNextUrl(pageData.next)}
         hasMore={!!pageData.next}
       />

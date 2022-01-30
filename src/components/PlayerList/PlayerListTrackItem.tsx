@@ -1,5 +1,5 @@
 import { useState, useEffect, Fragment } from 'react';
-import { Play, PlusCircle, Trash, Check } from 'react-feather';
+import { Play, PlusCircle, Trash, Check, Pause } from 'react-feather';
 import Track from '../../types/Track';
 import ApiSpotify from '../../utils/api-spotify';
 import { getSmallestImage, duration, fromNow } from '../../utils/helpers';
@@ -13,10 +13,12 @@ type PlayerListTrackItemProps = {
   offset: number;
   number: number;
   currentTrack: Track;
+  isPlaying?: boolean;
   showAlbum?: boolean;
   showDateAdded?: boolean;
   onRemoveFromPlaylist?: (trackId: string) => void;
   handlePlayTrack: (offset: number, positionMs: number) => void;
+  handlePauseTrack: () => void;
 };
 
 const defaultProps: PlayerListTrackItemProps = {
@@ -24,10 +26,12 @@ const defaultProps: PlayerListTrackItemProps = {
   offset: 0,
   number: 0,
   currentTrack: {} as Track,
+  isPlaying: false,
   showAlbum: false,
   showDateAdded: false,
   onRemoveFromPlaylist: undefined,
   handlePlayTrack: (offset: number, positionMs: number) => {},
+  handlePauseTrack: () => {},
 };
 
 const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
@@ -35,10 +39,12 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
   offset,
   number,
   currentTrack,
+  isPlaying,
   showAlbum,
   showDateAdded,
   onRemoveFromPlaylist,
   handlePlayTrack,
+  handlePauseTrack,
 }) => {
   const [isSaved, setIsSaved] = useState(track.is_saved);
 
@@ -85,18 +91,28 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
               'https://open.scdn.co/cdn/images/equaliser-animated-green.73b73928.gif'
             }
             alt="playing"
-            className="block group-hover:hidden"
+            className="hidden canhover:block canhover:group-hover:hidden"
           />
         ) : (
-          <div className="block group-hover:hidden">{number}</div>
+          <div className="hidden canhover:block canhover:group-hover:hidden">{number}</div>
         )}
-        <Play
-          className="w-6 h-6 cursor-pointer hidden group-hover:block"
-          onClick={() => handlePlayTrack(offset, 0)}
-          data-tip="play"
-          data-for="login-tooltip"
-          data-event="click"
-        />
+        {(isPlaying && currentTrack && track.uri === currentTrack.uri) ? (
+          <Pause
+            className="w-6 h-6 cursor-pointer block canhover:hidden canhover:group-hover:block"
+            onClick={handlePauseTrack}
+            data-tip="play"
+            data-for="login-tooltip"
+            data-event="click"
+          />
+        ) : (
+          <Play
+            className="w-6 h-6 cursor-pointer block canhover:hidden canhover:group-hover:block"
+            onClick={() => handlePlayTrack(offset, 0)}
+            data-tip="play"
+            data-for="login-tooltip"
+            data-event="click"
+          />
+        )}
       </div>
       <div className="flex items-center flex-grow min-w-0 col-start-2 col-end-2">
         {showAlbum && track.album && (

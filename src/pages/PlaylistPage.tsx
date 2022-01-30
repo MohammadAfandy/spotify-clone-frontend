@@ -26,7 +26,7 @@ const PlaylistPage: React.FC = () => {
 
   const { isLoggedIn, user, refreshPlaylists } = useContext(AuthContext);
 
-  const { currentTrack, togglePlay } = useContext(PlayerContext);
+  const { currentTrack, isPlaying, togglePlay, togglePause } = useContext(PlayerContext);
 
   const { setNextUrl, tracks, pageData, forceUpdate } = useFetchTracks(
     '/playlists/' + params.id + '/tracks'
@@ -110,6 +110,10 @@ const PlaylistPage: React.FC = () => {
     togglePlay([playlist.uri], selectedOffset, selectedPositionMs);
   };
 
+  const handlePauseTrack = () => {
+    togglePause();
+  };
+
   const handlePlaySuggestedTrack = (uri: string) => {
     togglePlay([uri], 0, 0);
   };
@@ -184,7 +188,9 @@ const PlaylistPage: React.FC = () => {
                   isOwnPlaylist ? handleRemoveFromPlaylist : undefined
                 }
                 currentTrack={currentTrack}
+                isPlaying={isPlaying}
                 handlePlayTrack={handlePlayTrack}
+                handlePauseTrack={handlePauseTrack}
                 handleNext={() => setNextUrl(pageData.next)}
                 hasMore={!!pageData.next}
                 isIncludeEpisode

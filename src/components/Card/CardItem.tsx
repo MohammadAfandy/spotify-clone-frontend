@@ -75,10 +75,12 @@ const CardItem: React.FC<CardItemProps> = ({
                 <Music className="w-24 h-24" />
               </div>
             )}
-            <PlayButton
-              className="opacity-0 group-hover:opacity-100 absolute bottom-4 right-5 h-12 w-12"
-              onClick={onClickPlay ? onClickPlay : handleClickPlay}
-            />
+            <div className="hidden md:block opacity-0 canhover:group-hover:opacity-100 transition duration-500 ease-in-out">
+              <PlayButton
+                className="absolute bottom-4 right-5 h-12 w-12"
+                onClick={onClickPlay ? onClickPlay : handleClickPlay}
+              />
+            </div>
           </div>
           <div className="text-sm font-bold mt-2">
             <div className="truncate">{name}</div>

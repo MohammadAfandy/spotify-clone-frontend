@@ -9,10 +9,12 @@ import styles from './PlayerListTrack.module.css';
 type PlayerListTrackProps = {
   tracks: Track[];
   currentTrack: Track;
+  isPlaying?: boolean;
   showAlbum?: boolean;
   showDateAdded?: boolean;
   onRemoveFromPlaylist?: (trackId: string) => void;
   handlePlayTrack: (offset: number, positionMs: number) => void;
+  handlePauseTrack: () => void;
   handleNext: () => void;
   hasMore: boolean;
   isIncludeEpisode?: boolean;
@@ -21,10 +23,12 @@ type PlayerListTrackProps = {
 const defaultProps: PlayerListTrackProps = {
   tracks: [],
   currentTrack: {} as Track,
+  isPlaying: false,
   showAlbum: false,
   showDateAdded: false,
   onRemoveFromPlaylist: undefined,
   handlePlayTrack: (offset: number, positionMs: number) => {},
+  handlePauseTrack: () => {},
   handleNext: () => {},
   hasMore: false,
   isIncludeEpisode: false,
@@ -33,10 +37,12 @@ const defaultProps: PlayerListTrackProps = {
 const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
   tracks,
   currentTrack,
+  isPlaying,
   showAlbum,
   showDateAdded,
   onRemoveFromPlaylist,
   handlePlayTrack,
+  handlePauseTrack,
   handleNext,
   hasMore,
   isIncludeEpisode,
@@ -87,7 +93,9 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
                   showDateAdded={showDateAdded}
                   onRemoveFromPlaylist={onRemoveFromPlaylist}
                   currentTrack={currentTrack}
+                  isPlaying={isPlaying}
                   handlePlayTrack={handlePlayTrack}
+                  handlePauseTrack={handlePauseTrack}
                 />
               );
             }
