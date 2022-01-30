@@ -167,12 +167,12 @@ const PlaylistPage: React.FC = () => {
           />
           <div className="mb-4 flex items-center justify-center sm:justify-start">
             <PlayButton
-              className="w-16 h-16 mr-6"
+              className="w-16 h-16"
               onClick={handlePlayFromStart}
             />
             {!isOwnPlaylist && (
               <LikeButton
-                className="w-8 h-8"
+                className="w-8 h-8 ml-6"
                 onClick={handleFollow}
                 isActive={isFollowed}
               />

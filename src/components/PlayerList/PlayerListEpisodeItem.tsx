@@ -80,7 +80,7 @@ const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
             </div>
             <div>{duration(episode.duration_ms, true)}</div>
           </div>
-          <div className="hidden group-hover:flex items-center">
+          <div className="flex canhover:hidden canhover:group-hover:flex items-center">
             {isSaved ? (
               <Check
                 className="mr-4 w-8 h-8 cursor-pointer text-green-400"

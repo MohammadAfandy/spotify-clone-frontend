@@ -84,8 +84,8 @@ const ShowPage: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-12 gap-6">
-            <div className="col-span-8">
+          <div className="flex flex-col-reverse md:grid grid-cols-12 gap-6">
+            <div className="md:col-span-8">
               <div className="text-lg font-bold mb-4">All Episode</div>
               <PlayerListEpisode
                 episodes={episodes}
@@ -94,7 +94,7 @@ const ShowPage: React.FC = () => {
                 hasMore={!!pageData.next}
               />
             </div>
-            <div className="col-span-4">
+            <div className="md:col-span-4">
               <div className="text-lg font-bold mb-4">About</div>
               <div className="font-light">{show.description}</div>
             </div>
