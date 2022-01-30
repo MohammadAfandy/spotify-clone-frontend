@@ -8,7 +8,8 @@ import {
   duration,
 } from '../../utils/helpers';
 
-import TextLink from '../Link/TextLink';
+import Explicit from '../Text/Explicit';
+import TextLink from '../Text/TextLink';
 
 type PlayerListEpisodeItemProps = {
   episode: Episode;
@@ -73,11 +74,7 @@ const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
               className="mr-4 w-8 h-8 cursor-pointer"
               onClick={() => handlePlayEpisode(number - 1, 0)}
             />
-            {episode.explicit && (
-              <div className="bg-gray-100 border border-black text-black rounded-xs px-1 text-xs mr-2">
-                E
-              </div>
-            )}
+            {episode.explicit && <Explicit />}
             <div className="mr-2">
               {formatDate(episode.release_date, 'MMM DD')}
             </div>

@@ -4,6 +4,8 @@ import { Clock } from 'react-feather';
 
 import PlayerListTrackItem from './PlayerListTrackItem';
 
+import styles from './PlayerListTrack.module.css';
+
 type PlayerListTrackProps = {
   tracks: Track[];
   currentTrack: Track;
@@ -41,65 +43,58 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
 }) => {
   let number = 0;
   return (
-    <div className="flex flex-col w-full">
-      <div className="text-sm">
-        <div className="flex border-b border-gray-500 py-2">
-          <div className="flex justify-center mr-2" style={{ flexBasis: '5%' }}>
-            #
+    <div className={styles.playerGrid + " flex flex-col w-full"}>
+      <div className="border-b border-gray-500" data-wrapper>
+        <div className="text-center col-start-1 col-end-1">
+          #
+        </div>
+        <div className="col-start-2 col-end-2">TITLE</div>
+        {showAlbum && (
+          <div className="hidden lg:block col-start-3 col-end-3">
+            {!isIncludeEpisode && `ALBUM`}
+            {isIncludeEpisode && `ALBUM OR PODCAST`}
           </div>
-          <div className="flex flex-grow">TITLE</div>
-          {showAlbum && (
-            <div className="hidden lg:flex mr-2" style={{ flexBasis: '30%' }}>
-              {!isIncludeEpisode && `ALBUM`}
-              {isIncludeEpisode && `ALBUM OR PODCAST`}
-            </div>
-          )}
-          {showDateAdded && (
-            <div className="hidden md:flex mr-2" style={{ flexBasis: '15%' }}>
-              DATE ADDED
-            </div>
-          )}
-          <div className="flex mr-2" style={{ flexBasis: '5%' }}></div>
-            {onRemoveFromPlaylist && (
-              <div className=" mr-2" style={{ flexBasis: '5%' }}></div>
-            )}
-          <div className="flex mr-2" style={{ flexBasis: '5%' }}>
-            <Clock className="w-4" />
+        )}
+        {showDateAdded && (
+          <div className="hidden md:block col-start-4 col-end-4">
+            DATE ADDED
           </div>
+        )}
+        <div className="col-start-5 col-end-5"></div>
+        <div className="col-start-6 col-end-6">
+          <Clock className="w-4" />
         </div>
       </div>
-      <div className="">
-        {tracks && (
-          <InfiniteScroll
-            dataLength={tracks.length}
-            next={handleNext}
-            hasMore={hasMore}
-            loader={<h4>Loading ...</h4>}
-            scrollableTarget="main-container"
-          >
-            {/* sometimes, the track object is null */}
-            {tracks.map((track, idx) => {
-              if (track.id != null) {
-                number++;
-                return (
-                  <PlayerListTrackItem
-                    key={track.id}
-                    track={track}
-                    offset={idx}
-                    number={number}
-                    showAlbum={showAlbum}
-                    showDateAdded={showDateAdded}
-                    onRemoveFromPlaylist={onRemoveFromPlaylist}
-                    currentTrack={currentTrack}
-                    handlePlayTrack={handlePlayTrack}
-                  />
-                );
-              }
-              return null;
-            })}
-          </InfiniteScroll>
-        )}
-      </div>
+      {tracks && (
+        <InfiniteScroll
+          dataLength={tracks.length}
+          next={handleNext}
+          hasMore={hasMore}
+          loader={<h4>Loading ...</h4>}
+          scrollableTarget="main-container"
+        >
+          {/* sometimes, the track object is null */}
+          {tracks.map((track, idx) => {
+            if (track.id != null) {
+              number++;
+              return (
+                <PlayerListTrackItem
+                  key={track.id}
+                  track={track}
+                  offset={idx}
+                  number={number}
+                  showAlbum={showAlbum}
+                  showDateAdded={showDateAdded}
+                  onRemoveFromPlaylist={onRemoveFromPlaylist}
+                  currentTrack={currentTrack}
+                  handlePlayTrack={handlePlayTrack}
+                />
+              );
+            }
+            return null;
+          })}
+        </InfiniteScroll>
+      )}
     </div>
   );
 };

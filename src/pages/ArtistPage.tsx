@@ -12,7 +12,7 @@ import CardItem from '../components/Card/CardItem';
 import PlayButton from '../components/Button/PlayButton';
 import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
 import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
-import TextLink from '../components/Link/TextLink';
+import TextLink from '../components/Text/TextLink';
 import FolllowButton from '../components/Button/FollowButton';
 import GridWrapper from '../components/Grid/GridWrapper';
 

@@ -5,7 +5,8 @@ import ApiSpotify from '../../utils/api-spotify';
 import { getSmallestImage, duration, fromNow } from '../../utils/helpers';
 
 import LikeButton from '../Button/LikeButton';
-import TextLink from '../Link/TextLink';
+import Explicit from '../Text/Explicit';
+import TextLink from '../Text/TextLink';
 
 type PlayerListTrackItemProps = {
   track: Track;
@@ -76,11 +77,8 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
   };
 
   return (
-    <div className="flex py-2 hover:bg-gray-100 hover:bg-opacity-25 rounded-md text-sm">
-      <div
-        className="group flex justify-center items-center mr-2"
-        style={{ flexBasis: '5%' }}
-      >
+    <div className="hover:bg-gray-100 hover:bg-opacity-25 rounded-md" data-wrapper>
+      <div className="group flex justify-center items-center col-start-1 col-end-1">
         {currentTrack && track.uri === currentTrack.uri ? (
           <img
             src={
@@ -100,12 +98,12 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
           data-event="click"
         />
       </div>
-      <div className="flex items-center flex-grow min-w-0">
+      <div className="flex items-center flex-grow min-w-0 col-start-2 col-end-2">
         {showAlbum && track.album && (
           <img
             src={getSmallestImage(track.album.images)}
             alt={track.album.name}
-            className="mr-2 w-10"
+            className="w-10 mr-2"
           />
         )}
         <div className="flex flex-col justify-end truncate">
@@ -120,6 +118,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
             />
           )}
           <div className="font-light truncate">
+            {track.explicit && <Explicit />}
             {track.artists &&
               track.artists.map((artist, idx) => (
                 <Fragment key={artist.id}>
@@ -137,10 +136,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
         </div>
       </div>
       {showAlbum && track.album && (
-        <div
-          className="hidden lg:flex items-center min-w-0 mr-2"
-          style={{ flexBasis: '30%' }}
-        >
+        <div className="hidden lg:flex items-center min-w-0 col-start-3 col-end-3">
           <TextLink
             className="truncate"
             text={track.album.name}
@@ -149,11 +145,11 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
         </div>
       )}
       {showDateAdded && (
-        <div className="hidden md:flex items-center mr-2" style={{ flexBasis: '15%' }}>
+        <div className="hidden md:flex items-center col-start-4 col-end-4">
           {fromNow(track.added_at)}
         </div>
       )}
-      <div className="flex items-center mr-2" style={{ flexBasis: '5%' }}>
+      <div className="flex items-center col-start-5 col-end-5">
         {track.type === 'track' && (
           <LikeButton
             isActive={isSaved}
@@ -171,17 +167,16 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
               className="cursor-pointer"
               onClick={() => handleAddToSavedEpisode(track.id)}
             />
-          ))}
-      </div>
-      {onRemoveFromPlaylist && (
-        <div className="flex items-center mr-2" style={{ flexBasis: '5%' }}>
+          ))
+        }
+        {onRemoveFromPlaylist && (
           <Trash
-            className="cursor-pointer"
+            className="cursor-pointer ml-4"
             onClick={() => onRemoveFromPlaylist(track.uri)}
           />
-        </div>
-      )}
-      <div className="flex items-center mr-2" style={{ flexBasis: '5%' }}>
+        )}
+      </div>
+      <div className="flex items-center col-start-6 col-end-6">
         {duration(track.duration_ms)}
       </div>
     </div>

@@ -9,7 +9,7 @@ import { AuthContext } from '../context/auth-context';
 import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 
 import CardItem from '../components/Card/CardItem';
-import TextLink from '../components/Link/TextLink';
+import TextLink from '../components/Text/TextLink';
 import GridWrapper from '../components/Grid/GridWrapper';
 
 const HomePage: React.FC = () => {

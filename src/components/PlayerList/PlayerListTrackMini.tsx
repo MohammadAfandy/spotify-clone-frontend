@@ -4,7 +4,7 @@ import Episode from '../../types/Episode';
 import { getSmallestImage, duration } from '../../utils/helpers';
 
 import Button from '../Button/Button';
-import TextLink from '../Link/TextLink';
+import TextLink from '../Text/TextLink';
 
 type PlayerListTrackMiniProps = {
   track: Track & Episode;

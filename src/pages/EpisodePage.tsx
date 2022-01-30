@@ -9,7 +9,7 @@ import { PlusCircle, Check } from 'react-feather';
 import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
 import PlayButton from '../components/Button/PlayButton';
 import Button from '../components/Button/Button';
-import TextLink from '../components/Link/TextLink';
+import TextLink from '../components/Text/TextLink';
 
 const EpisodePage: React.FC = () => {
   const params = useParams<{ id: string }>();

@@ -27,7 +27,7 @@ import { PLAYER_NAME } from '../../utils/constants';
 
 import Button from '../Button/Button';
 import Modal from '../Modal/Modal';
-import TextLink from '../Link/TextLink';
+import TextLink from '../Text/TextLink';
 
 declare global {
   interface Window {
