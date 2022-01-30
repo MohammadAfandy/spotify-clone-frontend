@@ -58,6 +58,13 @@ const useFetchTracks = (url: string) => {
                   added_at: item.added_at,
                 })
               );
+            } else if ('episode' in response.data.items[0]) {
+              trackList = response.data.items.map(
+                (item: { added_at: Date; episode: Episode }) => ({
+                  ...item.episode,
+                  added_at: item.added_at,
+                })
+              );
             } else {
               trackList = response.data.items;
             }

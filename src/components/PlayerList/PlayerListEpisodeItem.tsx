@@ -6,7 +6,6 @@ import {
   getHighestImage,
   formatDate,
   duration,
-  ellipsis,
 } from '../../utils/helpers';
 
 import TextLink from '../Link/TextLink';
@@ -65,8 +64,8 @@ const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
           text={episode.name}
           url={'/episode/' + episode.id}
         />
-        <div className="mb-2 text-sm font-light">
-          {ellipsis(episode.description, 200)}
+        <div className="mb-2 text-sm font-light line-clamp-2">
+          {episode.description}
         </div>
         <div className="flex items-center text-xs">
           <div className="flex items-center mr-auto">
