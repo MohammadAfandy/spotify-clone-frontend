@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext, Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
-import { isMobile } from 'react-device-detect';
 import {
   getCookie,
   setCookie,
@@ -22,7 +21,7 @@ import {
   SkipForward,
   Volume,
 } from 'react-feather';
-import { PLAYER_NAME } from '../../utils/constants';
+import { BACKEND_URI, PLAYER_NAME } from '../../utils/constants';
 
 import Button from '../Button/Button';
 import TextLink from '../Text/TextLink';
@@ -92,6 +91,8 @@ const mapRepeatMode = [
   { state: 'track', mode: 2, text: '1' },
 ];
 
+const intervalPlayState = 10 * 1000;
+
 const WebPlayback: React.FC = () => {
   const history = useHistory();
   const {
@@ -115,21 +116,11 @@ const WebPlayback: React.FC = () => {
 
   const [positionMs, setPositionMs] = useState(0);
 
-  const getUserDevices = async () => {
-    const response = await ApiSpotify.get('/me/player/devices');
-    const devices = response.data.devices;
-    setDevices(devices);
-    setActiveDevice(devices.find((device: Device) => device.is_active));
-    return devices;
-  };
-
   const transferPlayback = async (device_id: string): Promise<void> => {
     await ApiSpotify.put('/me/player', { device_ids: [device_id] });
   };
 
   useEffect(() => {
-    getUserDevices();
-
     const script = document.createElement('script');
     script.type = 'text/javascript';
     script.async = true;
@@ -141,8 +132,24 @@ const WebPlayback: React.FC = () => {
     window.onSpotifyWebPlaybackSDKReady = () => {
       initPlayer = new window.Spotify.Player({
         name: PLAYER_NAME,
-        getOAuthToken: (cb: (token: string) => {}) => {
-          cb(getCookie('access_token'));
+        getOAuthToken: async (cb: (token: string) => {}) => {
+          const refreshToken = getCookie('refresh_token');
+          if (refreshToken) {
+            const response = await fetch(BACKEND_URI + '/refresh_token', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ refresh_token: refreshToken }),
+            });
+            const res = await response.json();
+            const accessToken = res.access_token;
+            setCookie('access_token', accessToken);
+            cb(accessToken);
+          } else {
+            console.error('refresh token not set');
+            cb(getCookie('access_token'));
+          }
         },
         // volume: 1,
       });
@@ -152,18 +159,21 @@ const WebPlayback: React.FC = () => {
 
         initPlayer.addListener('initialization_error', (state) => {
           setError(state.message);
+          setIsPlayerActive(false);
           console.error('initialization_error', state.message);
         });
         initPlayer.addListener('authentication_error', (state) => {
           setError(state.message);
+          setIsPlayerActive(false);
           console.error('authentication_error', state.message);
         });
         initPlayer.addListener('account_error', (state) => {
           setError(state.message);
+          setIsPlayerActive(false);
           console.error('account_error', state.message);
         });
         initPlayer.addListener('playback_error', (state) => {
-          setError(state.message);
+          // setError(state.message);
           console.error('playback_error', state.message);
         });
 
@@ -186,11 +196,12 @@ const WebPlayback: React.FC = () => {
               setRepeatMode(repeat_mode);
               changeCurrentTrack(current_track);
               setIsPlayerActive(true);
-              // console.info('state from player_state_changed', state);
-  
+              
               initPlayer?.getVolume().then((volume) => {
                 setVolume(volume * 100);
               });
+
+              // console.info('state from player_state_changed', state);
             } catch (error) {
               console.error(error);
             }
@@ -226,27 +237,68 @@ const WebPlayback: React.FC = () => {
   };
 
   const handlePlay = async (): Promise<void> => {
-    player && player.togglePlay();
+    if (isPlayerActive) {
+      player && player.togglePlay();
+    } else {
+      if (isPlaying) {
+        await ApiSpotify.put('me/player/pause');
+        getPlaybackState();
+      } else {
+        await ApiSpotify.put('me/player/play');
+        getPlaybackState();
+      }
+    }
   };
 
   const handlePrev = async (): Promise<void> => {
-    if (positionMs <= 3000) {
-      player && player.previousTrack();
+    if (isPlayerActive) {
+      if (positionMs <= 3000) {
+        player && player.previousTrack();
+      } else {
+        player && player.seek(0);
+      }
     } else {
-      player && player.seek(0);
+      if (positionMs <= 3000) {
+        await ApiSpotify.put('me/player/previous');
+        getPlaybackState();
+      } else {
+        await ApiSpotify.put('me/player/seek', null, { params: {
+          position_ms: 0,
+        }});
+        getPlaybackState();
+      }
     }
   };
 
   const handleNext = async (): Promise<void> => {
-    player && player.nextTrack();
+    if (isPlayerActive) {
+      player && player.nextTrack();
+    } else {
+      await ApiSpotify.post('me/player/next');
+      getPlaybackState();
+    }
   };
 
   const handleSeek = async (position_ms: number): Promise<void> => {
-    player && player.seek(position_ms);
+    if (isPlayerActive) {
+      player && player.seek(position_ms);
+    } else {
+      await ApiSpotify.put('me/player/seek', null, { params: {
+        position_ms,
+      }});
+      getPlaybackState();
+    }
   };
 
   const handleVolume = async (volume_percent: number): Promise<void> => {
-    player && player.setVolume(volume_percent / 100);
+    if (isPlayerActive) {
+      player && player.setVolume(volume_percent / 100);
+    } else {
+      await ApiSpotify.put('me/player/seek', null, { params: {
+        volume_percent,
+      }});
+      getPlaybackState();
+    }
   };
 
   const handleRepeatMode = async (): Promise<void> => {
@@ -260,12 +312,18 @@ const WebPlayback: React.FC = () => {
       state = mapRepeatMode[0].state;
     }
     await ApiSpotify.put('me/player/repeat', null, { params: { state } });
+    if (!isPlayerActive) {
+      getPlaybackState();
+    }
   };
 
   const handleShuffle = async (): Promise<void> => {
     await ApiSpotify.put('me/player/shuffle', null, {
       params: { state: !shuffle },
     });
+    if (!isPlayerActive) {
+      getPlaybackState();
+    }
   };
 
   const handleSelectDevice = async (
@@ -274,36 +332,74 @@ const WebPlayback: React.FC = () => {
   ): Promise<void> => {
     event.stopPropagation();
     await transferPlayback(selectedDeviceId);
+    getUserDevices();
+    if (!isPlayerActive) {
+      getPlaybackState();
+    }
+  };
+
+  const getUserDevices = async () => {
+    const response = await ApiSpotify.get('/me/player/devices');
+    const devices = response.data.devices;
+    setDevices(devices);
+    setActiveDevice(devices.find((device: Device) => device.is_active));
+  };
+
+  const getPlaybackState = async (): Promise<void> => {
+    const { data: responseData } = await ApiSpotify.get('me/player');
+    console.log({ responseData });
+    if (!responseData) {
+      if (deviceId) handlePlayThisDevice();
+    } else {
+      const {
+        item,
+        progress_ms,
+        device,
+        shuffle_state,
+        repeat_state,
+        is_playing,
+      } = responseData;
+  
+      const {
+        duration_ms,
+      } = item;
+  
+      setDuration(duration_ms);
+      setPositionMs(progress_ms);
+      changeIsPlaying(is_playing);
+      setShuffle(shuffle_state);
+      setRepeatMode(mapRepeatMode.find((v) => v.state === repeat_state)?.mode || 0);
+      setVolume(device.volume_percent);
+      changeCurrentTrack(item);
+    }
   };
 
   // get player state from another device every 5 second if our device is not current active device
   // because event player_state_changed not fired when we are not in local playback / device
   // and currenty I'm not doing this because of rate limit
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     // if (activeDevice.id !== deviceId) {
-  //       getPlaybackState();
-  //     // }
-  //   }, 10 * 1000);
+  useEffect(() => {
+    getPlaybackState(); 
+    const interval = setInterval(() => {
+      if (!isPlayerActive && deviceId) {
+        getPlaybackState();
+      }
+    }, intervalPlayState);
 
-  //   return () => clearInterval(interval);
-  // // }, [activeDevice.id, deviceId]);
-  // }, []);
+    return () => clearInterval(interval);
+  }, [isPlayerActive, deviceId]);
 
   const getButtonColor = (isActive: boolean): string => {
     return isActive ? 'rgb(52, 211, 153)' : 'white';
   };
 
   useEffect(() => {
-    if (isPlayerActive) {
-      const intervalSecond = 60 * 1000; // 1 min
+      getUserDevices();
       const interval = setInterval(() => {
         getUserDevices();
-      }, intervalSecond);
+      }, intervalPlayState);
   
       return () => clearInterval(interval);
-    }
-  }, [isPlayerActive]);
+  }, []);
 
   useEffect(() => {
     if (isPlaying) {
@@ -326,7 +422,13 @@ const WebPlayback: React.FC = () => {
     <div className="h-full w-full border-t-2 border-gray-200 border-opacity-50 bg-black text-sm">
       {error && (
         <div className="flex flex-col items-center justify-center h-full">
-          {error}
+          <div className="mb-2 text-red-400">{error}</div>
+          <Button
+            className=""
+            text="Reload Page"
+            onClick={() => window.location.reload()}
+            color="green"
+          />
         </div>
       )}
       {!error && !deviceId && (
@@ -334,87 +436,7 @@ const WebPlayback: React.FC = () => {
           Loading ...
         </div>
       )}
-      {!error && deviceId && !isPlayerActive && (
-        <div className="flex flex-col items-center justify-center h-full">
-          <div className="mb-2">You are not listening on this Device</div>
-          <Button
-            className=""
-            text="Play Here"
-            onClick={() => handlePlayThisDevice()}
-            color="green"
-          />
-        </div>
-      )}
-      {!error && deviceId && isPlayerActive && isMobile && (
-        <div className="flex flex-col m-2 h-full">
-          <div className="flex justify-center items-center">
-            <div className="flex items-end mb-4 h-full">
-              <img
-                src={getSmallestImage(currentTrack.album.images)}
-                alt={currentTrack.album.name}
-                className="mr-4 w-12"
-              />
-              <div className="flex flex-col w-40">
-                {currentTrack.type === 'track' && (
-                  <div className="font-semibold truncate">
-                    {currentTrack.name}
-                  </div>
-                )}
-                {currentTrack.type === 'episode' && (
-                  <TextLink
-                    className="font-semibold truncate"
-                    text={currentTrack.name}
-                    url={'/episode/' + currentTrack.id}
-                  />
-                )}
-                <div className="font-light truncate">
-                  {currentTrack.artists.map((artist, idx) => (
-                    <Fragment key={artist.uri}>
-                      <TextLink
-                        text={artist.name}
-                        url={
-                          (currentTrack.type === 'track'
-                            ? '/artist/'
-                            : '/show/') + artist.uri.split(':')[2]
-                        }
-                      />
-                      {idx !== currentTrack.artists.length - 1 && ', '}
-                    </Fragment>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-center items-center ml-2">
-              <SkipBack
-                className="h-6 w-6 mr-2 cursor-pointer"
-                onClick={() => handlePrev()}
-              />
-              <PlayPauseIcon
-                className="h-6 w-6 mr-2 cursor-pointer"
-                onClick={() => handlePlay()}
-              />
-              <SkipForward
-                className="h-6 w-6 cursor-pointer"
-                onClick={() => handleNext()}
-              />
-            </div>
-          </div>
-          <div className="flex justify-center items-center w-full">
-            <input
-              className="h-1 w-full"
-              type="range"
-              id="progressbar"
-              max={duration}
-              value={positionMs}
-              onChange={(e) => setPositionMs(Number(e.target.value))}
-              onPointerUp={e =>
-                handleSeek(Number(e.currentTarget.value))
-              }
-            />
-          </div>
-        </div>
-      )}
-      {!error && deviceId && isPlayerActive && !isMobile && (
+      {!error && deviceId && (
         <div className="grid grid-cols-3 justify-center items-center h-full">
           <div className="flex items-end ml-10">
             {currentTrack && currentTrack.uri && (
@@ -536,6 +558,9 @@ const WebPlayback: React.FC = () => {
               onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
                 handleVolume(Number(e.currentTarget.value))
               }
+              onTouchEnd={(e: React.TouchEvent<HTMLInputElement>) =>
+                handleVolume(Number(e.currentTarget.value))
+              }
             />
           </div>
 
@@ -549,7 +574,7 @@ const WebPlayback: React.FC = () => {
               <p className="text-xl mb-2">Select Device</p>
               {/* <div className={`cursor-pointer`}>This Player</div> */}
               {devices
-                // .filter(({ id }) => id !== deviceId)
+                // .filter(({ id }, idx, arr) => idx === arr.findIndex((v: Device) => v.id === id))
                 .map(({ name, id }) => (
                   <div
                     key={id}
@@ -558,7 +583,7 @@ const WebPlayback: React.FC = () => {
                     }`}
                     onClick={(e) => handleSelectDevice(e, id)}
                   >
-                    {name}
+                    {name} {id === deviceId && (<b>(This Player)</b>)}
                   </div>
                 ))}
             </div>
