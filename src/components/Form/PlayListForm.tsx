@@ -149,9 +149,9 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
 
   return (
     <>
-      <div className="flex h-52">
+      <div className="flex flex-col items-center sm:flex-row sm:items-start">
         <div
-          className={`group relative flex justify-center items-center w-80 h-48 bg-light-black-2 rounded-md mr-4`}
+          className="group relative flex justify-center items-center w-52 sm:w-80 h-48 bg-light-black-2 rounded-md sm:mr-4"
         >
           <label htmlFor="input-image">
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 group-hover:block hidden cursor-pointer z-10 w-full text-center">
@@ -171,10 +171,10 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
           ) : playlistImage ? (
             imageContainer(playlistImage, playlistName || '', false)
           ) : (
-            <Music className="w-24 h-24 group-hover:hidden block" />
+            <Music className="w-3/4 h-3/4 group-hover:hidden block" />
           )}
         </div>
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full mt-4 sm:mt-0">
           <input
             onChange={(e) => setPlaylistName(e.target.value)}
             value={playlistName}
@@ -205,7 +205,7 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
         choose to upload. Please make sure you have the right to upload the
         image.
       </div>
-      <div className="flex justify-end">
+      <div className="flex justify-center sm:justify-end mt-4">
         {id && isOwn && (
           <Button
             className="mr-2"
@@ -214,7 +214,11 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
             color="red"
           />
         )}
-        <Button text="Save" onClick={handleSavePlaylist} color="green" />
+        <Button
+          text="Save"
+          onClick={handleSavePlaylist}
+          color="green"
+        />
       </div>
     </>
   );
