@@ -15,6 +15,19 @@ import PlayerListTrackMini from '../components/PlayerList/PlayerListTrackMini';
 import PlayButton from '../components/Button/PlayButton';
 import LikeButton from '../components/Button/LikeButton';
 import SearchInput from '../components/Input/SearchInput';
+import Button from '../components/Button/Button';
+import Modal from '../components/Modal/Modal';
+import PlayListForm from '../components/Form/PlayListForm';
+
+const initialPlaylistForm = {
+  id: '',
+  name: '',
+  description: '',
+  image: '',
+  isPublic: false,
+  isOwn: false,
+  previewImage: '',
+};
 
 const PlaylistPage: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -24,6 +37,9 @@ const PlaylistPage: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [suggested, setSuggested] = useState<Track[]>([]);
 
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [playlistForm, setPlaylistForm] = useState(initialPlaylistForm);
+
   const { isLoggedIn, user, refreshPlaylists } = useContext(AuthContext);
 
   const { currentTrack, isPlaying, togglePlay, togglePause } = useContext(PlayerContext);
@@ -31,6 +47,7 @@ const PlaylistPage: React.FC = () => {
   const { setNextUrl, tracks, pageData, forceUpdate } = useFetchTracks(
     '/playlists/' + params.id + '/tracks'
   );
+  
 
   useEffect(() => {
     const fetchPlaylist = async () => {
@@ -47,8 +64,8 @@ const PlaylistPage: React.FC = () => {
       setPlaylist(dataPlaylist.data);
       setIsOwnPlaylist(dataPlaylist.data.owner.id === user.id);
     };
-    fetchPlaylist();
-  }, [params.id, user.id, isLoggedIn]);
+    if (!isOpenModal) fetchPlaylist();
+  }, [params.id, user.id, isLoggedIn, isOpenModal]);
 
   useEffect(() => {
     const fetchSearch = async () => {
@@ -129,6 +146,10 @@ const PlaylistPage: React.FC = () => {
     forceUpdate();
   };
 
+  const totalDuration = tracks.reduce((acc, curr) => {
+    return acc + curr.duration_ms;
+  }, 0);
+
   const handleRemoveFromPlaylist = async (trackUri: string) => {
     const body = {
       tracks: [
@@ -143,9 +164,27 @@ const PlaylistPage: React.FC = () => {
     forceUpdate();
   };
 
-  const totalDuration = tracks.reduce((acc, curr) => {
-    return acc + curr.duration_ms;
-  }, 0);
+  const handleEditPlaylist = async () => {
+    const response = await ApiSpotify.get('/playlists/' + params.id);
+    setPlaylistForm((prevState) => ({
+      ...prevState,
+      id: response.data.id,
+      name: response.data.name,
+      description: response.data.description,
+      image: getHighestImage(response.data.images),
+      isPublic: response.data.public,
+      isOwn: response.data.owner.id === user.id,
+    }));
+    setIsOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setPlaylistForm((prevState) => ({
+      ...prevState,
+      ...initialPlaylistForm,
+    }));
+    setIsOpenModal(false);
+  };
 
   return (
     <div className="">
@@ -170,7 +209,13 @@ const PlaylistPage: React.FC = () => {
               className="w-16 h-16"
               onClick={handlePlayFromStart}
             />
-            {!isOwnPlaylist && (
+            {isOwnPlaylist ? (
+              <Button
+                className="ml-6"
+                text="Edit Playlist"
+                onClick={handleEditPlaylist}
+              />
+            ) : (
               <LikeButton
                 className="w-8 h-8 ml-6"
                 onClick={handleFollow}
@@ -235,6 +280,22 @@ const PlaylistPage: React.FC = () => {
       ) : (
         ''
       )}
+      <Modal
+        show={isOpenModal}
+        title="Playlist"
+        handleCloseModal={handleCloseModal}
+      >
+        <PlayListForm
+          id={playlistForm.id}
+          name={playlistForm.name}
+          description={playlistForm.description}
+          image={playlistForm.image}
+          isPublic={playlistForm.isPublic}
+          isOwn={playlistForm.isOwn}
+          previewImage={playlistForm.previewImage}
+          onSuccess={handleCloseModal}
+        />
+      </Modal>
     </div>
   );
 };

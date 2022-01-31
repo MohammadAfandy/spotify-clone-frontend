@@ -24,14 +24,14 @@ const Modal: React.FC<ModalProps> = ({
           {backdropContainer &&
             ReactDOM.createPortal(
               <div
-                className="fixed top-0 left-0 w-full h-screen z-10 bg-opacity-80 bg-black"
+                className="fixed top-0 left-0 w-full h-full z-40 bg-opacity-80 bg-black select-none"
                 onClick={handleCloseModal}
               />,
               backdropContainer
             )}
           {modalContainer &&
             ReactDOM.createPortal(
-              <div className="fixed flex flex-col top-1/12 inset-x-1/12 w-10/12 sm:inset-x-1/4 sm:w-2/4 z-20 overflow-hidden bg-light-black-1 px-10 py-4 rounded-xl">
+              <div className="fixed flex flex-col top-1/12 inset-x-1/12 w-10/12 sm:inset-x-1/4 sm:w-2/4 z-50 overflow-hidden bg-light-black-1 px-10 py-4 rounded-xl">
                 <div className="flex font-bold text-xl mb-4">
                   <div className="mr-auto">{title}</div>
                   <CloseIcon
