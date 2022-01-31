@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext, Fragment } from 'react';
+import { useHistory } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import { isMobile } from 'react-device-detect';
 import {
@@ -6,11 +7,9 @@ import {
   setCookie,
   getSmallestImage,
   duration as durationFn,
-  getArtistNames,
 } from '../../utils/helpers';
 import { PlayerContext } from '../../context/player-context';
 import ApiSpotify from '../../utils/api-spotify';
-import ApiBackend from '../../utils/api-backend';
 import Track from '../../types/Track';
 import {
   Airplay,
@@ -26,7 +25,6 @@ import {
 import { PLAYER_NAME } from '../../utils/constants';
 
 import Button from '../Button/Button';
-import Modal from '../Modal/Modal';
 import TextLink from '../Text/TextLink';
 
 declare global {
@@ -88,12 +86,6 @@ type Player = {
   getCurrentState: () => Promise<PlaybackState>;
 } | undefined;
 
-const initialLyric = {
-  lyric: '',
-  artist: '',
-  title: '',
-};
-
 const mapRepeatMode = [
   { state: 'off', mode: 0, text: '' },
   { state: 'context', mode: 1, text: '•' },
@@ -101,9 +93,7 @@ const mapRepeatMode = [
 ];
 
 const WebPlayback: React.FC = () => {
-  const [isOpenModal, setIsOpenModal] = useState(false);
-  const [lyric, setLyric] = useState(initialLyric);
-
+  const history = useHistory();
   const {
     isPlaying,
     changeIsPlaying,
@@ -328,28 +318,8 @@ const WebPlayback: React.FC = () => {
 
   const PlayPauseIcon = isPlaying ? PauseCircle : PlayCircle;
 
-  const handleOpenLyric = async () => {
-    try {
-      if (currentTrack.id) {
-        setLyric(initialLyric);
-        const artist = getArtistNames(currentTrack.artists);
-        const title = currentTrack.name;
-        const response = await ApiBackend.get('/lyrics', {
-          params: {
-            artist,
-            title,
-          },
-        });
-        setLyric({
-          artist,
-          title,
-          lyric: response.data.lyric || 'No Lyrics Found.',
-        });
-        setIsOpenModal(true);
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  const handleOpenLyric = () => {
+    history.push('/lyric');
   };
 
   return (
@@ -595,15 +565,6 @@ const WebPlayback: React.FC = () => {
           </ReactTooltip>
         </div>
       )}
-      <Modal
-        show={isOpenModal}
-        title={`${lyric.artist} - ${lyric.title}`}
-        handleCloseModal={() => setIsOpenModal(false)}
-      >
-        <div className="whitespace-pre overflow-y-auto h-105">
-          {lyric.lyric}
-        </div>
-      </Modal>
     </div>
   );
 };

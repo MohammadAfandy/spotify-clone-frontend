@@ -21,6 +21,7 @@ import CollectionArtistPage from '../../pages/CollectionArtistPage';
 import CollectionAlbumPage from '../../pages/CollectionAlbumPage';
 import CollectionTrackPage from '../../pages/CollectionTrackPage';
 import CollectionEpisodePage from '../../pages/CollectionEpisodePage';
+import LyricPage from '../../pages/LyricPage';
 import NotFoundPage from '../../pages/NotFoundPage';
 import ScrollToTop from '../Scroll/ScrollToTop';
 
@@ -183,6 +184,11 @@ const MainContent: React.FC = () => {
           <PrivateRoute
             component={CollectionEpisodePage}
             path="/collection/episodes"
+            exact
+          />
+          <PrivateRoute
+            component={LyricPage}
+            path="/lyric"
             exact
           />
           <Route path='*'>

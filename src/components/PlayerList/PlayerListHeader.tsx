@@ -26,7 +26,7 @@ const PlayerListHeader: React.FC<PlayerListHeaderProps> = ({
   footer,
 }) => {
   return (
-    <div className="flex flex-col items-center sm:flex-row sm:items-end mb-6">
+    <div className="flex flex-col items-center sm:flex-row sm:items-end mb-3 pb-3 border-b-2 border-opacity-10">
       {image ? (
         <img src={image} alt={name} className="w-52 h-52 mr-6 rounded-md" />
       ) : (
