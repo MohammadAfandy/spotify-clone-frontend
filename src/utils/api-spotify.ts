@@ -28,36 +28,31 @@ axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
-    return new Promise((resolve) => {
-      const originalRequest = error.config;
-      const refreshToken = getCookie('refresh_token');
-      if (
-        error.response &&
-        error.response.status === 401 &&
-        error.config &&
-        !error.config.__isRetryRequest &&
-        error.response.data.error.message === 'The access token expired' &&
-        refreshToken
-      ) {
-        originalRequest._retry = true;
+  async (error) => {
+    const originalRequest = error.config;
+    const refreshToken = getCookie('refresh_token');
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      error.response.data.error.message === 'The access token expired' &&
+      error.config &&
+      !error.config._retry &&
+      refreshToken
+    ) {
+      originalRequest._retry = true;
 
-        const response = fetch(BACKEND_URI + '/refresh_token', {
-          method: 'POST',
-          // credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ refresh_token: refreshToken }),
-        })
-          .then((res) => res.json())
-          .then((res) => {
-            setCookie('access_token', res.access_token);
-          });
-        resolve(response);
-      }
-      return Promise.reject(error);
-    });
+      const response = await fetch(BACKEND_URI + '/refresh_token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      });
+      const res = await response.json();
+      setCookie('access_token', res.access_token);
+      return axiosInstance(originalRequest);
+    }
+    return Promise.reject(error);
   }
 );
 
