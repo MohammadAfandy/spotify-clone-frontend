@@ -24,10 +24,16 @@ module.exports = {
         slide: {
           '0%': { transform: 'translateX(-13rem)' },
           '100%': { transform: 'translateY(0)' }
-        }
+        },
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '50%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        },
       },
       animation: {
         slide: 'slide 400ms ease-in-out',
+        marquee: 'marquee 10s linear infinite',
       },
       zIndex: {
         '-1': '-1',

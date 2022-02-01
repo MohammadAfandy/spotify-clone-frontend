@@ -35,7 +35,7 @@ img {
 }
 
 .content-area {
-  height: calc(100vh - theme('spacing.24'));
+  height: calc(100vh - theme('spacing.20'));
 }
 
 /* width */

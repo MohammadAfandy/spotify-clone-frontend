@@ -1,4 +1,10 @@
-import { useState, useEffect, useContext, Fragment } from 'react';
+import {
+  useState,
+  useEffect,
+  useContext,
+  Fragment,
+  useRef,
+} from 'react';
 import { useHistory } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import {
@@ -13,7 +19,9 @@ import Track from '../../types/Track';
 import {
   Airplay,
   Mic,
+  Pause,
   PauseCircle,
+  Play,
   PlayCircle,
   Repeat,
   Shuffle,
@@ -21,6 +29,7 @@ import {
   SkipForward,
   Volume,
 } from 'react-feather';
+import useWindowSize from '../../hooks/useWindowSize';
 import { BACKEND_URI, PLAYER_NAME } from '../../utils/constants';
 
 import Button from '../Button/Button';
@@ -91,9 +100,8 @@ const mapRepeatMode = [
   { state: 'track', mode: 2, text: '1' },
 ];
 
-const intervalPlayState = 10 * 1000;
-
 const WebPlayback: React.FC = () => {
+  const trackRef = useRef<HTMLDivElement>(null);
   const history = useHistory();
   const {
     isPlaying,
@@ -115,6 +123,19 @@ const WebPlayback: React.FC = () => {
   const [devices, setDevices] = useState([]);
 
   const [positionMs, setPositionMs] = useState(0);
+
+  const { width: windowWidth, height: windowHeight } = useWindowSize();
+  const [isOverFlow, setIsOverflow] = useState(false);
+
+  useEffect(() => {
+    if (trackRef.current) {
+      if (trackRef.current.clientWidth < trackRef.current.scrollWidth) {
+        setIsOverflow(true);
+        return;
+      }
+    }
+    setIsOverflow(false);
+  }, [currentTrack.id, windowWidth, windowHeight]);
 
   const transferPlayback = async (device_id: string): Promise<void> => {
     await ApiSpotify.put('/me/player', { device_ids: [device_id] });
@@ -294,10 +315,9 @@ const WebPlayback: React.FC = () => {
     if (isPlayerActive) {
       player && player.setVolume(volume_percent / 100);
     } else {
-      await ApiSpotify.put('me/player/seek', null, { params: {
+      await ApiSpotify.put('me/player/volume', null, { params: {
         volume_percent,
       }});
-      getPlaybackState();
     }
   };
 
@@ -347,7 +367,6 @@ const WebPlayback: React.FC = () => {
 
   const getPlaybackState = async (): Promise<void> => {
     const { data: responseData } = await ApiSpotify.get('me/player');
-    console.log({ responseData });
     if (!responseData) {
       if (deviceId) handlePlayThisDevice();
     } else {
@@ -383,7 +402,7 @@ const WebPlayback: React.FC = () => {
       if (!isPlayerActive && deviceId) {
         getPlaybackState();
       }
-    }, intervalPlayState);
+    }, 10 * 1000);
 
     return () => clearInterval(interval);
   }, [isPlayerActive, deviceId]);
@@ -396,8 +415,8 @@ const WebPlayback: React.FC = () => {
       getUserDevices();
       const interval = setInterval(() => {
         getUserDevices();
-      }, intervalPlayState);
-  
+      }, 30 * 1000);
+
       return () => clearInterval(interval);
   }, []);
 
@@ -413,6 +432,7 @@ const WebPlayback: React.FC = () => {
   }, [positionMs, isPlaying]);
 
   const PlayPauseIcon = isPlaying ? PauseCircle : PlayCircle;
+  const PlayPauseIconMini = isPlaying ? Pause : Play;
 
   const handleOpenLyric = () => {
     history.push('/lyric');
@@ -437,29 +457,29 @@ const WebPlayback: React.FC = () => {
         </div>
       )}
       {!error && deviceId && (
-        <div className="grid grid-cols-3 justify-center items-center h-full">
-          <div className="flex items-end ml-10">
+        <div className="grid grid-cols-3 gap-4 items-center h-full">
+          <div ref={trackRef} className="flex items-end col-span-2 lg:col-span-1 whitespace-nowrap overflow-x-hidden">
             {currentTrack && currentTrack.uri && (
               <>
                 <img
                   src={getSmallestImage(currentTrack.album.images)}
                   alt={currentTrack.album.name}
-                  className="mr-4 w-12"
+                  className="h-12 pl-2 lg:pl-10 pr-4 z-10 bg-black"
                 />
-                <div className="flex flex-col mr-6 w-60">
+                <div className={`flex flex-col mr-6 relative ${isOverFlow ? 'animate-marquee' : ''}`}>
                   {currentTrack.type === 'track' && (
-                    <div className="font-semibold truncate">
+                    <div className="font-semibold">
                       {currentTrack.name}
                     </div>
                   )}
                   {currentTrack.type === 'episode' && (
                     <TextLink
-                      className="font-semibold truncate"
+                      className="font-semibold"
                       text={currentTrack.name}
                       url={'/episode/' + currentTrack.id}
                     />
                   )}
-                  <div className="font-light truncate">
+                  <div className="font-light">
                     {currentTrack.artists.map((artist, idx) => (
                       <Fragment key={artist.uri}>
                         <TextLink
@@ -479,7 +499,7 @@ const WebPlayback: React.FC = () => {
             )}
           </div>
 
-          <div className="hidden md:flex flex-col items-center justify-around">
+          <div className="hidden lg:flex flex-col items-center justify-around">
             <div className="flex justify-center items-center">
               <Shuffle
                 className="h-4 w-4 mr-6 cursor-pointer"
@@ -537,31 +557,41 @@ const WebPlayback: React.FC = () => {
             </div>
           </div>
 
-          <div className="hidden md:flex justify-end items-center mr-10">
+          <div className="flex justify-end items-center pr-2 lg:pr-10">
             {currentTrack && currentTrack.type === 'track' && (
-              <Mic
-                className="w-6 mr-6 cursor-pointer"
-                onClick={handleOpenLyric}
-              />
+              <div>
+                <Mic
+                  className="w-6 mr-4 cursor-pointer"
+                  onClick={handleOpenLyric}
+                />
+              </div>
             )}
             <div data-tip data-for="device-tooltip" data-event="click focus">
-              <Airplay className="w-6 mr-6 cursor-pointer" />
+              <Airplay className="w-6 mr-4 cursor-pointer" />
             </div>
-            <Volume className="w-6 cursor-pointer" />
-            <input
-              type="range"
-              id="volumeebar"
-              className="w-40 h-2 text-green-200"
-              max="100"
-              value={volume}
-              onChange={(e) => setVolume(Number(e.target.value))}
-              onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
-                handleVolume(Number(e.currentTarget.value))
-              }
-              onTouchEnd={(e: React.TouchEvent<HTMLInputElement>) =>
-                handleVolume(Number(e.currentTarget.value))
-              }
-            />
+            <div className="hidden lg:flex items-center">
+              <Volume className="w-6 cursor-pointer" />
+              <input
+                type="range"
+                id="volumeebar"
+                className="w-40 h-2 text-green-200"
+                max="100"
+                value={volume}
+                onChange={(e) => setVolume(Number(e.target.value))}
+                onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
+                  handleVolume(Number(e.currentTarget.value))
+                }
+                onTouchEnd={(e: React.TouchEvent<HTMLInputElement>) =>
+                  handleVolume(Number(e.currentTarget.value))
+                }
+              />
+            </div>
+            <div className="block lg:hidden">
+              <PlayPauseIconMini
+                className="w-6 mr-4 cursor-pointer"
+                onClick={() => handlePlay()}
+              />
+            </div>
           </div>
 
           <ReactTooltip
