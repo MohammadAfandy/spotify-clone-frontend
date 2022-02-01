@@ -1,5 +1,5 @@
 
-.fullPlayer {
+.fullScreen {
   @apply fixed flex flex-col top-0 left-0 z-40 bg-gradient-to-b from-gray-600 to-black h-full w-full py-6 px-6;
   transform: translate(0, 200%);
   transition: transform 0.3s ease-in-out;
@@ -10,13 +10,13 @@
 }
 
 @screen md {
-  .fullPlayer {
+  .fullScreen {
     @apply px-10;
   }
 }
 
 @screen lg {
-  .fullPlayer {
+  .fullScreen {
     @apply px-20;
   }
 }

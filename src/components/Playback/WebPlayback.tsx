@@ -179,7 +179,7 @@ const WebPlayback: React.FC = () => {
                 setVolume(volume * 100);
               });
 
-              console.info('state from player_state_changed', state);
+              // console.info('state from player_state_changed', state);
             } catch (error) {
               console.error(error);
             }
@@ -214,7 +214,8 @@ const WebPlayback: React.FC = () => {
     await transferPlayback(deviceId);
   };
 
-  const handlePlay = async (): Promise<void> => {
+  const handlePlay = async (event: React.MouseEvent): Promise<void> => {
+    event.stopPropagation();
     if (isPlayerActive) {
       player && player.togglePlay();
     } else {
@@ -228,7 +229,8 @@ const WebPlayback: React.FC = () => {
     }
   };
 
-  const handlePrev = async (): Promise<void> => {
+  const handlePrev = async (event: React.MouseEvent): Promise<void> => {
+    event.stopPropagation();
     if (isPlayerActive) {
       if (positionMs <= 3000) {
         player && player.previousTrack();
@@ -236,19 +238,20 @@ const WebPlayback: React.FC = () => {
         player && player.seek(0);
       }
     } else {
-      if (positionMs <= 3000) {
-        await ApiSpotify.put('me/player/previous');
+      // if (positionMs <= 3000) {
+        await ApiSpotify.post('me/player/previous');
         getPlaybackState();
-      } else {
-        await ApiSpotify.put('me/player/seek', null, { params: {
-          position_ms: 0,
-        }});
-        getPlaybackState();
-      }
+      // } else {
+      //   await ApiSpotify.put('me/player/seek', null, { params: {
+      //     position_ms: 0,
+      //   }});
+      //   getPlaybackState();
+      // }
     }
   };
 
-  const handleNext = async (): Promise<void> => {
+  const handleNext = async (event: React.MouseEvent): Promise<void> => {
+    event.stopPropagation();
     if (isPlayerActive) {
       player && player.nextTrack();
     } else {
@@ -257,7 +260,8 @@ const WebPlayback: React.FC = () => {
     }
   };
 
-  const handleSeek = async (position_ms: number): Promise<void> => {
+  const handleSeek = async (event: React.MouseEvent, position_ms: number): Promise<void> => {
+    event.stopPropagation();
     if (isPlayerActive) {
       player && player.seek(position_ms);
     } else {
@@ -268,7 +272,8 @@ const WebPlayback: React.FC = () => {
     }
   };
 
-  const handleVolume = async (volume_percent: number): Promise<void> => {
+  const handleVolume = async (event: React.MouseEvent | React.TouchEvent, volume_percent: number): Promise<void> => {
+    event.stopPropagation();
     if (isPlayerActive) {
       player && player.setVolume(volume_percent / 100);
     } else {
@@ -278,7 +283,8 @@ const WebPlayback: React.FC = () => {
     }
   };
 
-  const handleRepeatMode = async (): Promise<void> => {
+  const handleRepeatMode = async (event: React.MouseEvent): Promise<void> => {
+    event.stopPropagation();
     let state = '';
     const currentModeIndex = mapRepeatMode.findIndex(
       (v) => v.mode === repeatMode
@@ -294,7 +300,8 @@ const WebPlayback: React.FC = () => {
     }
   };
 
-  const handleShuffle = async (): Promise<void> => {
+  const handleShuffle = async (event: React.MouseEvent): Promise<void> => {
+    event.stopPropagation();
     await ApiSpotify.put('me/player/shuffle', null, {
       params: { state: !shuffle },
     });
@@ -318,10 +325,6 @@ const WebPlayback: React.FC = () => {
   const handleshowFullPlayer = () => {
     setShowFullPlayer(true);
   }
-
-  const handleHideFullPlayer = () => {
-    setShowFullPlayer(false);
-  };
 
   const getUserDevices = async () => {
     const response = await ApiSpotify.get('/me/player/devices');
@@ -426,7 +429,8 @@ const WebPlayback: React.FC = () => {
   const PlayPauseIcon = isPlaying ? PauseCircle : PlayCircle;
   const PlayPauseIconMini = isPlaying ? Pause : Play;
 
-  const handleOpenLyric = () => {
+  const handleOpenLyric = (event: React.MouseEvent) => {
+    event.stopPropagation();
     setShowFullPlayer(false);
     history.push('/lyric');
   };
@@ -508,25 +512,25 @@ const WebPlayback: React.FC = () => {
               <Shuffle
                 className="h-4 w-4 mr-6 cursor-pointer"
                 color={getButtonColor(shuffle)}
-                onClick={() => handleShuffle()}
+                onClick={handleShuffle}
               />
               <SkipBack
                 className="h-4 w-4 mr-6 cursor-pointer"
-                onClick={() => handlePrev()}
+                onClick={handlePrev}
               />
               <PlayPauseIcon
                 className="h-10 w-10 mr-6 cursor-pointer"
-                onClick={() => handlePlay()}
+                onClick={handlePlay}
               />
               <SkipForward
                 className="h-4 w-4 mr-6 cursor-pointer"
-                onClick={() => handleNext()}
+                onClick={handleNext}
               />
               <div className="relative">
                 <Repeat
                   className="h-4 w-4 mr-6 cursor-pointer"
                   color={getButtonColor(repeatMode !== 0)}
-                  onClick={() => handleRepeatMode()}
+                  onClick={handleRepeatMode}
                 />
                 <div
                   className={`absolute left-2 top-4 bottom-0 text-xs font-light ${
@@ -547,7 +551,7 @@ const WebPlayback: React.FC = () => {
                 value={positionMs}
                 onChange={(e) => setPositionMs(Number(e.target.value))}
                 onPointerUp={(e: React.MouseEvent<HTMLInputElement>) =>
-                  handleSeek(Number(e.currentTarget.value))
+                  handleSeek(e, Number(e.currentTarget.value))
                 }
               />
               <div className="group">
@@ -583,17 +587,17 @@ const WebPlayback: React.FC = () => {
                 value={volume}
                 onChange={(e) => setVolume(Number(e.target.value))}
                 onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
-                  handleVolume(Number(e.currentTarget.value))
+                  handleVolume(e, Number(e.currentTarget.value))
                 }
                 onTouchEnd={(e: React.TouchEvent<HTMLInputElement>) =>
-                  handleVolume(Number(e.currentTarget.value))
+                  handleVolume(e, Number(e.currentTarget.value))
                 }
               />
             </div>
             <div className="block lg:hidden">
               <PlayPauseIconMini
                 className="w-6 mr-4 cursor-pointer"
-                onClick={() => handlePlay()}
+                onClick={handlePlay}
               />
             </div>
             <div className="hidden lg:block">
@@ -612,9 +616,7 @@ const WebPlayback: React.FC = () => {
           >
             <div className="text-lg w-60 pointer-events-auto">
               <p className="text-xl mb-2">Select Device</p>
-              {/* <div className={`cursor-pointer`}>This Player</div> */}
               {devices
-                // .filter(({ id }, idx, arr) => idx === arr.findIndex((v: Device) => v.id === id))
                 .map(({ name, id }) => (
                   <div
                     key={id}
@@ -623,7 +625,7 @@ const WebPlayback: React.FC = () => {
                     }`}
                     onClick={(e) => handleSelectDevice(e, id)}
                   >
-                    {name} {id === deviceId && (<b>(This Player)</b>)}
+                    {name} {id === deviceId && (<b>(This Device)</b>)}
                   </div>
                 ))}
             </div>
@@ -655,8 +657,9 @@ const WebPlayback: React.FC = () => {
         handleRepeatMode={handleRepeatMode}
         handleSelectDevice={handleSelectDevice}
         handleOpenLyric={handleOpenLyric}
-        handleHideFullPlayer={handleHideFullPlayer}
+        setShowFullPlayer={setShowFullPlayer}
       />
+
     </div>
   );
 };
