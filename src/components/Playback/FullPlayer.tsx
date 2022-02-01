@@ -163,6 +163,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
                   className="font-semibold"
                   text={currentTrack.name}
                   url={'/episode/' + currentTrack.id}
+                  afterClick={() => setShowFullPlayer(false)}
                 />
               )}
             </div>
@@ -177,6 +178,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
                           ? '/artist/'
                           : '/show/') + artist.uri.split(':')[2]
                       }
+                      afterClick={() => setShowFullPlayer(false)}
                     />
                     {idx !== currentTrack.artists.length - 1 && ', '}
                   </Fragment>
@@ -253,12 +255,14 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
               )}
             </div>
             <div
-              className="flex justify-center items-center text-green-400 cursor-pointer"
+              className={`flex justify-center items-center cursor-pointer ${activeDevice && activeDevice.id !== deviceId && 'text-green-400'}`}
               onClick={handleShowDeviceSelector}
             >
-              <div className="mr-2 text-xs">
-                {activeDevice && activeDevice.name}
-              </div>
+              {activeDevice && activeDevice.id !== deviceId && (
+                <div className="mr-2 text-xs">
+                  {activeDevice.name}
+                </div>
+              )}
               <Airplay className="w-8" />
             </div>
           </div>

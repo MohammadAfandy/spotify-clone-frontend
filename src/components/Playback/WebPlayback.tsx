@@ -192,6 +192,7 @@ const WebPlayback: React.FC = () => {
         initPlayer.addListener('ready', ({ device_id }: { device_id: string }) => {
           setError('');
           setDeviceId(device_id);
+          getUserDevices();
           setCookie('device_id', device_id);
           console.info('Ready with Device ID', device_id);
         });
@@ -239,15 +240,8 @@ const WebPlayback: React.FC = () => {
         player && player.seek(0);
       }
     } else {
-      // if (positionMs <= 3000) {
-        await ApiSpotify.post('me/player/previous');
-        getPlaybackState();
-      // } else {
-      //   await ApiSpotify.put('me/player/seek', null, { params: {
-      //     position_ms: 0,
-      //   }});
-      //   getPlaybackState();
-      // }
+      await ApiSpotify.post('me/player/previous');
+      getPlaybackState();
     }
   };
 
@@ -389,9 +383,8 @@ const WebPlayback: React.FC = () => {
     }
   };
 
-  // get player state from another device every 5 second if our device is not current active device
+  // get player state from another device if our device is not the current active device
   // because event player_state_changed not fired when we are not in local playback / device
-  // and currenty I'm not doing this because of rate limit
   useEffect(() => {
     getPlaybackState(); 
     const interval = setInterval(() => {
@@ -455,182 +448,197 @@ const WebPlayback: React.FC = () => {
         </div>
       )}
       {!error && deviceId && !showFullPlayer && (
-        <div
-          className="grid grid-cols-3 gap-4 items-center h-full"
-          onClick={isMobilePlayer ? handleshowFullPlayer : undefined}
-        >
-          <div ref={trackRef} className="flex items-end col-span-2 lg:col-span-1 whitespace-nowrap overflow-x-hidden">
-            {currentTrack && currentTrack.uri && (
-              <>
-                <img
-                  src={getSmallestImage(currentTrack.album?.images)}
-                  alt={currentTrack.album?.name}
-                  className="h-12 pl-2 lg:pl-10 pr-4 z-10 bg-black"
-                />
-                <div className={`flex flex-col mr-6 relative ${isOverFlow ? 'animate-marquee' : ''}`}>
-                  {currentTrack.type === 'track' && (
-                    <div className="font-semibold">
-                      {currentTrack.name}
-                    </div>
-                  )}
-                  {(currentTrack.type === 'episode' && isMobilePlayer) && (
-                    <div className="font-semibold">
-                      {currentTrack.name}
-                    </div>
-                  )}
-                  {(currentTrack.type === 'episode' && !isMobilePlayer) && (
-                    <TextLink
-                      className="font-semibold"
-                      text={currentTrack.name}
-                      url={'/episode/' + currentTrack.id}
-                    />
-                  )}
-                  <div className="font-light">
-                    {isMobilePlayer && (
-                      <div>{currentTrack.artists?.map((artist) => artist.name).join(', ')}</div>
-                    )}
-                    {!isMobilePlayer && currentTrack.artists?.map((artist, idx) => (
-                      <Fragment key={artist.uri}>
-                        <TextLink
-                          text={artist.name}
-                          url={
-                            (currentTrack.type === 'track'
-                              ? '/artist/'
-                              : '/show/') + artist.uri.split(':')[2]
-                          }
-                        />
-                        {idx !== currentTrack.artists.length - 1 && ', '}
-                      </Fragment>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-
-          <div className="hidden lg:flex flex-col items-center justify-around">
-            <div className="flex justify-center items-center">
-              <Shuffle
-                className="h-4 w-4 mr-6 cursor-pointer"
-                color={getButtonColor(shuffle)}
-                onClick={handleShuffle}
-              />
-              <SkipBack
-                className="h-4 w-4 mr-6 cursor-pointer"
-                onClick={handlePrev}
-              />
-              <PlayPauseIcon
-                className="h-10 w-10 mr-6 cursor-pointer"
-                onClick={handlePlay}
-              />
-              <SkipForward
-                className="h-4 w-4 mr-6 cursor-pointer"
-                onClick={handleNext}
-              />
-              <div className="relative">
-                <Repeat
-                  className="h-4 w-4 mr-6 cursor-pointer"
-                  color={getButtonColor(repeatMode !== 0)}
-                  onClick={handleRepeatMode}
-                />
-                <div
-                  className={`absolute left-2 top-4 bottom-0 text-xs font-light ${
-                    repeatMode !== 0 ? 'text-green-400' : 'text-white'
-                  }`}
-                >
-                  {mapRepeatMode.find((v) => v.mode === repeatMode)?.text || ''}
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-center items-center w-full">
-              <div className="mr-2">{durationFn(positionMs)}</div>
-              <input
-                type="range"
-                id="progressbar"
-                className="h-2 w-full mr-2"
-                max={duration}
-                value={positionMs}
-                onChange={(e) => setPositionMs(Number(e.target.value))}
-                onPointerUp={(e: React.MouseEvent<HTMLInputElement>) =>
-                  handleSeek(e, Number(e.currentTarget.value))
-                }
-              />
-              <div className="group">
-                <div className="group-hover:block hidden">
-                  {durationFn(duration - positionMs)}
-                </div>
-                <div className="group-hover:hidden block">
-                  {durationFn(duration)}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-end items-center pr-2 lg:pr-10">
-            {currentTrack && currentTrack.type === 'track' && (
-              <div>
-                <Mic
-                  className="w-6 mr-4 cursor-pointer"
-                  onClick={handleOpenLyric}
-                />
-              </div>
-            )}
-            <div data-tip data-for="device-tooltip" data-event="click focus">
-              <Airplay className="w-6 mr-4 cursor-pointer" />
-            </div>
-            <div className="hidden lg:flex items-center mr-4">
-              <Volume className="w-6 cursor-pointer" />
-              <input
-                type="range"
-                id="volumeebar"
-                className="w-40 h-2 text-green-200"
-                max="100"
-                value={volume}
-                onChange={(e) => setVolume(Number(e.target.value))}
-                onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
-                  handleVolume(e, Number(e.currentTarget.value))
-                }
-                onTouchEnd={(e: React.TouchEvent<HTMLInputElement>) =>
-                  handleVolume(e, Number(e.currentTarget.value))
-                }
-              />
-            </div>
-            <div className="block lg:hidden">
-              <PlayPauseIconMini
-                className="w-6 mr-4 cursor-pointer"
-                onClick={handlePlay}
-              />
-            </div>
-            <div className="hidden lg:block">
-              <Maximize2
-                className="w-6 mr-4 cursor-pointer"
-                onClick={handleshowFullPlayer}
-              />
-            </div>
-          </div>
-
-          <ReactTooltip
-            id="device-tooltip"
-            backgroundColor="#2e77d0"
-            globalEventOff="click"
-            textColor="white"
+        <div className="flex flex-col w-full h-full justify-center">
+          <div
+            className="grid grid-cols-3 gap-4 items-center py-1"
+            onClick={isMobilePlayer ? handleshowFullPlayer : undefined}
           >
-            <div className="text-lg w-60 pointer-events-auto">
-              <p className="text-xl mb-2">Select Device</p>
-              {devices
-                .map(({ name, id }) => (
-                  <div
-                    key={id}
-                    className={`cursor-pointer border-b-2 border-white border-opacity-20 mb-1 text-sm ${
-                      id === activeDevice?.id ? 'text-green-200' : ''
-                    }`}
-                    onClick={(e) => handleSelectDevice(e, id)}
-                  >
-                    {name} {id === deviceId && (<b>(This Device)</b>)}
+            <div ref={trackRef} className="flex items-end col-span-2 lg:col-span-1 whitespace-nowrap overflow-x-hidden">
+              {currentTrack && currentTrack.uri && (
+                <>
+                  <img
+                    src={getSmallestImage(currentTrack.album?.images)}
+                    alt={currentTrack.album?.name}
+                    className="h-12 pl-2 lg:pl-10 pr-4 z-10 bg-black"
+                  />
+                  <div className={`flex flex-col mr-6 relative ${isOverFlow ? 'animate-marquee' : ''}`}>
+                    {currentTrack.type === 'track' && (
+                      <div className="font-semibold">
+                        {currentTrack.name}
+                      </div>
+                    )}
+                    {(currentTrack.type === 'episode' && isMobilePlayer) && (
+                      <div className="font-semibold">
+                        {currentTrack.name}
+                      </div>
+                    )}
+                    {(currentTrack.type === 'episode' && !isMobilePlayer) && (
+                      <TextLink
+                        className="font-semibold"
+                        text={currentTrack.name}
+                        url={'/episode/' + currentTrack.id}
+                      />
+                    )}
+                    <div className="font-light">
+                      {isMobilePlayer && (
+                        <div>{currentTrack.artists?.map((artist) => artist.name).join(', ')}</div>
+                      )}
+                      {!isMobilePlayer && currentTrack.artists?.map((artist, idx) => (
+                        <Fragment key={artist.uri}>
+                          <TextLink
+                            text={artist.name}
+                            url={
+                              (currentTrack.type === 'track'
+                                ? '/artist/'
+                                : '/show/') + artist.uri.split(':')[2]
+                            }
+                          />
+                          {idx !== currentTrack.artists.length - 1 && ', '}
+                        </Fragment>
+                      ))}
+                    </div>
                   </div>
-                ))}
+                </>
+              )}
             </div>
-          </ReactTooltip>
+
+            <div className="hidden lg:flex flex-col items-center justify-around">
+              <div className="flex justify-center items-center">
+                <Shuffle
+                  className="h-4 w-4 mr-6 cursor-pointer"
+                  color={getButtonColor(shuffle)}
+                  onClick={handleShuffle}
+                />
+                <SkipBack
+                  className="h-4 w-4 mr-6 cursor-pointer"
+                  onClick={handlePrev}
+                />
+                <PlayPauseIcon
+                  className="h-10 w-10 mr-6 cursor-pointer"
+                  onClick={handlePlay}
+                />
+                <SkipForward
+                  className="h-4 w-4 mr-6 cursor-pointer"
+                  onClick={handleNext}
+                />
+                <div className="relative">
+                  <Repeat
+                    className="h-4 w-4 mr-6 cursor-pointer"
+                    color={getButtonColor(repeatMode !== 0)}
+                    onClick={handleRepeatMode}
+                  />
+                  <div
+                    className={`absolute left-2 top-4 bottom-0 text-xs font-light ${
+                      repeatMode !== 0 ? 'text-green-400' : 'text-white'
+                    }`}
+                  >
+                    {mapRepeatMode.find((v) => v.mode === repeatMode)?.text || ''}
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-center items-center w-full">
+                <div className="mr-2">{durationFn(positionMs)}</div>
+                <input
+                  type="range"
+                  id="progressbar"
+                  className="h-2 w-full mr-2"
+                  max={duration}
+                  value={positionMs}
+                  onChange={(e) => setPositionMs(Number(e.target.value))}
+                  onPointerUp={(e: React.MouseEvent<HTMLInputElement>) =>
+                    handleSeek(e, Number(e.currentTarget.value))
+                  }
+                />
+                <div className="group">
+                  <div className="group-hover:block hidden">
+                    {durationFn(duration - positionMs)}
+                  </div>
+                  <div className="group-hover:hidden block">
+                    {durationFn(duration)}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-end justify-center pr-2 lg:pr-10 h-full">
+              <div className="flex mb-2">
+                {currentTrack && currentTrack.type === 'track' && (
+                  <div>
+                    <Mic
+                      className="w-6 mr-4 cursor-pointer"
+                      onClick={handleOpenLyric}
+                    />
+                  </div>
+                )}
+                <div data-tip data-for="device-tooltip" data-event="click focus">
+                  <Airplay className="w-6 mr-4 cursor-pointer" />
+                </div>
+                <div className="hidden lg:flex items-center mr-4">
+                  <Volume className="w-6 cursor-pointer" />
+                  <input
+                    type="range"
+                    id="volumeebar"
+                    className="w-40 h-2 text-green-200"
+                    max="100"
+                    value={volume}
+                    onChange={(e) => setVolume(Number(e.target.value))}
+                    onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
+                      handleVolume(e, Number(e.currentTarget.value))
+                    }
+                    onTouchEnd={(e: React.TouchEvent<HTMLInputElement>) =>
+                      handleVolume(e, Number(e.currentTarget.value))
+                    }
+                  />
+                </div>
+                <div className="block lg:hidden">
+                  <PlayPauseIconMini
+                    className="w-6 cursor-pointer"
+                    onClick={handlePlay}
+                  />
+                </div>
+                <div className="hidden lg:block">
+                  <Maximize2
+                    className="w-6 cursor-pointer"
+                    onClick={handleshowFullPlayer}
+                  />
+                </div>
+              </div>
+              {activeDevice && activeDevice.id !== deviceId && (
+                <div className="hidden lg:block text-green-400 h-2">
+                  Listening on {activeDevice.name}
+                </div>
+              )}
+            </div>
+
+            <ReactTooltip
+              id="device-tooltip"
+              backgroundColor="#2e77d0"
+              globalEventOff="click"
+              textColor="white"
+            >
+              <div className="text-lg w-60 pointer-events-auto">
+                <p className="text-xl mb-2">Select Device</p>
+                {devices
+                  .map(({ name, id }) => (
+                    <div
+                      key={id}
+                      className={`cursor-pointer border-b-2 border-white border-opacity-20 mb-1 text-sm ${
+                        id === activeDevice?.id ? 'text-green-200' : ''
+                      }`}
+                      onClick={(e) => handleSelectDevice(e, id)}
+                    >
+                      {name} {id === deviceId && (<b>(This Device)</b>)}
+                    </div>
+                  ))}
+              </div>
+            </ReactTooltip>
+          </div>
+
+          {activeDevice && activeDevice.id !== deviceId && (
+              <div className="block lg:hidden text-green-400 h-2 text-xs text-center w-full">
+                Listening on {activeDevice.name}
+              </div>
+            )}
         </div>
       )}
 

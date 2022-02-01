@@ -36,7 +36,7 @@ const useWindowSize = (): Size => {
         width: window.innerWidth,
         height: window.innerHeight,
       });
-    }, 1 * 1000);
+    }, 500);
 
     // Add event listener
     window.addEventListener('resize', debounceHandleResize);
