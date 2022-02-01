@@ -1,5 +1,7 @@
 import {
   Airplay,
+  ChevronsLeft,
+  ChevronsRight,
   Mic,
   PauseCircle,
   PlayCircle,
@@ -11,7 +13,7 @@ import {
 import Player from '../../types/Player';
 import Device from '../../types/Device';
 import RepeatMode from '../../types/RepeatMode';
-import { duration as durationFn } from '../../utils/helpers';
+import { duration as durationFn, sleep } from '../../utils/helpers';
 
 import { getHighestImage } from '../../utils/helpers';
 import { Fragment, useEffect, useRef, useState } from 'react';
@@ -39,7 +41,9 @@ type FullPlayerProps = {
   showFullPlayer: boolean;
   handlePlay: (event: React.MouseEvent) => Promise<void>;
   handlePrev: (event: React.MouseEvent) => Promise<void>;
+  // handlePrevFifteen: (event: React.MouseEvent) => Promise<void>;
   handleNext: (event: React.MouseEvent) => Promise<void>;
+  // handleNextFifteen: (event: React.MouseEvent) => Promise<void>;
   setPositionMs: (position_ms: number) => void;
   handleSeek: (event: React.MouseEvent, position_ms: number) => Promise<void>;
   handleVolume: (event: React.MouseEvent, volume_percent: number) => Promise<void>;
@@ -101,21 +105,19 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
     setIsOverflow(false);
   }, [currentTrack.id, windowWidth, windowHeight]);
 
-  const handleShowDeviceSelector = () => {
+  const handleShowDeviceSelector = async () => {
     setShowFullPlayer(false);
-    setTimeout(() => {
-      setShowDeviceSelector(true);
-      setShowFullPlayer(true);
-    }, 300);
+    await sleep(300);
+    setShowDeviceSelector(true);
+    setShowFullPlayer(true);
   };
 
-  const handleClosePlayer = () => {
+  const handleClosePlayer = async () => {
     if (showDeviceSelector) {
       setShowDeviceSelector(false);
       setShowFullPlayer(false);
-      setTimeout(() => {
-        setShowFullPlayer(true);
-      }, 300);
+      await sleep(300);
+      setShowFullPlayer(true);
     } else {
       setShowFullPlayer(false);
     }
@@ -221,10 +223,32 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
                 className="h-8 w-8 mx-4 cursor-pointer"
                 onClick={handlePrev}
               />
+              {currentTrack.type === 'episode' && (
+                <div className="relative">
+                  <ChevronsLeft
+                    className="h-8 w-8 mx-2 cursor-pointer"
+                    onClick={(e) => handleSeek(e, positionMs - (15 * 1000))}
+                  />
+                  <div className="absolute w-2 left-0 right-0 mx-auto top-8 bottom-0 font-light text-xs">
+                    15
+                  </div>
+                </div>
+              )}
               <PlayPauseIcon
                 className="h-20 w-20 mx-4 cursor-pointer"
                 onClick={handlePlay}
               />
+              {currentTrack.type === 'episode' && (
+                <div className="relative">
+                  <ChevronsRight
+                    className="h-8 w-8 mx-2 cursor-pointer"
+                    onClick={(e) => handleSeek(e, positionMs + (15 * 1000))}
+                  />
+                  <div className="absolute w-2 left-0 right-0 mx-auto top-8 bottom-0 font-light text-xs">
+                    15
+                  </div>
+                </div>
+              )}
               <SkipForward
                 className="h-8 w-8 mx-4 cursor-pointer"
                 onClick={handleNext}

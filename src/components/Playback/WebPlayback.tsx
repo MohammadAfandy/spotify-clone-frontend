@@ -13,6 +13,7 @@ import {
   getSmallestImage,
   duration as durationFn,
   randomAlphaNumeric,
+  sleep,
 } from '../../utils/helpers';
 import { PlayerContext } from '../../context/player-context';
 import ApiSpotify from '../../utils/api-spotify';
@@ -22,6 +23,8 @@ import Player from '../../types/Player';
 import PlaybackState from '../../types/PlaybackState';
 import {
   Airplay,
+  ChevronsLeft,
+  ChevronsRight,
   Maximize2,
   Mic,
   Pause,
@@ -257,12 +260,15 @@ const WebPlayback: React.FC = () => {
 
   const handleSeek = async (event: React.MouseEvent, position_ms: number): Promise<void> => {
     event.stopPropagation();
+    if (position_ms < 0) position_ms = 0;
     if (isPlayerActive) {
       player && player.seek(position_ms);
     } else {
       await ApiSpotify.put('me/player/seek', null, { params: {
         position_ms,
       }});
+      setPositionMs(position_ms);
+      await sleep(1000);
       getPlaybackState();
     }
   };
@@ -461,7 +467,7 @@ const WebPlayback: React.FC = () => {
                     alt={currentTrack.album?.name}
                     className="h-12 pl-2 lg:pl-10 pr-4 z-10 bg-black"
                   />
-                  <div className={`flex flex-col mr-6 relative ${isOverFlow ? 'animate-marquee' : ''}`}>
+                  <div className={`flex flex-col mx-3 relative ${isOverFlow ? 'animate-marquee' : ''}`}>
                     {currentTrack.type === 'track' && (
                       <div className="font-semibold">
                         {currentTrack.name}
@@ -505,30 +511,52 @@ const WebPlayback: React.FC = () => {
             <div className="hidden lg:flex flex-col items-center justify-around">
               <div className="flex justify-center items-center">
                 <Shuffle
-                  className="h-4 w-4 mr-6 cursor-pointer"
+                  className="h-4 w-4 mx-3 cursor-pointer"
                   color={getButtonColor(shuffle)}
                   onClick={handleShuffle}
                 />
                 <SkipBack
-                  className="h-4 w-4 mr-6 cursor-pointer"
+                  className="h-4 w-4 mx-3 cursor-pointer"
                   onClick={handlePrev}
                 />
+                {currentTrack.type === 'episode' && (
+                  <div className="relative">
+                    <ChevronsLeft
+                      className="h-4 w-4 mx-3 cursor-pointer"
+                      onClick={(e) => handleSeek(e, positionMs - (15 * 1000))}
+                    />
+                    <div className="absolute w-2 left-0 right-0 mx-auto top-2 text-xxs bottom-0 font-light">
+                      15
+                    </div>
+                  </div>
+                )}
                 <PlayPauseIcon
-                  className="h-10 w-10 mr-6 cursor-pointer"
+                  className="h-10 w-10 mx-3 cursor-pointer"
                   onClick={handlePlay}
                 />
+                {currentTrack.type === 'episode' && (
+                  <div className="relative">
+                    <ChevronsRight
+                      className="h-4 w-4 mx-3 cursor-pointer"
+                      onClick={(e) => handleSeek(e, positionMs + (15 * 1000))}
+                    />
+                    <div className="absolute w-2 left-0 right-0 mx-auto top-2 text-xxs bottom-0 font-light">
+                      15
+                    </div>
+                  </div>
+                )}
                 <SkipForward
-                  className="h-4 w-4 mr-6 cursor-pointer"
+                  className="h-4 w-4 mx-3 cursor-pointer"
                   onClick={handleNext}
                 />
                 <div className="relative">
                   <Repeat
-                    className="h-4 w-4 mr-6 cursor-pointer"
+                    className="h-4 w-4 mx-3 cursor-pointer"
                     color={getButtonColor(repeatMode !== 0)}
                     onClick={handleRepeatMode}
                   />
                   <div
-                    className={`absolute left-2 top-4 bottom-0 text-xs font-light ${
+                    className={`absolute w-2 left-0 right-0 mx-auto top-3 text-xxs bottom-0 font-light ${
                       repeatMode !== 0 ? 'text-green-400' : 'text-white'
                     }`}
                   >
