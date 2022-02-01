@@ -4,6 +4,7 @@ import Device from "../../types/Device";
 type DeviceSelectorProps = {
   className?: string;
   activeDevice: Device | null,
+  deviceId: string,
   devices: Device[],
   handleSelectDevice: (event: React.MouseEvent, selectedDeviceId: string) => Promise<void>;
 };
@@ -11,6 +12,7 @@ type DeviceSelectorProps = {
 const DeviceSelector: React.FC<DeviceSelectorProps> = ({
   className,
   activeDevice,
+  deviceId,
   devices,
   handleSelectDevice,
 }) => {
@@ -37,7 +39,7 @@ const DeviceSelector: React.FC<DeviceSelectorProps> = ({
               {device.type.toLowerCase() === 'computer' ? <Airplay /> : <Smartphone />}
             </div>
             <div>
-              {device.name} {activeDevice && activeDevice.id === device.id && (<b>(This Device)</b>)}
+              {device.name} {deviceId === device.id && (<b>(This Device)</b>)}
             </div>
           </div>
         ))}

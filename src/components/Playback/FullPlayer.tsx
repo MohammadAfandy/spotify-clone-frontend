@@ -27,6 +27,7 @@ type FullPlayerProps = {
   mapRepeatMode: RepeatMode;
   isPlayerActive: boolean;
   activeDevice: Device | null;
+  deviceId: string;
   shuffle: boolean;
   repeatMode: number;
   duration: number;
@@ -55,6 +56,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
   mapRepeatMode,
   isPlayerActive,
   activeDevice,
+  deviceId,
   shuffle,
   repeatMode,
   duration,
@@ -127,6 +129,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
       {showDeviceSelector && (
         <DeviceSelector
           activeDevice={activeDevice} 
+          deviceId={deviceId} 
           devices={devices} 
           handleSelectDevice={handleSelectDevice}
         />

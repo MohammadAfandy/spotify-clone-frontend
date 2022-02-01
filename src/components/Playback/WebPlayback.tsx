@@ -12,6 +12,7 @@ import {
   setCookie,
   getSmallestImage,
   duration as durationFn,
+  randomAlphaNumeric,
 } from '../../utils/helpers';
 import { PlayerContext } from '../../context/player-context';
 import ApiSpotify from '../../utils/api-spotify';
@@ -109,7 +110,7 @@ const WebPlayback: React.FC = () => {
     let initPlayer: Player;
     window.onSpotifyWebPlaybackSDKReady = () => {
       initPlayer = new window.Spotify.Player({
-        name: PLAYER_NAME,
+        name: `${PLAYER_NAME} - ${randomAlphaNumeric(4)}`,
         getOAuthToken: async (cb: (token: string) => {}) => {
           const refreshToken = getCookie('refresh_token');
           if (refreshToken) {
@@ -638,6 +639,7 @@ const WebPlayback: React.FC = () => {
         mapRepeatMode={mapRepeatMode}
         isPlayerActive={isPlayerActive}
         activeDevice={activeDevice}
+        deviceId={deviceId}
         shuffle={shuffle}
         repeatMode={repeatMode}
         duration={duration}
