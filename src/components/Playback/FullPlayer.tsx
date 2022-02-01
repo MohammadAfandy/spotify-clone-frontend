@@ -141,18 +141,18 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
               {currentTrack.album?.name}
             </div>
           </div>
-          <div className="flex w-full justify-center h-50%">
+          <div className="flex w-full justify-center h-50% mb-2">
             <img
               src={getHighestImage(currentTrack.album?.images)}
               alt={currentTrack.album?.name}
-              className="h-72 rounded-md"
+              className="rounded-md"
             />
           </div>
           <div
             ref={trackRef}
             className="flex flex-col w-full whitespace-nowrap overflow-x-hidden h-15%"
           >
-            <div className={`flex w-full text-2xl md:text-4xl mb-2 relative ${isOverFlow ? 'animate-marquee' : ''}`}>
+            <div className={`flex w-full text-2xl md:text-4xl relative ${isOverFlow ? 'animate-marquee' : ''}`}>
               {currentTrack.type === 'track' && (
                 <div className="font-semibold">
                   {currentTrack.name}
