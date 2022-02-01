@@ -125,6 +125,7 @@ const WebPlayback: React.FC = () => {
   const [positionMs, setPositionMs] = useState(0);
 
   const { width: windowWidth, height: windowHeight } = useWindowSize();
+  const [isMobilePlayer, setIsMobilePlayer] = useState(false);
   const [isOverFlow, setIsOverflow] = useState(false);
 
   useEffect(() => {
@@ -135,6 +136,7 @@ const WebPlayback: React.FC = () => {
       }
     }
     setIsOverflow(false);
+    setIsMobilePlayer(!!(windowWidth && windowWidth < 1024));
   }, [currentTrack.id, windowWidth, windowHeight]);
 
   const transferPlayback = async (device_id: string): Promise<void> => {
@@ -366,7 +368,9 @@ const WebPlayback: React.FC = () => {
   };
 
   const getPlaybackState = async (): Promise<void> => {
-    const { data: responseData } = await ApiSpotify.get('me/player');
+    const { data: responseData } = await ApiSpotify.get('me/player', {
+      params: { additional_types: 'track,episode' }
+    });
     if (!responseData) {
       if (deviceId) handlePlayThisDevice();
     } else {
@@ -378,18 +382,43 @@ const WebPlayback: React.FC = () => {
         repeat_state,
         is_playing,
       } = responseData;
-  
+
       const {
         duration_ms,
+        type,
       } = item;
-  
+
       setDuration(duration_ms);
       setPositionMs(progress_ms);
       changeIsPlaying(is_playing);
       setShuffle(shuffle_state);
       setRepeatMode(mapRepeatMode.find((v) => v.state === repeat_state)?.mode || 0);
       setVolume(device.volume_percent);
-      changeCurrentTrack(item);
+
+      // episode have different structure from track
+      let newTrack;
+      if (type === 'episode') {
+        newTrack = {
+          id: item.id,
+          duration_ms: item.duration_ms,
+          is_playable: item.is_playable,
+          name: item.name,
+          type: item.type,
+          uri: item.uri,
+          album: {
+            name: item.show.name,
+            uri: item.show.uri,
+            images: item.images,
+          },
+          artists: [{
+            name: item.show.name,
+            uri: item.show.uri,
+          }],
+        };
+      } else {
+        newTrack = item;
+      }
+      changeCurrentTrack(newTrack);
     }
   };
 
@@ -462,8 +491,8 @@ const WebPlayback: React.FC = () => {
             {currentTrack && currentTrack.uri && (
               <>
                 <img
-                  src={getSmallestImage(currentTrack.album.images)}
-                  alt={currentTrack.album.name}
+                  src={getSmallestImage(currentTrack.album?.images)}
+                  alt={currentTrack.album?.name}
                   className="h-12 pl-2 lg:pl-10 pr-4 z-10 bg-black"
                 />
                 <div className={`flex flex-col mr-6 relative ${isOverFlow ? 'animate-marquee' : ''}`}>
@@ -472,7 +501,12 @@ const WebPlayback: React.FC = () => {
                       {currentTrack.name}
                     </div>
                   )}
-                  {currentTrack.type === 'episode' && (
+                  {(currentTrack.type === 'episode' && isMobilePlayer) && (
+                    <div className="font-semibold">
+                      {currentTrack.name}
+                    </div>
+                  )}
+                  {(currentTrack.type === 'episode' && !isMobilePlayer) && (
                     <TextLink
                       className="font-semibold"
                       text={currentTrack.name}
@@ -480,7 +514,10 @@ const WebPlayback: React.FC = () => {
                     />
                   )}
                   <div className="font-light">
-                    {currentTrack.artists.map((artist, idx) => (
+                    {isMobilePlayer && (
+                      <div>{currentTrack.artists?.map((artist) => artist.name).join(', ')}</div>
+                    )}
+                    {!isMobilePlayer && currentTrack.artists?.map((artist, idx) => (
                       <Fragment key={artist.uri}>
                         <TextLink
                           text={artist.name}
