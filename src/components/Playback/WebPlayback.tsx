@@ -1,4 +1,4 @@
-import {
+import React, {
   useState,
   useEffect,
   useContext,
@@ -15,9 +15,13 @@ import {
 } from '../../utils/helpers';
 import { PlayerContext } from '../../context/player-context';
 import ApiSpotify from '../../utils/api-spotify';
-import Track from '../../types/Track';
+import Device from '../../types/Device';
+import RepeatMode from '../../types/RepeatMode';
+import Player from '../../types/Player';
+import PlaybackState from '../../types/PlaybackState';
 import {
   Airplay,
+  Maximize2,
   Mic,
   Pause,
   PauseCircle,
@@ -29,6 +33,7 @@ import {
   SkipForward,
   Volume,
 } from 'react-feather';
+import FullPlayer from './FullPlayer';
 import useWindowSize from '../../hooks/useWindowSize';
 import { BACKEND_URI, PLAYER_NAME } from '../../utils/constants';
 
@@ -44,57 +49,7 @@ declare global {
 
 window.Spotify = window.Spotify || {};
 
-type PlaybackState = {
-  track_window: {
-    current_track: Track;
-    next_tracks: Track[];
-    previous_tracks: Track[];
-  };
-  context: {
-    uri: string;
-  };
-  disallows: {
-    pausing: boolean;
-    peeking_next: boolean;
-    peeking_prev: boolean;
-    resuming: boolean;
-    seeking: boolean;
-    skipping_prev: boolean;
-  };
-  duration: number;
-  loading: boolean;
-  paused: boolean;
-  playback_quality: string;
-  position: number;
-  repeat_mode: number;
-  shuffle: boolean;
-  timestamp: number;
-};
-
-type Device = {
-  id: string;
-  is_active: boolean;
-  is_private_session: boolean;
-  is_restricted: boolean;
-  name: string;
-  type: string;
-  volume_percent: number;
-};
-
-type Player = {
-  addListener: (type: string, callback: (arg: any) => void) => void;
-  connect: () => Promise<void>;
-  disconnect: () => Promise<void>;
-  previousTrack: () => Promise<void>;
-  nextTrack: () => Promise<void>;
-  togglePlay: () => Promise<void>;
-  seek: (position_ms: number) => Promise<void>;
-  getVolume: () => Promise<number>;
-  setVolume: (volume_percent: number) => Promise<void>;
-  getCurrentState: () => Promise<PlaybackState>;
-} | undefined;
-
-const mapRepeatMode = [
+const mapRepeatMode: RepeatMode = [
   { state: 'off', mode: 0, text: '' },
   { state: 'context', mode: 1, text: '•' },
   { state: 'track', mode: 2, text: '1' },
@@ -120,12 +75,12 @@ const WebPlayback: React.FC = () => {
   const [repeatMode, setRepeatMode] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(100);
-  const [devices, setDevices] = useState([]);
-
+  const [devices, setDevices] = useState<Device[]>([]);
   const [positionMs, setPositionMs] = useState(0);
 
   const { width: windowWidth, height: windowHeight } = useWindowSize();
   const [isMobilePlayer, setIsMobilePlayer] = useState(false);
+  const [showFullPlayer, setShowFullPlayer] = useState(false);
   const [isOverFlow, setIsOverflow] = useState(false);
 
   useEffect(() => {
@@ -224,7 +179,7 @@ const WebPlayback: React.FC = () => {
                 setVolume(volume * 100);
               });
 
-              // console.info('state from player_state_changed', state);
+              console.info('state from player_state_changed', state);
             } catch (error) {
               console.error(error);
             }
@@ -360,6 +315,14 @@ const WebPlayback: React.FC = () => {
     }
   };
 
+  const handleshowFullPlayer = () => {
+    setShowFullPlayer(true);
+  }
+
+  const handleHideFullPlayer = () => {
+    setShowFullPlayer(false);
+  };
+
   const getUserDevices = async () => {
     const response = await ApiSpotify.get('/me/player/devices');
     const devices = response.data.devices;
@@ -464,6 +427,7 @@ const WebPlayback: React.FC = () => {
   const PlayPauseIconMini = isPlaying ? Pause : Play;
 
   const handleOpenLyric = () => {
+    setShowFullPlayer(false);
     history.push('/lyric');
   };
 
@@ -485,8 +449,11 @@ const WebPlayback: React.FC = () => {
           Loading ...
         </div>
       )}
-      {!error && deviceId && (
-        <div className="grid grid-cols-3 gap-4 items-center h-full">
+      {!error && deviceId && !showFullPlayer && (
+        <div
+          className="grid grid-cols-3 gap-4 items-center h-full"
+          onClick={isMobilePlayer ? handleshowFullPlayer : undefined}
+        >
           <div ref={trackRef} className="flex items-end col-span-2 lg:col-span-1 whitespace-nowrap overflow-x-hidden">
             {currentTrack && currentTrack.uri && (
               <>
@@ -606,7 +573,7 @@ const WebPlayback: React.FC = () => {
             <div data-tip data-for="device-tooltip" data-event="click focus">
               <Airplay className="w-6 mr-4 cursor-pointer" />
             </div>
-            <div className="hidden lg:flex items-center">
+            <div className="hidden lg:flex items-center mr-4">
               <Volume className="w-6 cursor-pointer" />
               <input
                 type="range"
@@ -627,6 +594,12 @@ const WebPlayback: React.FC = () => {
               <PlayPauseIconMini
                 className="w-6 mr-4 cursor-pointer"
                 onClick={() => handlePlay()}
+              />
+            </div>
+            <div className="hidden lg:block">
+              <Maximize2
+                className="w-6 mr-4 cursor-pointer"
+                onClick={handleshowFullPlayer}
               />
             </div>
           </div>
@@ -657,6 +630,33 @@ const WebPlayback: React.FC = () => {
           </ReactTooltip>
         </div>
       )}
+
+      <FullPlayer
+        player={player}
+        mapRepeatMode={mapRepeatMode}
+        isPlayerActive={isPlayerActive}
+        activeDevice={activeDevice}
+        shuffle={shuffle}
+        repeatMode={repeatMode}
+        duration={duration}
+        volume={volume}
+        devices={devices}
+        positionMs={positionMs}
+        currentTrack={currentTrack}
+        isPlaying={isPlaying}
+        showFullPlayer={showFullPlayer}
+        handlePlay={handlePlay}
+        handlePrev={handlePrev}
+        handleNext={handleNext}
+        setPositionMs={setPositionMs}
+        handleSeek={handleSeek}
+        handleVolume={handleVolume}
+        handleShuffle={handleShuffle}
+        handleRepeatMode={handleRepeatMode}
+        handleSelectDevice={handleSelectDevice}
+        handleOpenLyric={handleOpenLyric}
+        handleHideFullPlayer={handleHideFullPlayer}
+      />
     </div>
   );
 };
