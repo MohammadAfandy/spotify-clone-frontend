@@ -6,7 +6,7 @@ import Track from '../types/Track';
 import Episode from '../types/Episode';
 import ApiSpotify from '../utils/api-spotify';
 import { getHighestImage } from '../utils/helpers';
-import { EPISODE_LOGO_IMAGE } from '../utils/constants';
+import { EPISODE_LOGO_IMAGE, LIMIT_CARD } from '../utils/constants';
 
 import CardItem from '../components/Card/CardItem';
 import CardCollection from '../components/Card/CardCollection';
@@ -70,7 +70,7 @@ const CollectionPlaylistPage: React.FC = () => {
   };
 
   const CardLoading = (
-    [...Array(5)].map((_, idx) => (
+    [...Array(LIMIT_CARD)].map((_, idx) => (
       <CardItem key={idx} isLoading />
     ))
   );

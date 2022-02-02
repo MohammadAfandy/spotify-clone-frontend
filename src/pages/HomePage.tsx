@@ -11,6 +11,7 @@ import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 import CardItem from '../components/Card/CardItem';
 import TextLink from '../components/Text/TextLink';
 import GridWrapper from '../components/Grid/GridWrapper';
+import { LIMIT_CARD } from '../utils/constants';
 
 const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -27,7 +28,7 @@ const HomePage: React.FC = () => {
     const fetchHome = async () => {
       try {
         setIsLoading(true);
-        const params = { limit: 5 };
+        const params = { limit: LIMIT_CARD };
         const promises = [
           makeRequest('/browse/new-releases', { params }, isLoggedIn),
           makeRequest('/browse/featured-playlists', { params }, isLoggedIn)
@@ -59,7 +60,7 @@ const HomePage: React.FC = () => {
   }, [isLoggedIn]);
 
   const CardLoading = (
-    [...Array(5)].map((_, idx) => (
+    [...Array(LIMIT_CARD)].map((_, idx) => (
       <CardItem key={idx} isLoading />
     ))
   );
@@ -67,10 +68,10 @@ const HomePage: React.FC = () => {
   return (
     <div className="flex flex-col px-4 py-4">
       <div className="mb-8">
-        <div className="mb-4 flex justify-between items-end font-bold w-full">
+        <div className="mb-4 flex justify-between items-center font-bold w-full">
           {isLoading && <Skeleton width={200} height={30} />}
-          {!isLoading && <div className="text-2xl">{message}</div>}
-          <TextLink text="See All" url="/genre/featured-playlists" />
+          {!isLoading && <div className="text-lg md:text-2xl truncate">{message}</div>}
+          <TextLink className="ml-6 whitespace-pre" text="See All" url="/genre/featured-playlists" />
         </div>
         <GridWrapper>
           {isLoading && CardLoading}
@@ -78,7 +79,7 @@ const HomePage: React.FC = () => {
             <CardItem
               key={playlist.id}
               name={playlist.name}
-              description={playlist.owner.name}
+              description={`By ${playlist.owner.display_name}`}
               image={getHighestImage(playlist.images)}
               uri={playlist.uri}
               href={'/playlist/' + playlist.id}
@@ -89,9 +90,9 @@ const HomePage: React.FC = () => {
 
       {isLoggedIn && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-end font-bold w-full">
-            <div className="text-2xl">Your Top Tracks</div>
-            <TextLink text="See All" url="genre/top-tracks" />
+          <div className="mb-4 flex justify-between items-center font-bold w-full">
+            <div className="text-lg md:text-2xl truncate">Your Top Tracks</div>
+            <TextLink className="ml-6 whitespace-pre" text="See All" url="genre/top-tracks" />
           </div>
           <GridWrapper>
             {isLoading && CardLoading}
@@ -99,6 +100,7 @@ const HomePage: React.FC = () => {
               <CardItem
                 key={track.id}
                 name={track.name}
+                description={getArtistNames(track.artists)}
                 image={getHighestImage(track.album.images)}
                 uri={track.uri}
                 href={'/album/' + track.album.id}
@@ -110,9 +112,9 @@ const HomePage: React.FC = () => {
 
       {isLoggedIn && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-end font-bold w-full">
-            <div className="text-2xl">Your Top Artists</div>
-            <TextLink text="See All" url="genre/top-artists" />
+          <div className="mb-4 flex justify-between items-center font-bold w-full">
+            <div className="text-lg md:text-2xl truncate">Your Top Artists</div>
+            <TextLink className="ml-6 whitespace-pre" text="See All" url="genre/top-artists" />
           </div>
           <GridWrapper>
             {isLoading && CardLoading}
@@ -131,9 +133,9 @@ const HomePage: React.FC = () => {
       )}
 
       <div className="mb-8">
-        <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-2xl">New Releases</div>
-          <TextLink text="See All" url="genre/new-releases" />
+        <div className="mb-4 flex justify-between items-center font-bold w-full">
+          <div className="text-lg md:text-2xl truncate">New Releases</div>
+          <TextLink className="ml-6 whitespace-pre" text="See All" url="genre/new-releases" />
         </div>
         <GridWrapper>
           {isLoading && CardLoading}

@@ -86,6 +86,7 @@ const WebPlayback: React.FC = () => {
   const [isMobilePlayer, setIsMobilePlayer] = useState(false);
   const [showFullPlayer, setShowFullPlayer] = useState(false);
   const [isOverFlow, setIsOverflow] = useState(false);
+  const [isEnableReverseDuration, setIsEnableReverseDuration] = useState(false);
 
   useEffect(() => {
     if (trackRef.current) {
@@ -281,6 +282,8 @@ const WebPlayback: React.FC = () => {
       await ApiSpotify.put('me/player/volume', null, { params: {
         volume_percent,
       }});
+      await sleep(2000);
+      getPlaybackState();
     }
   };
 
@@ -436,7 +439,7 @@ const WebPlayback: React.FC = () => {
   };
 
   return (
-    <div className="h-full w-full border-t-2 border-gray-200 border-opacity-50 bg-black text-sm">
+    <div className="h-full w-full border-t-2 border-light-black-1 bg-light-black text-sm sm:text-xs">
       {error && (
         <div className="flex flex-col items-center justify-center h-full">
           <div className="mb-2 text-red-400">{error}</div>
@@ -454,33 +457,33 @@ const WebPlayback: React.FC = () => {
         </div>
       )}
       {!error && deviceId && !showFullPlayer && (
-        <div className="flex flex-col w-full h-full justify-center">
+        <div className="flex flex-col w-full h-full justify-center items-between">
           <div
-            className="grid grid-cols-3 gap-4 items-center py-1"
+            className="grid grid-cols-3 gap-4 items-center h-85%"
             onClick={isMobilePlayer ? handleshowFullPlayer : undefined}
           >
-            <div ref={trackRef} className="flex items-end col-span-2 lg:col-span-1 whitespace-nowrap overflow-x-hidden">
+            <div ref={trackRef} className="flex items-center col-span-2 lg:col-span-1 whitespace-nowrap overflow-x-hidden">
               {currentTrack && currentTrack.uri && (
                 <>
                   <img
                     src={getSmallestImage(currentTrack.album?.images)}
                     alt={currentTrack.album?.name}
-                    className="h-12 pl-2 lg:pl-10 pr-4 z-10 bg-black"
+                    className="pl-2 lg:pl-4 pr-4 z-10 bg-inherit"
                   />
-                  <div className={`flex flex-col mx-3 relative ${isOverFlow ? 'animate-marquee' : ''}`}>
+                  <div className={`flex flex-col mr-2 relative ${isOverFlow ? 'animate-marquee' : ''}`}>
                     {currentTrack.type === 'track' && (
-                      <div className="font-semibold">
+                      <div className="font-semibold text-sm">
                         {currentTrack.name}
                       </div>
                     )}
                     {(currentTrack.type === 'episode' && isMobilePlayer) && (
-                      <div className="font-semibold">
+                      <div className="font-semibold text-sm">
                         {currentTrack.name}
                       </div>
                     )}
                     {(currentTrack.type === 'episode' && !isMobilePlayer) && (
                       <TextLink
-                        className="font-semibold"
+                        className="font-semibold text-sm"
                         text={currentTrack.name}
                         url={'/episode/' + currentTrack.id}
                       />
@@ -511,18 +514,18 @@ const WebPlayback: React.FC = () => {
             <div className="hidden lg:flex flex-col items-center justify-around">
               <div className="flex justify-center items-center">
                 <Shuffle
-                  className="h-4 w-4 mx-3 cursor-pointer"
+                  className="h-6 w-6 sm:h-4 md:w-4 mx-3 cursor-pointer"
                   color={getButtonColor(shuffle)}
                   onClick={handleShuffle}
                 />
                 <SkipBack
-                  className="h-4 w-4 mx-3 cursor-pointer"
+                  className="h-6 w-6 sm:h-4 md:w-4 mx-3 cursor-pointer"
                   onClick={handlePrev}
                 />
                 {currentTrack.type === 'episode' && (
                   <div className="relative">
                     <ChevronsLeft
-                      className="h-4 w-4 mx-3 cursor-pointer"
+                      className="h-6 w-6 sm:h-4 md:w-4 mx-3 cursor-pointer"
                       onClick={(e) => handleSeek(e, positionMs - (15 * 1000))}
                     />
                     <div className="absolute w-2 left-0 right-0 mx-auto top-2 text-xxs bottom-0 font-light">
@@ -537,7 +540,7 @@ const WebPlayback: React.FC = () => {
                 {currentTrack.type === 'episode' && (
                   <div className="relative">
                     <ChevronsRight
-                      className="h-4 w-4 mx-3 cursor-pointer"
+                      className="h-6 w-6 sm:h-4 md:w-4 mx-3 cursor-pointer"
                       onClick={(e) => handleSeek(e, positionMs + (15 * 1000))}
                     />
                     <div className="absolute w-2 left-0 right-0 mx-auto top-2 text-xxs bottom-0 font-light">
@@ -546,12 +549,12 @@ const WebPlayback: React.FC = () => {
                   </div>
                 )}
                 <SkipForward
-                  className="h-4 w-4 mx-3 cursor-pointer"
+                  className="h-6 w-6 sm:h-4 md:w-4 mx-3 cursor-pointer"
                   onClick={handleNext}
                 />
                 <div className="relative">
                   <Repeat
-                    className="h-4 w-4 mx-3 cursor-pointer"
+                    className="h-6 w-6 sm:h-4 md:w-4 mx-3 cursor-pointer"
                     color={getButtonColor(repeatMode !== 0)}
                     onClick={handleRepeatMode}
                   />
@@ -564,7 +567,7 @@ const WebPlayback: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-center items-center w-full">
+              <div className="flex justify-center items-center w-full mt-1">
                 <div className="mr-2">{durationFn(positionMs)}</div>
                 <input
                   type="range"
@@ -577,32 +580,30 @@ const WebPlayback: React.FC = () => {
                     handleSeek(e, Number(e.currentTarget.value))
                   }
                 />
-                <div className="group">
-                  <div className="group-hover:block hidden">
-                    {durationFn(duration - positionMs)}
-                  </div>
-                  <div className="group-hover:hidden block">
-                    {durationFn(duration)}
-                  </div>
+                <div
+                  className="font-light cursor-pointer"
+                  onClick={() => setIsEnableReverseDuration((prevState) => !prevState)}
+                >
+                  {isEnableReverseDuration ? `-${durationFn(duration - positionMs)}` : durationFn(duration)}
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col items-end justify-center pr-2 lg:pr-10 h-full">
+            <div className="flex flex-col items-end justify-center pr-2 lg:pr-4 h-full">
               <div className="flex mb-2">
                 {currentTrack && currentTrack.type === 'track' && (
                   <div>
                     <Mic
-                      className="w-6 mr-4 cursor-pointer"
+                      className="h-6 w-6 sm:h-4 md:w-4 mr-4 cursor-pointer"
                       onClick={handleOpenLyric}
                     />
                   </div>
                 )}
                 <div data-tip data-for="device-tooltip" data-event="click focus">
-                  <Airplay className="w-6 mr-4 cursor-pointer" />
+                  <Airplay className="h-6 w-6 sm:h-4 md:w-4 mr-4 cursor-pointer" />
                 </div>
                 <div className="hidden lg:flex items-center mr-4">
-                  <Volume className="w-6 cursor-pointer" />
+                  <Volume className="h-6 w-6 sm:h-4 sm:w-4 cursor-pointer" />
                   <input
                     type="range"
                     id="volumeebar"
@@ -620,13 +621,13 @@ const WebPlayback: React.FC = () => {
                 </div>
                 <div className="block lg:hidden">
                   <PlayPauseIconMini
-                    className="w-6 cursor-pointer"
+                    className="h-6 w-6 sm:h-4 md:w-4 cursor-pointer"
                     onClick={handlePlay}
                   />
                 </div>
                 <div className="hidden lg:block">
                   <Maximize2
-                    className="w-6 cursor-pointer"
+                    className="h-6 w-6 sm:h-4 md:w-4 cursor-pointer"
                     onClick={handleshowFullPlayer}
                   />
                 </div>
@@ -650,7 +651,7 @@ const WebPlayback: React.FC = () => {
                   .map(({ name, id }) => (
                     <div
                       key={id}
-                      className={`cursor-pointer border-b-2 border-white border-opacity-20 mb-1 text-sm ${
+                      className={`cursor-pointer border-b-2 border-white border-opacity-20 mb-1 text-xs ${
                         id === activeDevice?.id ? 'text-green-200' : ''
                       }`}
                       onClick={(e) => handleSelectDevice(e, id)}
@@ -663,10 +664,10 @@ const WebPlayback: React.FC = () => {
           </div>
 
           {activeDevice && activeDevice.id !== deviceId && (
-              <div className="block lg:hidden text-green-400 h-2 text-xs text-center w-full">
-                Listening on {activeDevice.name}
-              </div>
-            )}
+            <div className="block lg:hidden text-green-400 text-xs text-center w-full">
+              Listening on {activeDevice.name}
+            </div>
+          )}
         </div>
       )}
 

@@ -54,17 +54,17 @@ const CardCollection: React.FC<CardCollectionProps> = ({
   };
 
   const bgColor =
-    'bg-gradient-to-b ' +
+    'bg-gradient-to-tl ' +
     (type === 'track'
-      ? 'from-green-300 to-green-800'
-      : 'from-blue-300 to-blue-800');
+      ? 'from-indigo-500 to-indigo-800'
+      : 'from-green-500 to-green-800');
 
   return (
     <div
       className={`group relative flex flex-col h-72 p-4 justify-end rounded-md cursor-pointer ${bgColor} ${className}`}
       onClick={handleClick}
     >
-      <SkeletonTheme color="#c8c6c6" highlightColor="#eee">
+      <SkeletonTheme color="rgba(255,255,255, .3)" highlightColor="rgba(255,255,255,.1)">
         <div className="text-justify mb-4 text-sm">
           {isLoading && <Skeleton />}
           {!isLoading && (

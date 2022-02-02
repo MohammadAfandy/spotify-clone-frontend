@@ -28,7 +28,9 @@ const SearchResultAllTrackPage: React.FC = () => {
 
   return (
     <div className="flex flex-col px-4 py-4">
-      <div className="text-2xl mb-4">All songs for “{query}”</div>
+      <div className="text-2xl font-bold mb-4 truncate">
+        All songs for “{query}”
+      </div>
       <PlayerListTrack
         tracks={tracks}
         showAlbum

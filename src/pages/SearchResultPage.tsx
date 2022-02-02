@@ -8,12 +8,13 @@ import Show from '../types/Show';
 import Episode from '../types/Episode';
 import { PlayerContext } from '../context/player-context';
 import { AuthContext } from '../context/auth-context';
-import { makeRequest, getArtistNames, removeNull } from '../utils/helpers';
+import { makeRequest, getArtistNames, removeNull, duration, formatDate } from '../utils/helpers';
 
 import PlayerListTrackMini from '../components/PlayerList/PlayerListTrackMini';
 import CardItem from '../components/Card/CardItem';
 import TextLink from '../components/Text/TextLink';
 import GridWrapper from '../components/Grid/GridWrapper';
+import { LIMIT_CARD } from '../utils/constants';
 
 const SearchResultPage: React.FC = () => {
   const params = useParams<{ query: string }>();
@@ -43,7 +44,7 @@ const SearchResultPage: React.FC = () => {
           params: {
             q: params.query,
             type: 'track,artist,album,playlist,show,episode',
-            limit: 5,
+            limit: LIMIT_CARD,
           },
         }, isLoggedIn);
   
@@ -64,7 +65,7 @@ const SearchResultPage: React.FC = () => {
   }, [params, isLoggedIn]);
 
   const CardLoading = (
-    [...Array(5)].map((_, idx) => (
+    [...Array(LIMIT_CARD)].map((_, idx) => (
       <CardItem key={idx} isLoading />
     ))
   );
@@ -73,8 +74,8 @@ const SearchResultPage: React.FC = () => {
     <div className="flex flex-col px-4 py-4">
       <div className="mb-8">
         <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-2xl">Songs</div>
-          {tracks.length > 0 && <TextLink text="See All" url={location.pathname + '/track'} />}
+          <div className="text-lg md:text-2xl truncate">Songs</div>
+          {tracks.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/track'} />}
         </div>
         {!isLoading && tracks.map((track) => (
           <PlayerListTrackMini
@@ -87,8 +88,8 @@ const SearchResultPage: React.FC = () => {
 
       <div className="mb-8">
         <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-2xl">Artists</div>
-          {artists.length > 0 && <TextLink text="See All" url={location.pathname + '/artist'} />}
+          <div className="text-lg md:text-2xl truncate">Artists</div>
+          {artists.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/artist'} />}
         </div>
         <GridWrapper>
           {isLoading && CardLoading}
@@ -109,8 +110,8 @@ const SearchResultPage: React.FC = () => {
 
       <div className="mb-8">
         <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-2xl">Albums</div>
-          {albums.length > 0 && <TextLink text="See All" url={location.pathname + '/album'} />}
+          <div className="text-lg md:text-2xl truncate">Albums</div>
+          {albums.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/album'} />}
         </div>
         <GridWrapper>
           {isLoading && CardLoading}
@@ -129,8 +130,8 @@ const SearchResultPage: React.FC = () => {
 
       <div className="mb-8">
         <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-2xl">Playlists</div>
-          {playlists.length > 0 && <TextLink text="See All" url={location.pathname + '/playlist'} />}
+          <div className="text-lg md:text-2xl truncate">Playlists</div>
+          {playlists.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/playlist'} />}
         </div>
         <GridWrapper>
           {isLoading && CardLoading}
@@ -153,8 +154,8 @@ const SearchResultPage: React.FC = () => {
 
       <div className="mb-8">
         <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-2xl">Podcasts</div>
-          {shows.length > 0 && <TextLink text="See All" url={location.pathname + '/show'} />}
+          <div className="text-lg md:text-2xl truncate">Podcasts</div>
+          {shows.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/show'} />}
         </div>
         <GridWrapper>
           {isLoading && CardLoading}
@@ -173,8 +174,8 @@ const SearchResultPage: React.FC = () => {
 
       <div className="mb-8">
         <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-2xl">Episodes</div>
-          {episodes.length > 0 && <TextLink text="See All" url={location.pathname + '/episode'} />}
+          <div className="text-lg md:text-2xl truncate">Episodes</div>
+          {episodes.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/episode'} />}
         </div>
         <GridWrapper>
           {isLoading && CardLoading}
@@ -182,7 +183,7 @@ const SearchResultPage: React.FC = () => {
             <CardItem
               key={episode.id}
               name={episode.name}
-              description={''}
+              description={`${formatDate(episode.release_date, 'MMM YY')} · ${duration(episode.duration_ms, true, true)}`}
               image={
                 episode.images && episode.images[0] && episode.images[0].url
               }

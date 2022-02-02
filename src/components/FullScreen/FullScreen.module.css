@@ -1,6 +1,6 @@
 
 .fullScreen {
-  @apply fixed flex flex-col top-0 left-0 z-40 bg-gradient-to-b from-gray-600 to-black h-full w-full py-6 px-6;
+  @apply fixed flex flex-col top-0 left-0 z-40 bg-gradient-to-tr from-light-black to-light-black-1 h-full w-full py-6 px-6;
   transform: translate(0, 200%);
   transition: transform 0.3s ease-in-out;
 }

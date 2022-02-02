@@ -74,7 +74,7 @@ const GenrePage: React.FC = () => {
 
   return (
     <div className="flex flex-col px-4 py-4">
-      <div className="text-2xl mb-4">
+      <div className="text-2xl font-bold mb-4 truncate">
         {typeText || <Skeleton width={200} />}
       </div>
       {type === 'featured-playlists' && (
@@ -84,7 +84,7 @@ const GenrePage: React.FC = () => {
             <CardItem
               key={playlist.id}
               name={playlist.name}
-              description={playlist.owner.name}
+              description={`By ${playlist.owner.display_name}`}
               image={getHighestImage(playlist.images)}
               uri={playlist.uri}
               href={'/playlist/' + playlist.id}
@@ -99,6 +99,7 @@ const GenrePage: React.FC = () => {
             <CardItem
               key={track.id}
               name={track.name}
+              description={getArtistNames(track.artists)}
               image={getHighestImage(track.album.images)}
               uri={track.uri}
               href={'/album/' + track.album.id}

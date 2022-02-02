@@ -5,7 +5,7 @@ import Album from '../types/Album';
 import ApiSpotify from '../utils/api-spotify';
 import { PlayerContext } from '../context/player-context';
 import { AuthContext } from '../context/auth-context';
-import { makeRequest, getArtistNames } from '../utils/helpers';
+import { makeRequest, getArtistNames, ucwords } from '../utils/helpers';
 import useFetchTracks from '../hooks/useFetchTracks';
 
 import CardItem from '../components/Card/CardItem';
@@ -15,6 +15,7 @@ import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
 import TextLink from '../components/Text/TextLink';
 import FolllowButton from '../components/Button/FollowButton';
 import GridWrapper from '../components/Grid/GridWrapper';
+import { LIMIT_CARD } from '../utils/constants';
 
 const ArtistPage: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -41,14 +42,14 @@ const ArtistPage: React.FC = () => {
   
         const dataAlbums = await makeRequest('/artists/' + params.id + '/albums', {
           params: {
-            limit: 5,
+            limit: LIMIT_CARD,
           },
         }, isLoggedIn);
         setAlbums(dataAlbums.data.items);
   
         const dataRelatedArtists = await makeRequest('/artists/' + params.id + '/related-artists', {
           params: {
-            limit: 5,
+            limit: LIMIT_CARD,
           },
         }, isLoggedIn);
         setRelatedArtists(dataRelatedArtists.data.artists);
@@ -109,7 +110,7 @@ const ArtistPage: React.FC = () => {
   };
 
   const CardLoading = (
-    [...Array(5)].map((_, idx) => (
+    [...Array(LIMIT_CARD)].map((_, idx) => (
       <CardItem key={idx} isLoading />
     ))
   );
@@ -118,38 +119,49 @@ const ArtistPage: React.FC = () => {
     <div className="px-4 py-4">
       {artist.id ? (
         <div className="px-4 py-4">
-          <PlayerListHeader
-            image={artist.images && artist.images[0]?.url}
-            name={artist.name}
-            type={artist.type}
-          />
-          <div className="flex items-center justify-center sm:justify-start">
-            <PlayButton className="w-16 h-16 mr-6" onClick={handlePlay} />
-            <FolllowButton
-              isFollowed={isFollowed}
-              onClick={handleFollow}
+          <div className="mb-4">
+            <PlayerListHeader
+              image={artist.images && artist.images[0]?.url}
+              name={artist.name}
+              type={ucwords(artist.type)}
+              footer={[
+                `${artist.followers?.total.toLocaleString()} Followers`,
+              ]}
             />
+            <div className="flex items-center justify-center sm:justify-start">
+              <PlayButton className="w-16 h-16 mr-6" onClick={handlePlay} />
+              <FolllowButton
+                isFollowed={isFollowed}
+                onClick={handleFollow}
+              />
+            </div>
           </div>
-          <PlayerListTrack
-            tracks={!isShowMore ? tracks.slice(0, 5) : tracks}
-            showAlbum
-            currentTrack={currentTrack}
-            isPlaying={isPlaying}
-            handlePlayTrack={handlePlayTrack}
-            handlePauseTrack={handlePauseTrack}
-            handleNext={() => setNextUrl(pageData.next)}
-            hasMore={!!pageData.next}
-          />
-          <span
-            className="cursor-pointer hover:underline"
-            onClick={() => setIsShowMore((prevState) => !prevState)}
-          >
-            {!isShowMore ? 'See More' : 'See Less'}
-          </span>
           <div className="mb-4">
             <div className="mb-4 flex justify-between items-end font-bold w-full">
-              <div className="text-2xl">Albums</div>
+              <div className="text-lg md:text-2xl truncate">Popular</div>
+            </div>
+            <PlayerListTrack
+              tracks={!isShowMore ? tracks.slice(0, 5) : tracks}
+              showAlbum
+              currentTrack={currentTrack}
+              isPlaying={isPlaying}
+              handlePlayTrack={handlePlayTrack}
+              handlePauseTrack={handlePauseTrack}
+              handleNext={() => setNextUrl(pageData.next)}
+              hasMore={!!pageData.next}
+            />
+            <span
+              className="cursor-pointer hover:underline"
+              onClick={() => setIsShowMore((prevState) => !prevState)}
+            >
+              {!isShowMore ? 'See More' : 'See Less'}
+            </span>
+          </div>
+          <div className="mb-4">
+            <div className="mb-4 flex justify-between items-end font-bold w-full">
+              <div className="text-lg md:text-2xl truncate">Albums</div>
               <TextLink
+                className="ml-6 whitespace-pre"
                 text="See All"
                 url={'/artist/' + params.id + '/albums'}
               />
@@ -171,15 +183,16 @@ const ArtistPage: React.FC = () => {
 
           <div className="mb-4">
             <div className="mb-4 flex justify-between items-end font-bold w-full">
-              <div className="text-2xl">Fans Also Like</div>
+              <div className="text-lg md:text-2xl truncate">Fans Also Like</div>
               <TextLink
+                className="ml-6 whitespace-pre"
                 text="See All"
                 url={'/artist/' + params.id + '/related'}
               />
             </div>
             <GridWrapper>
               {isLoading && CardLoading}
-              {!isLoading && relatedAtists.slice(0, 5).map((artist) => (
+              {!isLoading && relatedAtists.slice(0, 4).map((artist) => (
                 <CardItem
                   key={artist.id}
                   name={artist.name}

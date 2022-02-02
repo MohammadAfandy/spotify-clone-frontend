@@ -10,6 +10,7 @@ import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
 import PlayButton from '../components/Button/PlayButton';
 import Button from '../components/Button/Button';
 import TextLink from '../components/Text/TextLink';
+import { duration, formatDate } from '../utils/helpers';
 
 const EpisodePage: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -76,7 +77,12 @@ const EpisodePage: React.FC = () => {
               />,
             ]}
           />
-          <div className="flex items-center mb-8 justify-center sm:justify-start">
+          <div className="mb-4">
+            <div className="text-sm">
+              {formatDate(episode.release_date, 'MMM YY')} · {duration(episode.duration_ms, true, true)}
+            </div>
+          </div>
+          <div className="flex items-center justify-center sm:justify-start mb-4">
             <PlayButton
               className="w-16 h-16 mr-6"
               onClick={handlePlayEpisode}

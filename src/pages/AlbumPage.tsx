@@ -86,18 +86,20 @@ const AlbumPage: React.FC = () => {
     <div className="">
       {album.id ? (
         <div className="px-4 py-4">
-          <PlayerListHeader
-            image={album.images && album.images[0]?.url}
-            name={album.name}
-            type={album.album_type?.toUpperCase()}
-            footer={[
-              ...album.artists.map((artist) => (
-                <TextLink text={artist.name} url={'/artist/' + artist.id} />
-              )),
-              `${album.total_tracks} songs, ${duration(totalDuration, true)}`,
-            ]}
-          />
-          <div className="flex items-center justify-center sm:justify-start">
+          <div className="mb-4">
+            <PlayerListHeader
+              image={album.images && album.images[0]?.url}
+              name={album.name}
+              type={album.album_type?.toUpperCase()}
+              footer={[
+                ...album.artists.map((artist) => (
+                  <TextLink text={artist.name} url={'/artist/' + artist.id} />
+                )),
+                `${album.total_tracks} songs, ${duration(totalDuration, true)}`,
+              ]}
+            />
+          </div>
+          <div className="flex items-center justify-center sm:justify-start mb-4">
             <PlayButton
               className="w-16 h-16 mr-6"
               onClick={handlePlayFromStart}

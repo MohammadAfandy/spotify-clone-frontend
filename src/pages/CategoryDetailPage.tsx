@@ -57,7 +57,7 @@ const CategoryDetailPage: React.FC = () => {
           <CardItem
             key={playlist.id}
             name={playlist.name}
-            description={playlist.owner.name}
+            description={`By ${playlist.owner.display_name}`}
             image={
               playlist.images && playlist.images[0] && playlist.images[0].url
             }

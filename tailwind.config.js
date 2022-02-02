@@ -33,8 +33,12 @@ module.exports = {
         'light-black': '#181818',
         'light-black-1': '#262626',
         'light-black-2': '#3E3E3E',
+
+        // ''
+        // 'base-color': '#121212';
       },
       backgroundImage: theme => ({
+        'background-gradient': 'linear-gradient(rgba(0, 0, 0, .85) 0 , #121212 100%)',
         'banner-gradient': 'linear-gradient(90deg, #af2896, #509bf5)',
       }),
       inset: {

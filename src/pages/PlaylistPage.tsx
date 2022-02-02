@@ -190,21 +190,23 @@ const PlaylistPage: React.FC = () => {
     <div className="">
       {playlist.id ? (
         <div className="px-4 py-4">
-          <PlayerListHeader
-            image={getHighestImage(playlist.images)}
-            name={playlist.name}
-            type="PLAYLIST"
-            description={playlist.description}
-            footer={[
-              playlist.owner.display_name,
-              `${playlist.followers.total.toLocaleString()} likes`,
-              `${playlist.tracks.total} songs, ${duration(
-                totalDuration,
-                true
-              )}`,
-            ]}
-          />
-          <div className="mb-4 flex items-center justify-center sm:justify-start">
+          <div className="mb-4">
+            <PlayerListHeader
+              image={getHighestImage(playlist.images)}
+              name={playlist.name}
+              type="PLAYLIST"
+              description={playlist.description}
+              footer={[
+                playlist.owner.display_name,
+                `${playlist.followers.total.toLocaleString()} likes`,
+                `${playlist.tracks.total} songs, ${duration(
+                  totalDuration,
+                  true
+                )}`,
+              ]}
+            />
+          </div>
+          <div className="flex items-center justify-center sm:justify-start mb-4">
             <PlayButton
               className="w-16 h-16"
               onClick={handlePlayFromStart}

@@ -19,7 +19,7 @@ const PlayButton: React.FC<PlayButtonProps> = ({
   const Prop = isPlaying ? Pause : Play;
   return (
     <Prop
-      className={`bg-green-500 rounded-full p-3 cursor-pointer transition duration-300 ease-in-out transform hover:scale-110 ${className}`}
+      className={`bg-green-500 rounded-full p-4 cursor-pointer transition duration-300 ease-in-out transform hover:scale-110 ${className}`}
       onClick={onClick}
       fill="#fff"
       data-tip="play"

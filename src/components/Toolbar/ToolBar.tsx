@@ -78,7 +78,7 @@ const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
   };
 
   return (
-    <div className="fixed flex box-shadow w-auto items-center justify-between left-0 sm:left-52 right-0 top-0 px-4 py-2 h-16 z-10">
+    <div className="fixed flex w-auto items-center justify-between bg-black bg-opacity-50 left-0 sm:left-52 right-0 top-0 px-4 py-2 h-16 z-10">
       <div className="flex sm:hidden items-center">
         <Menu
           className="cursor-pointer"
@@ -87,13 +87,13 @@ const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
       </div>
       <div className="flex items-center">
         <div
-          className={`mr-4 bg-black rounded-full bg-opacity-60 p-1 cursor-pointer hidden sm:block`}
+          className={`mr-4 bg-black bg-opacity-70 rounded-full p-1 cursor-pointer hidden sm:block`}
           onClick={handleGoBack}
         >
           <ChevronLeft />
         </div>
         <div
-          className={`mr-4 bg-black rounded-full bg-opacity-60 p-1 cursor-pointer hidden sm:block`}
+          className={`mr-4 bg-black bg-opacity-70 rounded-full p-1 cursor-pointer hidden sm:block`}
           onClick={handleGoForward}
         >
           <ChevronRight />

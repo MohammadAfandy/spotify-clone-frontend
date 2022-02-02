@@ -73,7 +73,7 @@ const SearchResultAllPage: React.FC = () => {
 
   return (
     <div className="flex flex-col px-4 py-4">
-      <div className="text-2xl mb-4">
+      <div className="text-2xl font-bold mb-4 truncate">
         All {type} for “{query}”
       </div>
       {type === 'artist' && (

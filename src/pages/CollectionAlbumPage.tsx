@@ -5,6 +5,7 @@ import { getArtistNames, getHighestImage } from '../utils/helpers';
 
 import CardItem from '../components/Card/CardItem';
 import GridWrapper from '../components/Grid/GridWrapper';
+import { LIMIT_CARD } from '../utils/constants';
 
 const CollectionAlbumPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -35,7 +36,7 @@ const CollectionAlbumPage: React.FC = () => {
   }, []);
 
   const CardLoading = (
-    [...Array(5)].map((_, idx) => (
+    [...Array(LIMIT_CARD)].map((_, idx) => (
       <CardItem key={idx} isLoading />
     ))
   );

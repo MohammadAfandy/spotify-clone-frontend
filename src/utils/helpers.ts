@@ -67,14 +67,15 @@ export const getArtistNames = (artists: Artist[]): string => {
 
 export const formatDate = (
   date: string | number | Date,
-  format = 'string'
+  format: string
 ): string => {
   return moment(date).format(format);
 };
 
 export const duration = (
   miliseconds: number,
-  humanize = false
+  humanize = false,
+  hideSec = true
 ): string | number => {
   const momentObj = moment.utc(miliseconds);
   const hours = momentObj.hours();
@@ -89,7 +90,7 @@ export const duration = (
     if (minutes > 0) {
       result.push(minutes + ' min');
     }
-    if (hours <= 0) {
+    if (hours <= 0 && !hideSec) {
       result.push(seconds + ' sec');
     }
 
@@ -147,3 +148,9 @@ export const randomAlphaNumeric = (length: number) => {
     (Math.pow(36, length + 1) - Math.random() * Math.pow(36, length))
   ).toString(36).slice(1);
 };
+
+export const ucwords = (str: string): string => {
+  return (str + '').replace(/^([a-z])|\s+([a-z])/g, ($1) => {
+      return $1.toUpperCase();
+  });
+}

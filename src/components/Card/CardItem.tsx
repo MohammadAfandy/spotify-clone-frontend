@@ -5,6 +5,7 @@ import { PlayerContext } from '../../context/player-context';
 import { Music } from 'react-feather';
 
 import PlayButton from '../Button/PlayButton';
+import { ucwords } from '../../utils/helpers';
 
 type CardItemProps = {
   className?: string;
@@ -50,8 +51,8 @@ const CardItem: React.FC<CardItemProps> = ({
   };
   
   const LoadingComponent = (
-    <div className="p-4 h-72 min-w-52 bg-light-black hover:bg-light-black-1 rounded-xl">
-      <Skeleton className="w-full h-48 rounded-xl" />
+    <div className="p-4 h-72 min-w-52 bg-light-black hover:bg-light-black-1 rounded-md">
+      <Skeleton className="w-full h-48 rounded-md" />
       <div className="text-sm font-bold mt-2">
         <Skeleton />
         <Skeleton />
@@ -64,15 +65,18 @@ const CardItem: React.FC<CardItemProps> = ({
       {isLoading && LoadingComponent}
       {!isLoading && (
         <div
-          className={`group cursor-pointer h-72 min-w-52 transition duration-300 ease-in-out transform p-4 bg-light-black hover:bg-light-black-1 rounded-xl ${className}`}
+          className={`group cursor-pointer min-w-52 transition duration-300 ease-in-out transform p-4 bg-light-black hover:bg-light-black-1 rounded-md h-full ${className}`}
           onClick={handleClick}
         >
-          <div className="relative">
+          <div className="relative h-80%">
             {image ? (
-              <img src={image} alt={name} className="w-full h-48 rounded-xl" />
+              <img
+                src={image}
+                alt={name}
+                className="w-full h-full rounded-md" />
             ) : (
-              <div className="flex justify-center items-center w-full h-48 rounded-xl bg-light-black-2">
-                <Music className="w-24 h-24" />
+              <div className="w-full h-full">
+                <Music className="w-full h-full p-8" />
               </div>
             )}
             <div className="hidden md:block opacity-0 canhover:group-hover:opacity-100 transition duration-500 ease-in-out">
@@ -84,8 +88,8 @@ const CardItem: React.FC<CardItemProps> = ({
           </div>
           <div className="text-sm font-bold mt-2">
             <div className="truncate">{name}</div>
-            <div className="text-sm font-light text-gray-300 truncate">
-              {description}
+            <div className="text-sm font-semibold text-gray-300 truncate">
+              {description ? ucwords(description) : <span>&nbsp;</span>}
             </div>
           </div>
         </div>

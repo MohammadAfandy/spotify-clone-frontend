@@ -132,7 +132,7 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
     <>
       {showDelete && (
         <div
-          className="absolute top-2 right-2 group-hover:block hidden rounded-xl bg-light-black-2 p-2 cursor-pointer z-10"
+          className="absolute top-2 right-2 group-hover:block hidden rounded-md bg-light-black-2 p-2 cursor-pointer z-10"
           onClick={handleDeleteImage}
         >
           <Trash className="w-4 h-4" />
@@ -180,14 +180,14 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
             value={playlistName}
             type="text"
             placeholder="My Playlist"
-            className="bg-light-black-2 font-bold p-3 mb-4 rounded-xl outline-none"
+            className="bg-light-black-2 font-bold p-3 mb-4 rounded-md outline-none"
           />
           <textarea
             onChange={(e) => setPlaylistDescription(e.target.value)}
             value={playlistDescription}
             style={{ resize: 'none' }}
             placeholder="Add an optional Description"
-            className="h-full font-bold bg-light-black-2 p-3 mb-4 rounded-xl outline-none"
+            className="h-full font-bold bg-light-black-2 p-3 mb-4 rounded-md outline-none"
           />
         </div>
       </div>

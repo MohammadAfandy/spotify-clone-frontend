@@ -29,7 +29,7 @@ const TextLink: React.FC<TextLinkProps> = ({
 
   return (
     <span
-      className={`hover:underline cursor-pointer ${className}`}
+      className={`font-semibold text-gray-300 hover:underline cursor-pointer ${className}`}
       onClick={handleClick}
     >
       {text}
