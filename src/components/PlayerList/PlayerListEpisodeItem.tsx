@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
-import { PlayCircle, PlusCircle, Check } from 'react-feather';
+import {
+  MdPlayCircle,
+  MdAddCircle,
+  MdCheck,
+} from 'react-icons/md';
 import Episode from '../../types/Episode';
 import ApiSpotify from '../../utils/api-spotify';
 import {
@@ -70,7 +74,7 @@ const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
         </div>
         <div className="flex items-center text-xs">
           <div className="flex items-center mr-auto">
-            <PlayCircle
+            <MdPlayCircle
               className="mr-4 w-8 h-8 cursor-pointer"
               onClick={() => handlePlayEpisode(number - 1, 0)}
             />
@@ -82,12 +86,12 @@ const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
           </div>
           <div className="flex canhover:hidden canhover:group-hover:flex items-center">
             {isSaved ? (
-              <Check
+              <MdCheck
                 className="mr-4 w-8 h-8 cursor-pointer text-green-400"
                 onClick={() => handleAddToSavedEpisode(episode.id)}
               />
             ) : (
-              <PlusCircle
+              <MdAddCircle
                 className="mr-4 w-8 h-8 cursor-pointer"
                 onClick={() => handleAddToSavedEpisode(episode.id)}
               />

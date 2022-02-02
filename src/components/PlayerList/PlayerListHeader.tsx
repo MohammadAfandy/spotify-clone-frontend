@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { Music } from 'react-feather';
+import { FiMusic } from 'react-icons/fi';
 import { ellipsis } from '../../utils/helpers';
 
 type PlayerListHeaderProps = {
@@ -28,10 +28,10 @@ const PlayerListHeader: React.FC<PlayerListHeaderProps> = ({
   return (
     <div className="flex flex-col items-center sm:flex-row sm:items-end mb-3 pb-3 border-b-2 border-opacity-10">
       {image ? (
-        <img src={image} alt={name} className="w-52 h-52 mr-6 rounded-md" />
+        <img src={image} alt={name} className="w-52 h-52 sm:mr-6 rounded-md" />
       ) : (
-        <div className="flex justify-center items-center w-52 h-52 mr-6 rounded-md bg-light-black-2">
-          <Music className="w-24 h-24" />
+        <div className="flex justify-center items-center w-52 h-52 sm:mr-6 rounded-md bg-light-black-2">
+          <FiMusic className="w-24 h-24" />
         </div>
       )}
       <div className="font-bold text-center sm:text-left mt-4 sm:mt-0">

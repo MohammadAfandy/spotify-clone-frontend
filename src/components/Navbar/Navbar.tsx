@@ -1,6 +1,11 @@
 import { useEffect, useState, useContext } from 'react';
-// import { Edit2, Home, List, Music, Plus, Search, Trash, X as Close } from 'react-feather';
-import { Home, List, Plus, Search, X as Close } from 'react-feather';
+import {
+  MdHomeFilled,
+  MdSearch,
+  MdOutlineQueueMusic,
+  MdAddBox,
+  MdClose,
+} from 'react-icons/md';
 import { AuthContext } from '../../context/auth-context';
 import ApiSpotify from '../../utils/api-spotify';
 import { EPISODE_LOGO_IMAGE, LIKED_SONG_IMAGE } from '../../utils/constants';
@@ -76,7 +81,7 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
     <nav className={`content-area ${styles.navbar} ${isNavOpen ? styles.open : ''}`}>
       <div className="flex items-center px-6 mb-8 text-2xl">
         <div className="mr-auto">Spotify Clone</div>
-        <Close
+        <MdClose
           className="block sm:hidden"
           onClick={() => handleIsNavOpen(false)}
         />
@@ -85,13 +90,13 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
         <ul>
           <NavbarLink
             to="/"
-            Icon={<Home />}
+            Icon={<MdHomeFilled className="w-6 h-6" />}
             text="Home"
             onClick={() => handleIsNavOpen(false)}
           />
           <NavbarLink
             to="/search"
-            Icon={<Search />}
+            Icon={<MdSearch className="w-6 h-6" />}
             text="Search"
             onClick={() => handleIsNavOpen(false)}
           />
@@ -104,13 +109,13 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
             {isLoggedIn ? (
               <NavbarLink
                 to="/collection/playlists"
-                Icon={<List />}
+                Icon={<MdOutlineQueueMusic className="w-6 h-6" />}
                 text="Your Library"
                 onClick={() => handleIsNavOpen(false)}
               />
             ) : (
               <NavbarItem
-                Icon={<List />}
+                Icon={<MdOutlineQueueMusic className="w-6 h-6" />}
                 text="Your Library"
                 onClick={() => handleIsNavOpen(false)}
               />
@@ -127,7 +132,7 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
             data-place="right"
           >
             <NavbarItem
-              Icon={<Plus />}
+              Icon={<MdAddBox className="w-6 h-6" />}
               text="Create Playlist"
               onClick={() => {
                 setIsOpenModal(true);

@@ -1,5 +1,8 @@
 import { Fragment } from 'react';
-import { Play, Plus } from 'react-feather';
+import {
+  MdPlayArrow,
+  MdAddCircle,
+} from 'react-icons/md';
 import Track from '../../types/Track';
 import Episode from '../../types/Episode';
 import { getSmallestImage, duration } from '../../utils/helpers';
@@ -38,8 +41,8 @@ const PlayerListTrackMini: React.FC<PlayerListTrackMiniProps> = ({
           alt={track.name}
           className="opacity-20 canhover:opacity-100 canhover:group-hover:opacity-20 w-full"
         />
-        <Play
-          className="block canhover:hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 canhover:group-hover:block"
+        <MdPlayArrow
+          className="block canhover:hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 canhover:group-hover:block h-6 w-6"
           onClick={handlePlayTrack}
           data-tip="play"
           data-for="login-tooltip"
@@ -60,7 +63,7 @@ const PlayerListTrackMini: React.FC<PlayerListTrackMiniProps> = ({
       </div>
       <div className="col-span-2 md:col-span-1 flex items-center">
         {showAddLibrary ? (
-          <Plus onClick={onAddToPlaylist} />
+          <MdAddCircle className="w-4 h-4" onClick={onAddToPlaylist} />
         ) : (
           duration(track.duration_ms)
         )}

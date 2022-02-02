@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { ChevronDown } from 'react-feather';
+import { MdExpandMore } from 'react-icons/md';
 
 type MenuListProps = {
   children: React.ReactNode,
@@ -35,7 +35,7 @@ const MenuList = forwardRef<HTMLDivElement, MenuListProps>(({
           ) : (
             <span className="mr-2">{text}</span>
           )}
-          <ChevronDown />
+          <MdExpandMore className="h-6 w-6" />
         </div>
       </div>
 

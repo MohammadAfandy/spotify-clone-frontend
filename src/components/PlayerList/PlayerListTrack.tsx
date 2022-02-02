@@ -1,6 +1,6 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Track from '../../types/Track';
-import { Clock } from 'react-feather';
+import { MdAccessTime } from 'react-icons/md';
 
 import PlayerListTrackItem from './PlayerListTrackItem';
 
@@ -68,7 +68,7 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
         )}
         <div className="col-start-5 col-end-5"></div>
         <div className="col-start-6 col-end-6">
-          <Clock className="w-4" />
+          <MdAccessTime className="h-4 w-4" />
         </div>
       </div>
       {tracks && (

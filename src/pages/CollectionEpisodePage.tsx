@@ -37,9 +37,9 @@ const CollectionEpisodePage: React.FC = () => {
           type="PLAYLIST"
           footer={[user.display_name, `${pageData.total} episodes`]}
         />
-        <div className="flex items-center mb-4 justify-center sm:justify-start">
+        <div className="flex items-center justify-center sm:justify-start mb-4">
           <PlayButton
-            className="w-16 h-16 mr-6"
+            className="w-16 h-16"
             onClick={handlePlayFromStart}
           />
         </div>

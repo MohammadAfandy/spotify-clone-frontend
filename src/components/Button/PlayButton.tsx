@@ -1,4 +1,7 @@
-import { Play, Pause } from 'react-feather';
+import {
+  MdPlayArrow,
+  MdPause,
+} from 'react-icons/md';
 
 type PlayButtonProps = {
   isPlaying?: boolean;
@@ -16,10 +19,10 @@ const PlayButton: React.FC<PlayButtonProps> = ({
   onClick,
   isPlaying,
 }) => {
-  const Prop = isPlaying ? Pause : Play;
+  const Prop = isPlaying ? MdPause : MdPlayArrow;
   return (
     <Prop
-      className={`bg-green-500 rounded-full p-4 cursor-pointer transition duration-300 ease-in-out transform hover:scale-110 ${className}`}
+      className={`bg-green-500 rounded-full p-2 cursor-pointer transition duration-300 ease-in-out transform hover:scale-110 ${className}`}
       onClick={onClick}
       fill="#fff"
       data-tip="play"

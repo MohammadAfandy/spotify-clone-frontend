@@ -1,4 +1,7 @@
-import { Heart } from 'react-feather';
+import {
+  MdFavorite,
+  MdFavoriteBorder,
+} from 'react-icons/md';
 
 type LikeButtonProps = {
   className?: string;
@@ -16,20 +19,15 @@ const LikeButton: React.FC<LikeButtonProps> = ({
   onClick,
   isActive,
 }) => {
-  const colorProps = isActive
-    ? {
-        color: 'green',
-        fill: 'green',
-      }
-    : {};
+  const Prop = isActive ? MdFavorite : MdFavoriteBorder;
+  const color = isActive ? 'text-green-500' : '';
   return (
-    <Heart
-      className={`cursor-pointer transition duration-300 ease-in-out transform hover:scale-110  ${className}`}
+    <Prop
+      className={`h-4 w-4 cursor-pointer transition duration-300 ease-in-out transform hover:scale-110 ${color} ${className}`}
       onClick={onClick}
       data-tip="like"
       data-for="login-tooltip"
       data-event="click"
-      {...colorProps}
     />
   );
 };

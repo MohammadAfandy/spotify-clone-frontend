@@ -1,4 +1,4 @@
-import { ChevronDown } from 'react-feather';
+import { MdExpandMore } from 'react-icons/md';
 import styles from './FullScreen.module.css';
 
 type FullScreenProps = {
@@ -15,7 +15,7 @@ const FullScreen: React.FC<FullScreenProps> = ({
   return (
     <div className={`${styles.fullScreen} ${isOpen ? styles.open : ''}`}>
       <div className="absolute right-6 top-2">
-        <ChevronDown
+        <MdExpandMore
           className="h-8 w-8 cursor-pointer"
           onClick={handleCloseScreen}
         />

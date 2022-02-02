@@ -1,6 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, ExternalLink, Menu, User } from 'react-feather';
+import {
+  MdChevronLeft,
+  MdChevronRight,
+  MdPerson,
+} from 'react-icons/md';
+import { FiExternalLink, FiMenu } from 'react-icons/fi';
 import { BACKEND_URI } from '../../utils/constants';
 import { AuthContext } from '../../context/auth-context';
 import useComponentVisible from '../../hooks/useComponentVisible';
@@ -80,8 +85,8 @@ const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
   return (
     <div className="fixed flex w-auto items-center justify-between bg-black bg-opacity-50 left-0 sm:left-52 right-0 top-0 px-4 py-2 h-16 z-10">
       <div className="flex sm:hidden items-center">
-        <Menu
-          className="cursor-pointer"
+        <FiMenu
+          className="h-6 w-6 cursor-pointer"
           onClick={() => handleIsNavOpen(true)}
         />
       </div>
@@ -90,17 +95,17 @@ const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
           className={`mr-4 bg-black bg-opacity-70 rounded-full p-1 cursor-pointer hidden sm:block`}
           onClick={handleGoBack}
         >
-          <ChevronLeft />
+          <MdChevronLeft className="w-6 h-6" />
         </div>
         <div
           className={`mr-4 bg-black bg-opacity-70 rounded-full p-1 cursor-pointer hidden sm:block`}
           onClick={handleGoForward}
         >
-          <ChevronRight />
+          <MdChevronRight className="w-6 h-6" />
         </div>
         {isSearchActive && (
           <SearchInput
-            className="w-full md:w-80 mx-2"
+            className="w-full md:w-80 mx-2 text-sm"
             placeholder="Artists, songs, or podcasts"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -136,7 +141,7 @@ const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
             text={user.display_name}
             isVisible={userDropDownVisible}
             handleVisible={setUserDropDownVisible}
-            Icon={<User />}
+            Icon={<MdPerson className="w-4 h-4" />}
           >
             <a
               className="flex justify-between px-4 py-2 text-sm cursor-pointer hover:bg-gray-500"
@@ -145,7 +150,7 @@ const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
               rel="noreferrer"
             >
               Account
-              <ExternalLink className="w-5 h-5" />
+              <FiExternalLink className="w-4 h-4" />
             </a>
             {/* profile page stil in progress */}
             {/* <div className="flex justify-between px-4 py-2 text-sm cursor-pointer hover:bg-gray-500">

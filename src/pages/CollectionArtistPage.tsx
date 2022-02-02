@@ -42,16 +42,14 @@ const CollectionArtistPage: React.FC = () => {
       <GridWrapper>
         {isLoading && CardLoading}
         {!isLoading && artists.map((artist) => (
-          <div>
-            <CardItem
-              key={artist.id}
-              name={artist.name}
-              description={artist.type}
-              image={getHighestImage(artist.images)}
-              uri={artist.uri}
-              href={'/artist/' + artist.id}
-            />
-          </div>
+          <CardItem
+            key={artist.id}
+            name={artist.name}
+            description={artist.type}
+            image={getHighestImage(artist.images)}
+            uri={artist.uri}
+            href={'/artist/' + artist.id}
+          />
         ))}
       </GridWrapper>
     </div>

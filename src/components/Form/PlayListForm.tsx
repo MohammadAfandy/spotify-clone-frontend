@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
-import { Edit2, Music, Trash } from 'react-feather';
+import { FiMusic } from 'react-icons/fi';
+import { MdModeEditOutline, MdDeleteOutline } from 'react-icons/md';
 import { AuthContext } from '../../context/auth-context';
 import { toBase64 } from '../../utils/helpers';
 import ApiSpotify from '../../utils/api-spotify';
@@ -135,7 +136,7 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
           className="absolute top-2 right-2 group-hover:block hidden rounded-md bg-light-black-2 p-2 cursor-pointer z-10"
           onClick={handleDeleteImage}
         >
-          <Trash className="w-4 h-4" />
+          <MdDeleteOutline className="w-4 h-4" />
         </div>
       )}
       <img
@@ -155,7 +156,7 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
         >
           <label htmlFor="input-image">
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 group-hover:block hidden cursor-pointer z-10 w-full text-center">
-              <Edit2 className="w-8 h-8 mx-auto" />
+              <MdModeEditOutline className="w-8 h-8 mx-auto" />
               Choose Photo
             </div>
           </label>
@@ -171,7 +172,7 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
           ) : playlistImage ? (
             imageContainer(playlistImage, playlistName || '', false)
           ) : (
-            <Music className="w-3/4 h-3/4 group-hover:hidden block" />
+            <FiMusic className="w-3/4 h-3/4 group-hover:hidden block" />
           )}
         </div>
         <div className="flex flex-col w-full mt-4 sm:mt-0">

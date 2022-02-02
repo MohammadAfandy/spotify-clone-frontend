@@ -49,9 +49,9 @@ const CollectionTrackPage: React.FC = () => {
               `${pageData.total} songs, ${duration(totalDuration, true)}`,
             ]}
           />
-          <div className="flex items-center justify-center sm:justify-start">
+          <div className="flex items-center justify-center sm:justify-start mb-4">
             <PlayButton
-              className="w-16 h-16 mr-6"
+              className="w-16 h-16"
               onClick={handlePlayFromStart}
             />
           </div>

@@ -1,4 +1,4 @@
-import { Edit2 } from 'react-feather';
+import { MdModeEditOutline } from 'react-icons/md';
 
 type NavbarItemProps = {
   Icon?: React.ReactNode;
@@ -38,7 +38,7 @@ const NavbarItem: React.FC<NavbarItemProps> = ({
       <div className="mr-auto truncate">{text}</div>
       {editable && (
         <div className="hidden canhover:group-hover:block">
-          <Edit2 className="w-4 h-4" onClick={onClickEdit} />
+          <MdModeEditOutline className="w-4 h-4" onClick={onClickEdit} />
         </div>
       )}
     </li>

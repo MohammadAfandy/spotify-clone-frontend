@@ -1,15 +1,16 @@
 import {
-  Airplay,
-  ChevronsLeft,
-  ChevronsRight,
-  Mic,
-  PauseCircle,
-  PlayCircle,
-  Repeat,
-  Shuffle,
-  SkipBack,
-  SkipForward,
-} from 'react-feather';
+  MdPlayCircle,
+  MdPauseCircle,
+  MdSkipPrevious,
+  MdSkipNext,
+  MdShuffle,
+  MdRepeat,
+  MdRepeatOne,
+  MdMic,
+  MdDevices,
+  MdForward10,
+  MdReplay10,
+} from 'react-icons/md';
 import Player from '../../types/Player';
 import Device from '../../types/Device';
 import RepeatMode from '../../types/RepeatMode';
@@ -88,7 +89,6 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
   const [isOverFlow, setIsOverflow] = useState(false);
   const { width: windowWidth, height: windowHeight } = useWindowSize();
 
-  const PlayPauseIcon = isPlaying ? PauseCircle : PlayCircle;
   const getButtonColor = (isActive: boolean): string => {
     return isActive ? 'rgb(52, 211, 153)' : 'white';
   };
@@ -128,14 +128,13 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
     >
       {showDeviceSelector && (
         <DeviceSelector
-          activeDevice={activeDevice} 
           deviceId={deviceId} 
           devices={devices} 
           handleSelectDevice={handleSelectDevice}
         />
       )}
       {!showDeviceSelector && (
-        <div className="flex flex-col text-lg md:text-md h-full">
+        <div className="flex flex-col text-md md:text-sm h-full">
           <div className="flex flex-col flex-1 justify-around">
             <div className="flex w-full justify-center">
               <div className="">
@@ -214,34 +213,41 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
               </div>
             </div>
             <div className="flex justify-around items-center">
-              <Shuffle
+              <MdShuffle
                 className="h-8 w-8 cursor-pointer"
                 color={getButtonColor(shuffle)}
                 onClick={handleShuffle}
               />
               <div className="flex justify-around items-center w-1/2">
-                <SkipBack
+                <MdSkipPrevious
                   className="h-8 w-8 cursor-pointer"
                   onClick={handlePrev}
                 />
                 {currentTrack.type === 'episode' && (
                   <div className="hidden sm:block relative">
-                    <ChevronsLeft
+                    <MdReplay10
                       className="h-8 w-8 cursor-pointer"
-                      onClick={(e) => handleSeek(e, positionMs - (15 * 1000))}
+                      onClick={(e) => handleSeek(e, positionMs - (10 * 1000))}
                     />
                     <div className="absolute w-2 left-0 right-0 mx-auto top-8 bottom-0 font-light text-xs">
                       15
                     </div>
                   </div>
                 )}
-                <PlayPauseIcon
-                  className="h-20 w-20 cursor-pointer"
-                  onClick={handlePlay}
-                />
+                {isPlaying ? (
+                  <MdPauseCircle
+                    className="h-20 w-20 cursor-pointer"
+                    onClick={handlePlay}
+                  />
+                ) : (
+                  <MdPlayCircle
+                    className="h-20 w-20 cursor-pointer"
+                    onClick={handlePlay}
+                  />
+                )}
                 {currentTrack.type === 'episode' && (
                   <div className="hidden sm:block relative">
-                    <ChevronsRight
+                    <MdForward10
                       className="h-8 w-8 cursor-pointer"
                       onClick={(e) => handleSeek(e, positionMs + (15 * 1000))}
                     />
@@ -250,34 +256,34 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
                     </div>
                   </div>
                 )}
-                <SkipForward
+                <MdSkipNext
                   className="h-8 w-8 cursor-pointer"
                   onClick={handleNext}
                 />
               </div>
               <div className="relative">
-                <Repeat
-                  className="h-8 w-8 cursor-pointer"
-                  color={getButtonColor(repeatMode !== 0)}
-                  onClick={handleRepeatMode}
-                />
-                <div
-                  className={`absolute left-1/2 top-8 bottom-0 font-light ${
-                    repeatMode !== 0 ? 'text-green-400' : 'text-white'
-                  }`}
-                >
-                  {mapRepeatMode.find((v) => v.mode === repeatMode)?.text || ''}
-                </div>
+                {repeatMode === 2 ? (
+                  <MdRepeatOne
+                    className="h-8 w-8 cursor-pointer"
+                    color={getButtonColor(true)}
+                    onClick={handleRepeatMode}
+                  />
+                ) : (
+                  <MdRepeat
+                    className="h-8 w-8 cursor-pointer"
+                    color={getButtonColor(repeatMode !== 0)}
+                    onClick={handleRepeatMode}
+                  />
+                )}
               </div>
             </div>
           </div>
-          <div className="flex flex-col">
-
+          <div className="flex flex-col mt-4">
             <div className="flex w-full justify-between items-center">
               <div className="w-8">
                 {currentTrack.type === 'track' && (
-                  <Mic
-                    className="cursor-pointer"
+                  <MdMic
+                    className="h-8 w-8 cursor-pointer"
                     onClick={handleOpenLyric}
                   />
                 )}
@@ -291,7 +297,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
                     {activeDevice.name}
                   </div>
                 )}
-                <Airplay className="w-8" />
+                <MdDevices className="h-8 w-8" />
               </div>
             </div>
           </div>

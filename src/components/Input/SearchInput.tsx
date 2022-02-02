@@ -1,4 +1,4 @@
-import { Search } from 'react-feather';
+import { MdSearch } from 'react-icons/md';
 
 type SearchInputProps = {
   className?: string;
@@ -23,7 +23,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
     <div
       className={`rounded-md flex items-center bg-white text-black py-1 px-3 ${className}`}
     >
-      <Search className="mr-4" />
+      <MdSearch className="h-6 w-6" />
       <input
         className={`outline-none w-full ${className}`}
         onChange={onChange}

@@ -50,7 +50,7 @@ const SearchPage: React.FC = () => {
             <img
               src={category.icons[0].url}
               alt={category.id}
-              className="rounded-xl filter brightness-200"
+              className="rounded-xl filter brightness-200 min-h-full"
             />
             <div className="font-bold text-center text-2xl absolute bottom-1 left-1/2 transform -translate-x-1/2 ">
               {category.name}

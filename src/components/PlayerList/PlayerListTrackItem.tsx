@@ -1,5 +1,11 @@
 import { useState, useEffect, Fragment } from 'react';
-import { Play, PlusCircle, Trash, Check, Pause } from 'react-feather';
+import {
+  MdAddCircle,
+  MdPlayArrow,
+  MdPause,
+  MdCheck,
+  MdDeleteOutline,
+} from 'react-icons/md';
 import Track from '../../types/Track';
 import ApiSpotify from '../../utils/api-spotify';
 import { getSmallestImage, duration, fromNow } from '../../utils/helpers';
@@ -97,7 +103,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
           <div className="hidden canhover:block canhover:group-hover:hidden">{number}</div>
         )}
         {(isPlaying && currentTrack && track.uri === currentTrack.uri) ? (
-          <Pause
+          <MdPause
             className="w-6 h-6 cursor-pointer block canhover:hidden canhover:group-hover:block"
             onClick={handlePauseTrack}
             data-tip="play"
@@ -105,7 +111,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
             data-event="click"
           />
         ) : (
-          <Play
+          <MdPlayArrow
             className="w-6 h-6 cursor-pointer block canhover:hidden canhover:group-hover:block"
             onClick={() => handlePlayTrack(offset, 0)}
             data-tip="play"
@@ -174,20 +180,20 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
         )}
         {track.type === 'episode' &&
           (isSaved ? (
-            <Check
+            <MdCheck
               className="cursor-pointer text-green-400"
               onClick={() => handleAddToSavedEpisode(track.id)}
             />
           ) : (
-            <PlusCircle
+            <MdAddCircle
               className="cursor-pointer"
               onClick={() => handleAddToSavedEpisode(track.id)}
             />
           ))
         }
         {onRemoveFromPlaylist && (
-          <Trash
-            className="cursor-pointer ml-4"
+          <MdDeleteOutline
+            className="h-4 w-4 cursor-pointer ml-4"
             onClick={() => onRemoveFromPlaylist(track.uri)}
           />
         )}

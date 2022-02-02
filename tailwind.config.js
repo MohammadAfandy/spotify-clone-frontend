@@ -38,7 +38,7 @@ module.exports = {
         // 'base-color': '#121212';
       },
       backgroundImage: theme => ({
-        'background-gradient': 'linear-gradient(rgba(0, 0, 0, .85) 0 , #121212 100%)',
+        'background-gradient': 'linear-gradient(rgba(0, 0, 0, .85) 0 , #262626 100%)',
         'banner-gradient': 'linear-gradient(90deg, #af2896, #509bf5)',
       }),
       inset: {

@@ -4,7 +4,10 @@ import Episode from '../types/Episode';
 import ApiSpotify from '../utils/api-spotify';
 import { AuthContext } from '../context/auth-context';
 import { PlayerContext } from '../context/player-context';
-import { PlusCircle, Check } from 'react-feather';
+import {
+  MdAddCircle,
+  MdCheck,
+} from 'react-icons/md';
 
 import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
 import PlayButton from '../components/Button/PlayButton';
@@ -88,12 +91,12 @@ const EpisodePage: React.FC = () => {
               onClick={handlePlayEpisode}
             />
             {isSaved ? (
-              <Check
+              <MdCheck
                 className="mr-4 w-10 h-10 cursor-pointer text-green-400"
                 onClick={handleSave}
               />
             ) : (
-              <PlusCircle
+              <MdAddCircle
                 className="mr-4 w-10 h-10 cursor-pointer"
                 onClick={handleSave}
               />
