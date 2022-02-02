@@ -47,7 +47,7 @@ const EpisodePage: React.FC = () => {
         },
       });
     } else {
-      response = await ApiSpotify.put('/me/episodes', null, {
+      response = await ApiSpotify.put('/me/episodes', {}, {
         params: {
           ids: episode.id,
         },

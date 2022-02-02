@@ -48,7 +48,7 @@ const ShowPage: React.FC = () => {
         },
       });
     } else {
-      response = await ApiSpotify.put('/me/shows', null, {
+      response = await ApiSpotify.put('/me/shows', {}, {
         params: {
           ids: show.id,
         },

@@ -60,7 +60,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
     if (isSaved) {
       response = await ApiSpotify.delete('/me/tracks', { params });
     } else {
-      response = await ApiSpotify.put('/me/tracks', null, { params });
+      response = await ApiSpotify.put('/me/tracks', {}, { params });
     }
     if (response.status === 200) {
       setIsSaved((prevState) => !prevState);
@@ -75,7 +75,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
     if (isSaved) {
       response = await ApiSpotify.delete('/me/episodes', { params });
     } else {
-      response = await ApiSpotify.put('/me/episodes', null, { params });
+      response = await ApiSpotify.put('/me/episodes', {}, { params });
     }
     if (response.status === 200) {
       setIsSaved((prevState) => !prevState);

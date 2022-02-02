@@ -82,7 +82,7 @@ const ArtistPage: React.FC = () => {
         },
       });
     } else {
-      response = await ApiSpotify.put('/me/following', null, {
+      response = await ApiSpotify.put('/me/following', {}, {
         params: {
           type: 'artist',
           ids: artist.id,

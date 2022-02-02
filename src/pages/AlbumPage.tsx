@@ -52,7 +52,7 @@ const AlbumPage: React.FC = () => {
         },
       });
     } else {
-      response = await ApiSpotify.put('/me/albums', null, {
+      response = await ApiSpotify.put('/me/albums', {}, {
         params: {
           ids: album.id,
         },

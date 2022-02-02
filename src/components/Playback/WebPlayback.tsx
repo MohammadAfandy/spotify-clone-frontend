@@ -265,7 +265,7 @@ const WebPlayback: React.FC = () => {
     if (isPlayerActive) {
       player && player.seek(position_ms);
     } else {
-      await ApiSpotify.put('me/player/seek', null, { params: {
+      await ApiSpotify.put('me/player/seek', {}, { params: {
         position_ms,
       }});
       setPositionMs(position_ms);
@@ -279,7 +279,7 @@ const WebPlayback: React.FC = () => {
     if (isPlayerActive) {
       player && player.setVolume(volume_percent / 100);
     } else {
-      await ApiSpotify.put('me/player/volume', null, { params: {
+      await ApiSpotify.put('me/player/volume', {}, { params: {
         volume_percent,
       }});
       await sleep(2000);
@@ -298,7 +298,7 @@ const WebPlayback: React.FC = () => {
     } else {
       state = mapRepeatMode[0].state;
     }
-    await ApiSpotify.put('me/player/repeat', null, { params: { state } });
+    await ApiSpotify.put('me/player/repeat', {}, { params: { state } });
     if (!isPlayerActive) {
       getPlaybackState();
     }
@@ -306,7 +306,7 @@ const WebPlayback: React.FC = () => {
 
   const handleShuffle = async (event: React.MouseEvent): Promise<void> => {
     event.stopPropagation();
-    await ApiSpotify.put('me/player/shuffle', null, {
+    await ApiSpotify.put('me/player/shuffle', {}, {
       params: { state: !shuffle },
     });
     if (!isPlayerActive) {
