@@ -1,16 +1,25 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, useContext, Fragment } from 'react';
 import {
   MdAddCircle,
   MdPlayArrow,
   MdPause,
   MdCheck,
-  MdDeleteOutline,
+  MdOutlineMoreVert,
 } from 'react-icons/md';
+import { useHistory } from 'react-router-dom';
+import { AuthContext } from '../../context/auth-context';
+import {
+  SubMenu,
+  MenuDivider,
+  MenuButton,
+  MenuItem,
+} from '@szhsin/react-menu';
 import Track from '../../types/Track';
 import ApiSpotify from '../../utils/api-spotify';
 import { getSmallestImage, duration, fromNow } from '../../utils/helpers';
 
 import LikeButton from '../Button/LikeButton';
+import ContextMenu from '../ContextMenu/ContextMenu';
 import Explicit from '../Text/Explicit';
 import TextLink from '../Text/TextLink';
 
@@ -52,7 +61,12 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
   handlePlayTrack,
   handlePauseTrack,
 }) => {
+  const history = useHistory();
   const [isSaved, setIsSaved] = useState(track.is_saved);
+  const {
+    user,
+    playlists,
+  } = useContext(AuthContext);
 
   useEffect(() => {
     setIsSaved(track.is_saved);
@@ -88,8 +102,17 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
     }
   };
 
+  const handleAddTrackToPlaylist = async (playlistId: string, trackUris: string) => {
+    const params = {
+      uris: trackUris,
+    };
+    await ApiSpotify.post('/playlists/' + playlistId + '/tracks', null, {
+      params,
+    });
+  };
+
   return (
-    <div className="hover:bg-gray-100 hover:bg-opacity-25 rounded-md" data-wrapper>
+    <div className="hover:bg-gray-100 hover:bg-opacity-25 rounded-md px-2" data-wrapper>
       <div className="group flex justify-center items-center col-start-1 col-end-1">
         {currentTrack && track.uri === currentTrack.uri ? (
           <img
@@ -191,15 +214,53 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
             />
           ))
         }
-        {onRemoveFromPlaylist && (
-          <MdDeleteOutline
-            className="h-4 w-4 cursor-pointer ml-4"
-            onClick={() => onRemoveFromPlaylist(track.uri)}
-          />
-        )}
       </div>
       <div className="flex items-center col-start-6 col-end-6">
         {duration(track.duration_ms)}
+      </div>
+      <div className="flex items-center col-start-7 col-end-7">
+        <ContextMenu
+          menuButton={(
+            <MenuButton>
+              <MdOutlineMoreVert className="relative cursor-pointer" />
+            </MenuButton>
+          )}
+          direction="left"
+        >
+          <SubMenu label="Go to artist">
+            {track.artists && track.artists.map((artist) => (
+              <MenuItem
+                key={artist.id}
+                onClick={() => history.push((track.type === 'track' ? '/artist/' : '/show/') + artist.id)}
+              >
+                {artist.name}
+              </MenuItem>
+            ))}
+          </SubMenu>
+          <MenuItem onClick={() => history.push('/album/' + track.album.id)}>Go to album</MenuItem>
+          <MenuDivider />
+          <MenuItem onClick={() => handleAddToSavedTrack(track.id)}>
+            {isSaved ? 'Remove from your Liked Songs' : 'Save to your Liked Songs'}
+          </MenuItem>
+          {onRemoveFromPlaylist && (
+            <MenuItem onClick={() => onRemoveFromPlaylist(track.uri)}>
+              Remove from this playlist
+            </MenuItem>
+          )}
+          <SubMenu label="Add to playlist">
+            {playlists
+              .filter((playlist) => playlist.owner.id === user.id)
+              .map((playlist) => (
+                <MenuItem
+                  key={playlist.id}
+                  onClick={() => handleAddTrackToPlaylist(playlist.id, track.uri)}
+                >
+                  {playlist.name}
+                </MenuItem>
+              )
+            )}
+          </SubMenu>
+        </ContextMenu>
       </div>
     </div>
   );

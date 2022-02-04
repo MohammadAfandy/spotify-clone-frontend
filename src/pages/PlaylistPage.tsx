@@ -138,7 +138,6 @@ const PlaylistPage: React.FC = () => {
   const handleAddTrackToPlaylist = async (track: Track) => {
     const params = {
       uris: track.uri,
-      position: 0,
     };
     await ApiSpotify.post('/playlists/' + playlist.id + '/tracks', null, {
       params,
@@ -187,9 +186,9 @@ const PlaylistPage: React.FC = () => {
   };
 
   return (
-    <div className="">
+    <div className="px-4 py-4">
       {playlist.id ? (
-        <div className="px-4 py-4">
+        <>
           <div className="mb-4">
             <PlayerListHeader
               image={getHighestImage(playlist.images)}
@@ -278,7 +277,7 @@ const PlaylistPage: React.FC = () => {
               </div>
             </div>
           )}
-        </div>
+        </>
       ) : (
         ''
       )}

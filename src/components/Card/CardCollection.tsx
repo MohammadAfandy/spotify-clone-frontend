@@ -61,7 +61,7 @@ const CardCollection: React.FC<CardCollectionProps> = ({
 
   return (
     <div
-      className={`group relative flex flex-col h-72 p-4 justify-end rounded-md cursor-pointer ${bgColor} ${className}`}
+      className={`group relative flex flex-col min-h-72 h-full p-4 justify-end rounded-md cursor-pointer ${bgColor} ${className}`}
       onClick={handleClick}
     >
       <SkeletonTheme color="rgba(255,255,255, .3)" highlightColor="rgba(255,255,255,.1)">

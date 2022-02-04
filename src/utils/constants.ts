@@ -5,4 +5,6 @@ export const LIKED_SONG_IMAGE =
 export const EPISODE_LOGO_IMAGE = '/images/episode-logo.png';
 export const ITEM_LIST_LIMIT = 50;
 export const PLAYER_NAME = 'Spotify Clone Player';
-export const LIMIT_CARD = 4;
+export const GRID_COUNT = 4;
+export const ACCESS_TOKEN_AGE = 1 / 24; // 1 hour
+export const REFRESH_TOKEN_AGE = 7; // 7 days

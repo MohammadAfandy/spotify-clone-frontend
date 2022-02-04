@@ -22,8 +22,12 @@ export const getCookie = (key: string): string => {
   return Cookies.get(cookiePrefix + key) || '';
 };
 
-export const setCookie = (key: string, value: string): void => {
-  Cookies.set(cookiePrefix + key, value);
+export const setCookie = (
+  key: string,
+  value: string,
+  options?: Cookies.CookieAttributes
+): void => {
+  Cookies.set(cookiePrefix + key, value, options);
 };
 
 export const removeCookie = (key: string): void => {

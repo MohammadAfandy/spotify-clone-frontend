@@ -44,13 +44,13 @@ const SearchPage: React.FC = () => {
         {!isLoading && categories.map((category) => (
           <div
             key={category.id}
-            className="relative cursor-pointer transition duration-300 ease-in-out transform hover:scale-105"
+            className="card-item relative cursor-pointer transition duration-300 ease-in-out transform hover:scale-105"
             onClick={() => history.push('/category/' + category.id)}
           >
             <img
               src={category.icons[0].url}
               alt={category.id}
-              className="rounded-xl filter brightness-200 min-h-full"
+              className="rounded-xl filter brightness-200 h-full w-full"
             />
             <div className="font-bold text-center text-2xl absolute bottom-1 left-1/2 transform -translate-x-1/2 ">
               {category.name}

@@ -51,8 +51,8 @@ const CardItem: React.FC<CardItemProps> = ({
   };
   
   const LoadingComponent = (
-    <div className="p-4 h-72 min-w-52 bg-light-black hover:bg-light-black-2 rounded-md">
-      <Skeleton className="w-full h-48 rounded-md" />
+    <div className={`card-item p-4 bg-light-black hover:bg-light-black-2 rounded-md`}>
+      <Skeleton className="w-full h-5/6 rounded-md" />
       <div className="text-sm font-bold mt-2">
         <Skeleton />
         <Skeleton />
@@ -65,7 +65,7 @@ const CardItem: React.FC<CardItemProps> = ({
       {isLoading && LoadingComponent}
       {!isLoading && (
         <div
-          className={`group cursor-pointer min-w-52 transition duration-300 ease-in-out transform p-4 bg-light-black hover:bg-light-black-2 rounded-md h-full ${className}`}
+          className={`card-item group cursor-pointer transition duration-300 ease-in-out transform p-4 bg-light-black hover:bg-light-black-2 rounded-md ${className}`}
           onClick={handleClick}
         >
           <div className="relative h-80%">
@@ -86,9 +86,9 @@ const CardItem: React.FC<CardItemProps> = ({
               />
             </div>
           </div>
-          <div className="text-sm font-bold mt-2">
+          <div className="text-xs sm:text-sm font-bold mt-2">
             <div className="truncate">{name}</div>
-            <div className="text-sm font-semibold text-gray-300 truncate">
+            <div className="font-semibold text-gray-300 line-clamp-2">
               {description ? ucwords(description) : <span>&nbsp;</span>}
             </div>
           </div>

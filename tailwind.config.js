@@ -33,9 +33,6 @@ module.exports = {
         'light-black': '#181818',
         'light-black-1': '#262626',
         'light-black-2': '#3E3E3E',
-
-        // ''
-        // 'base-color': '#121212';
       },
       backgroundImage: theme => ({
         'background-gradient': 'linear-gradient(rgba(0, 0, 0, .85) 0 , #262626 100%)',
@@ -64,6 +61,9 @@ module.exports = {
       },
       screens: {
         'canhover': {'raw': '(hover: hover)'},
+      },
+      minHeight: {
+        '72': '18rem',
       },
     },
   },

@@ -11,7 +11,7 @@ import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 import CardItem from '../components/Card/CardItem';
 import TextLink from '../components/Text/TextLink';
 import GridWrapper from '../components/Grid/GridWrapper';
-import { LIMIT_CARD } from '../utils/constants';
+import { GRID_COUNT } from '../utils/constants';
 
 const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -28,7 +28,7 @@ const HomePage: React.FC = () => {
     const fetchHome = async () => {
       try {
         setIsLoading(true);
-        const params = { limit: LIMIT_CARD };
+        const params = { limit: GRID_COUNT };
         const promises = [
           makeRequest('/browse/new-releases', { params }, isLoggedIn),
           makeRequest('/browse/featured-playlists', { params }, isLoggedIn)
@@ -60,7 +60,7 @@ const HomePage: React.FC = () => {
   }, [isLoggedIn]);
 
   const CardLoading = (
-    [...Array(LIMIT_CARD)].map((_, idx) => (
+    [...Array(GRID_COUNT)].map((_, idx) => (
       <CardItem key={idx} isLoading />
     ))
   );

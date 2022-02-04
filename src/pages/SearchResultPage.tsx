@@ -14,7 +14,7 @@ import PlayerListTrackMini from '../components/PlayerList/PlayerListTrackMini';
 import CardItem from '../components/Card/CardItem';
 import TextLink from '../components/Text/TextLink';
 import GridWrapper from '../components/Grid/GridWrapper';
-import { LIMIT_CARD } from '../utils/constants';
+import { GRID_COUNT } from '../utils/constants';
 
 const SearchResultPage: React.FC = () => {
   const params = useParams<{ query: string }>();
@@ -44,7 +44,7 @@ const SearchResultPage: React.FC = () => {
           params: {
             q: params.query,
             type: 'track,artist,album,playlist,show,episode',
-            limit: LIMIT_CARD,
+            limit: GRID_COUNT,
           },
         }, isLoggedIn);
   
@@ -65,7 +65,7 @@ const SearchResultPage: React.FC = () => {
   }, [params, isLoggedIn]);
 
   const CardLoading = (
-    [...Array(LIMIT_CARD)].map((_, idx) => (
+    [...Array(GRID_COUNT)].map((_, idx) => (
       <CardItem key={idx} isLoading />
     ))
   );

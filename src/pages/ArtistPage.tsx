@@ -15,7 +15,7 @@ import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
 import TextLink from '../components/Text/TextLink';
 import FolllowButton from '../components/Button/FollowButton';
 import GridWrapper from '../components/Grid/GridWrapper';
-import { LIMIT_CARD } from '../utils/constants';
+import { GRID_COUNT } from '../utils/constants';
 
 const ArtistPage: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -42,14 +42,14 @@ const ArtistPage: React.FC = () => {
   
         const dataAlbums = await makeRequest('/artists/' + params.id + '/albums', {
           params: {
-            limit: LIMIT_CARD,
+            limit: GRID_COUNT,
           },
         }, isLoggedIn);
         setAlbums(dataAlbums.data.items);
   
         const dataRelatedArtists = await makeRequest('/artists/' + params.id + '/related-artists', {
           params: {
-            limit: LIMIT_CARD,
+            limit: GRID_COUNT,
           },
         }, isLoggedIn);
         setRelatedArtists(dataRelatedArtists.data.artists);
@@ -110,7 +110,7 @@ const ArtistPage: React.FC = () => {
   };
 
   const CardLoading = (
-    [...Array(LIMIT_CARD)].map((_, idx) => (
+    [...Array(GRID_COUNT)].map((_, idx) => (
       <CardItem key={idx} isLoading />
     ))
   );
@@ -118,7 +118,7 @@ const ArtistPage: React.FC = () => {
   return (
     <div className="px-4 py-4">
       {artist.id ? (
-        <div className="px-4 py-4">
+        <>
           <div className="mb-4">
             <PlayerListHeader
               image={artist.images && artist.images[0]?.url}
@@ -206,7 +206,7 @@ const ArtistPage: React.FC = () => {
               ))}
             </GridWrapper>
           </div>
-        </div>
+        </>
       ) : (
         ''
       )}

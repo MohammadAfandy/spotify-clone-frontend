@@ -39,7 +39,7 @@ const CollectionTrackPage: React.FC = () => {
   return (
     <div className="px-4 py-4">
       {tracks.length > 0 ? (
-        <div className="px-4 py-4">
+        <>
           <PlayerListHeader
             image={LIKED_SONG_IMAGE}
             name="Liked Songs"
@@ -66,7 +66,7 @@ const CollectionTrackPage: React.FC = () => {
             handleNext={() => setNextUrl(pageData.next)}
             hasMore={!!pageData.next}
           />
-        </div>
+        </>
       ) : (
         ''
       )}

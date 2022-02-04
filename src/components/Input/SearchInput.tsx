@@ -23,7 +23,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
     <div
       className={`rounded-md flex items-center bg-white text-black py-1 px-3 ${className}`}
     >
-      <MdSearch className="h-6 w-6" />
+      <MdSearch className="h-6 w-6 mr-2" />
       <input
         className={`outline-none w-full ${className}`}
         onChange={onChange}

@@ -38,6 +38,27 @@ img {
   height: calc(100vh - theme('spacing.20'));
 }
 
+.card-item {
+  min-width: 10rem;
+  min-height: 16rem;
+}
+
+@screen sm {
+  .card-item {
+    min-width: 12rem;
+    min-height: 20rem;
+  }
+}
+
+.szh-menu {
+  @apply bg-light-black-2 text-white rounded-md border border-opacity-10 !important;
+}
+
+.szh-menu__item--hover {
+  @apply bg-gray-100 bg-opacity-25 !important;
+}
+
+
 /* width */
 ::-webkit-scrollbar {
   width: 10px;

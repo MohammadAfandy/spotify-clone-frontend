@@ -14,6 +14,7 @@ import Button from '../Button/Button';
 import SearchInput from '../Input/SearchInput';
 import ToolBarItem from './ToolBarItem';
 import MenuList from '../Menu/MenuList';
+import { ucwords } from '../../utils/helpers';
 
 type ToolbarProps = {
   isNavOpen: boolean;
@@ -90,49 +91,51 @@ const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
           onClick={() => handleIsNavOpen(true)}
         />
       </div>
-      <div className="flex items-center">
+      <div className="flex items-center w-full">
         <div
-          className={`mr-4 bg-black bg-opacity-70 rounded-full p-1 cursor-pointer hidden sm:block`}
+          className={`bg-black bg-opacity-70 rounded-full p-1 cursor-pointer ml-4`}
           onClick={handleGoBack}
         >
           <MdChevronLeft className="w-6 h-6" />
         </div>
         <div
-          className={`mr-4 bg-black bg-opacity-70 rounded-full p-1 cursor-pointer hidden sm:block`}
+          className={`bg-black bg-opacity-70 rounded-full p-1 cursor-pointer ml-4 ${isSearchActive || isToolbarLinkActive ? 'hidden sm:block' : ''}`}
           onClick={handleGoForward}
         >
           <MdChevronRight className="w-6 h-6" />
         </div>
-        {isSearchActive && (
-          <SearchInput
-            className="w-full md:w-80 mx-2 text-sm"
-            placeholder="Artists, songs, or podcasts"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        )}
-        {isToolbarLinkActive && (
-          <>
-            <div className="hidden lg:flex">
-              <ToolBarItem to="/collection/playlists" text="Playlists" />
-              <ToolBarItem to="/collection/podcasts" text="Podcasts" />
-              <ToolBarItem to="/collection/artists" text="Artists" />
-              <ToolBarItem to="/collection/albums" text="Albums" />
-            </div>
-            <MenuList
-              className="inline-block lg:hidden w-48 mx-2"
-              ref={libraryDropDownRef}
-              text="Library"
-              isVisible={libraryDropDownVisible}
-              handleVisible={setLibraryDropDownVisible}
-            >
-              <ToolBarItem to="/collection/playlists" text="Playlists" />
-              <ToolBarItem to="/collection/podcasts" text="Podcasts" />
-              <ToolBarItem to="/collection/artists" text="Artists" />
-              <ToolBarItem to="/collection/albums" text="Albums" />
-            </MenuList>
-          </>
-        )}
+        <div className="w-full mx-4 text-sm">
+          {isSearchActive && (
+            <SearchInput
+              className="w-full lg:w-96"
+              placeholder="Artists, songs, or podcasts"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          )}
+          {isToolbarLinkActive && (
+            <>
+              <div className="hidden lg:flex">
+                <ToolBarItem to="/collection/playlists" text="Playlists" />
+                <ToolBarItem to="/collection/podcasts" text="Podcasts" />
+                <ToolBarItem to="/collection/artists" text="Artists" />
+                <ToolBarItem to="/collection/albums" text="Albums" />
+              </div>
+              <MenuList
+                className="inline-block lg:hidden mx-2 w-full"
+                ref={libraryDropDownRef}
+                text={ucwords(location.pathname.split('/')[2])}
+                isVisible={libraryDropDownVisible}
+                handleVisible={setLibraryDropDownVisible}
+              >
+                <ToolBarItem to="/collection/playlists" text="Playlists" onClick={() => setLibraryDropDownVisible(false)} />
+                <ToolBarItem to="/collection/podcasts" text="Podcasts" onClick={() => setLibraryDropDownVisible(false)} />
+                <ToolBarItem to="/collection/artists" text="Artists" onClick={() => setLibraryDropDownVisible(false)} />
+                <ToolBarItem to="/collection/albums" text="Albums" onClick={() => setLibraryDropDownVisible(false)} />
+              </MenuList>
+            </>
+          )}
+        </div>
       </div>
       <div className="flex items-center">
         {isLoggedIn ? (
@@ -142,6 +145,7 @@ const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
             isVisible={userDropDownVisible}
             handleVisible={setUserDropDownVisible}
             Icon={<MdPerson className="w-4 h-4" />}
+            childPosition="right"
           >
             <a
               className="flex justify-between px-4 py-2 text-sm cursor-pointer hover:bg-gray-500"

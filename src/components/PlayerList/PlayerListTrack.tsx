@@ -50,7 +50,7 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
   let number = 0;
   return (
     <div className={styles.playerGrid + " flex flex-col w-full"}>
-      <div className="border-b border-gray-500" data-wrapper>
+      <div className="border-b-2 border-opacity-10 px-2" data-wrapper>
         <div className="text-center col-start-1 col-end-1">
           #
         </div>
@@ -70,6 +70,7 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
         <div className="col-start-6 col-end-6">
           <MdAccessTime className="h-4 w-4" />
         </div>
+        <div className="col-start-7 col-end-7"></div>
       </div>
       {tracks && (
         <InfiniteScroll
@@ -78,6 +79,7 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
           hasMore={hasMore}
           loader={<h4>Loading ...</h4>}
           scrollableTarget="main-container"
+          style={{ overflow: 'unset' }}
         >
           {/* sometimes, the track object is null */}
           {tracks.map((track, idx) => {

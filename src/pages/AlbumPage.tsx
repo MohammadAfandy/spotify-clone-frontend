@@ -83,9 +83,9 @@ const AlbumPage: React.FC = () => {
   }, 0);
 
   return (
-    <div className="">
+    <div className="px-4 py-4">
       {album.id ? (
-        <div className="px-4 py-4">
+        <>
           <div className="mb-4">
             <PlayerListHeader
               image={album.images && album.images[0]?.url}
@@ -118,7 +118,7 @@ const AlbumPage: React.FC = () => {
             handleNext={() => setNextUrl(pageData.next)}
             hasMore={!!pageData.next}
           />
-        </div>
+        </>
       ) : (
         ''
       )}

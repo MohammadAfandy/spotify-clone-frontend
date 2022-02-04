@@ -10,6 +10,7 @@ import {
 import User from '../types/User';
 import Playlist from '../types/Playlist';
 import Track from '../types/Track';
+import { ACCESS_TOKEN_AGE, REFRESH_TOKEN_AGE } from '../utils/constants';
 
 type AuthContextObj = {
   isLoggedIn: boolean;
@@ -29,7 +30,7 @@ export const AuthContext = createContext<AuthContextObj>({
 
 const AuthProvider: React.FC = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
-    !!getCookie('access_token')
+    !!getCookie('refresh_token')
   );
   const [user, setUser] = useState<User>({} as User);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -48,9 +49,9 @@ const AuthProvider: React.FC = ({ children }) => {
   useEffect(() => {
     const { access_token, refresh_token, country } = getHashValue();
     if (access_token) {
-      setCookie('access_token', access_token);
-      setCookie('refresh_token', refresh_token);
-      setCookie('country', country);
+      setCookie('access_token', access_token, { expires: ACCESS_TOKEN_AGE });
+      setCookie('refresh_token', refresh_token, { expires: REFRESH_TOKEN_AGE });
+      setCookie('country', country, { expires: REFRESH_TOKEN_AGE });
       setIsLoggedIn(true);
       window.location.hash = '';
     }
@@ -62,7 +63,7 @@ const AuthProvider: React.FC = ({ children }) => {
         try {
           const response = await ApiSpotify.get('/me');
           setUser(response.data);
-          setCookie('country', response.data.country);
+          setCookie('country', response.data.country, { expires: REFRESH_TOKEN_AGE });
         } catch (error) {
           console.error(error);
         }
