@@ -5,8 +5,6 @@ import {
 import '@szhsin/react-menu/dist/index.css';
 import '@szhsin/react-menu/dist/transitions/slide.css';
 
-import styles from './ContextMenu.module.css';
-
 const ContextMenu: React.FC<MenuProps> = ({
   children,
   ...props
@@ -15,7 +13,6 @@ const ContextMenu: React.FC<MenuProps> = ({
   return (
     <Menu
       transition
-      menuClassName={styles.contextMenu}
       {...props}
     >
       {children}
