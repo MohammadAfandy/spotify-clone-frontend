@@ -18,6 +18,7 @@ import SearchInput from '../components/Input/SearchInput';
 import Button from '../components/Button/Button';
 import Modal from '../components/Modal/Modal';
 import PlayListForm from '../components/Form/PlayListForm';
+import { MdClose } from 'react-icons/md';
 
 const initialPlaylistForm = {
   id: '',
@@ -36,6 +37,7 @@ const PlaylistPage: React.FC = () => {
   const [isOwnPlaylist, setIsOwnPlaylist] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [suggested, setSuggested] = useState<Track[]>([]);
+  const [isShowFindPlaylist, setIsShowFindPlaylist] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -249,37 +251,49 @@ const PlaylistPage: React.FC = () => {
         />
       </div>
 
-      {isOwnPlaylist && (
+      {isOwnPlaylist && !isShowFindPlaylist && (
+        <div
+          className="flex w-full justify-end cursor-pointer"
+          onClick={() => setIsShowFindPlaylist(true)}
+        >
+          Find More
+        </div>
+      )}
+
+      {isOwnPlaylist && (isShowFindPlaylist) && (
         <div className="mb-4 py-2 border-t-2 border-opacity-10 border-gray-500">
-          <div className="font-bold text-xl mb-2">
-            Let's find something for your playlist
-          </div>
-          <div className="font-bold text-xl">
-            <div className="mb-4">
-              <SearchInput
-                className="bg-light-black-2 text-white w-96 text-sm"
-                placeholder="Search for songs or episodes"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-              />
+          <div className="flex justify-between items-center">
+            <div className="font-bold text-xl mb-2">
+              Let's find something for your playlist
             </div>
-            {suggested.length > 0 && (
-              <>
-                {suggested.map((suggest) => (
-                  <PlayerListTrackMini
-                    track={suggest as Track & Episode}
-                    handlePlayTrack={() =>
-                      handlePlaySuggestedTrack(suggest.uri)
-                    }
-                    showAddLibrary
-                    onAddToPlaylist={() =>
-                      handleAddTrackToPlaylist(suggest)
-                    }
-                  />
-                ))}
-              </>
-            )}
+            <MdClose className="w-4 h-4" onClick={() => setIsShowFindPlaylist(false)} />
           </div>
+          <div className="font-bold text-xl mb-4">
+            <SearchInput
+              className="bg-light-black-2 text-white w-96 text-sm"
+              placeholder="Search for songs or episodes"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onClearValue={(e) => setSearchText('')}
+            />
+          </div>
+          {suggested.length > 0 && (
+            <>
+              {suggested.map((suggest) => (
+                <PlayerListTrackMini
+                  key={suggest.id}
+                  track={suggest as Track & Episode}
+                  handlePlayTrack={() =>
+                    handlePlaySuggestedTrack(suggest.uri)
+                  }
+                  showAddLibrary
+                  onAddToPlaylist={() =>
+                    handleAddTrackToPlaylist(suggest)
+                  }
+                />
+              ))}
+            </>
+          )}
         </div>
       )}
 

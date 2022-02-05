@@ -91,7 +91,7 @@ const PlayerProvider: React.FC = ({ children }) => {
           if (newContextUri) {
             throw new Error('Can only contain 1 uri if not track / episode');
           }
-          if (type === 'artist' || type === 'user') {
+          if (type === 'artist') {
             noOffset = true;
           }
           newContextUri = uri;

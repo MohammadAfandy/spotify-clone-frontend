@@ -10,11 +10,11 @@ import { PlayerContext } from '../context/player-context';
 import { AuthContext } from '../context/auth-context';
 import { makeRequest, getArtistNames, removeNull, duration, formatDate } from '../utils/helpers';
 
-import PlayerListTrackMini from '../components/PlayerList/PlayerListTrackMini';
 import CardItem from '../components/Card/CardItem';
 import TextLink from '../components/Text/TextLink';
 import GridWrapper from '../components/Grid/GridWrapper';
 import { GRID_COUNT } from '../utils/constants';
+import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
 
 const SearchResultPage: React.FC = () => {
   const params = useParams<{ query: string }>();
@@ -28,12 +28,19 @@ const SearchResultPage: React.FC = () => {
   const [shows, setShows] = useState<Show[]>([]);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
 
-  const { togglePlay } = useContext(PlayerContext);
+  const { currentTrack, isPlaying, togglePlay, togglePause } = useContext(PlayerContext);
   const { isLoggedIn } = useContext(AuthContext);
 
-  const handlePlayTrack = (event: React.MouseEvent, uri: string) => {
-    event.stopPropagation();
-    togglePlay([uri], 0, 0);
+  const handlePlayTrack = (
+    selectedOffset: number,
+    selectedPositionMs: number
+  ) => {
+    const trackUris = tracks.map((v) => v.uri);
+    togglePlay(trackUris, selectedOffset, selectedPositionMs);
+  };
+
+  const handlePauseTrack = () => {
+    togglePause();
   };
 
   useEffect(() => {
@@ -47,7 +54,7 @@ const SearchResultPage: React.FC = () => {
             limit: GRID_COUNT,
           },
         }, isLoggedIn);
-  
+
         setTracks(response.data.tracks.items.filter(removeNull));
         setArtists(response.data.artists.items.filter(removeNull));
         setAlbums(response.data.albums.items.filter(removeNull));
@@ -62,17 +69,11 @@ const SearchResultPage: React.FC = () => {
     };
 
     fetchSearch();
-  }, [params, isLoggedIn]);
+  }, [params.query, isLoggedIn]);
 
   const CardLoading = (
     [...Array(GRID_COUNT)].map((_, idx) => (
       <CardItem key={idx} isLoading />
-    ))
-  );
-
-  const TrackLoading = (
-    [...Array(GRID_COUNT)].map((_, idx) => (
-      <PlayerListTrackMini key={idx} isLoading />
     ))
   );
 
@@ -83,14 +84,16 @@ const SearchResultPage: React.FC = () => {
           <div className="text-lg md:text-2xl truncate">Songs</div>
           {tracks.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/track'} />}
         </div>
-        {isLoading && TrackLoading}
-        {!isLoading && tracks.map((track) => (
-          <PlayerListTrackMini
-            key={track.id}
-            track={track as Track & Episode}
-            handlePlayTrack={(e) => handlePlayTrack(e, track.uri)}
-          />
-        ))}
+        <PlayerListTrack
+          tracks={tracks}
+          showAlbum
+          currentTrack={currentTrack}
+          isPlaying={isPlaying}
+          handlePlayTrack={handlePlayTrack}
+          handlePauseTrack={handlePauseTrack}
+          handleNext={() => {}}
+          hasMore={false}
+        />
       </div>
 
       <div className="mb-8">

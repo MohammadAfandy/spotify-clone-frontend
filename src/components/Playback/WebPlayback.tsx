@@ -204,10 +204,6 @@ const WebPlayback: React.FC = () => {
                 });
               }
 
-              initPlayer?.getCurrentState().then((currentState) => {
-                console.log({ currentState });
-              });
-
               initPlayer?.getVolume().then((volume) => {
                 setVolume(volume * 100);
               });

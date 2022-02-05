@@ -24,8 +24,7 @@ const CollectionTrackPage: React.FC = () => {
     selectedOffset: number,
     selectedPositionMs: number
   ) => {
-    const trackUris = tracks.map((v) => v.uri);
-    togglePlay(trackUris, selectedOffset, selectedPositionMs);
+    togglePlay([`spotify:user:${user.id}:collection`], selectedOffset, selectedPositionMs);
   };
 
   const handlePauseTrack = () => {

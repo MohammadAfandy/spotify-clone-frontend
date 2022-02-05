@@ -102,7 +102,8 @@ const ArtistPage: React.FC = () => {
     selectedOffset: number,
     selectedPositionMs: number
   ) => {
-    togglePlay([artist.uri], selectedOffset, selectedPositionMs);
+    const trackUris = tracks.map((v) => v.uri);
+    togglePlay(trackUris, selectedOffset, selectedPositionMs);
   };
 
   const handlePauseTrack = () => {

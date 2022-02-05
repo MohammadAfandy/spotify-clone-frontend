@@ -1,10 +1,11 @@
-import { MdSearch } from 'react-icons/md';
+import { MdClose, MdSearch } from 'react-icons/md';
 
 type SearchInputProps = {
   className?: string;
   value: string;
   placeholder: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onClearValue?: (event: React.MouseEvent) => void;
 };
 
 const defaultProps: SearchInputProps = {
@@ -18,6 +19,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   value,
   placeholder,
   onChange,
+  onClearValue,
 }) => {
   return (
     <div
@@ -30,6 +32,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         value={value}
         placeholder={placeholder}
       />
+      {value && <MdClose className="h-6 w-6 mr-2" onClick={onClearValue} />}
     </div>
   );
 };

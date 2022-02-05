@@ -34,9 +34,13 @@ const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (searchQuery) {
+      if (searchQuery.trim() !== '') {
         const [, , , type] = location.pathname.split('/');
         history.replace('/search/' + searchQuery + (type ? '/' + type : ''));
+      } else {
+        if (location.pathname.startsWith('/search')) {
+          history.replace('/search');
+        }
       }
     }, 500);
     return () => clearTimeout(timer);
@@ -111,6 +115,7 @@ const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
               placeholder="Artists, songs, or podcasts"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onClearValue={(e) => setSearchQuery('')}
             />
           )}
           {isToolbarLinkActive && (

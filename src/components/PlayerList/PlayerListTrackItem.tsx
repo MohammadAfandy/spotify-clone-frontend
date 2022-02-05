@@ -155,7 +155,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
             ) : (
               <MdPlayArrow
                 className="w-6 h-6 cursor-pointer block canhover:hidden canhover:group-hover:block"
-                onClick={() => handlePlayTrack && offset && handlePlayTrack(offset, 0)}
+                onClick={() => handlePlayTrack && handlePlayTrack(offset || 0, 0)}
                 data-tip="play"
                 data-for="login-tooltip"
                 data-event="click"
