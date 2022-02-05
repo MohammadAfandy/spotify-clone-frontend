@@ -454,7 +454,7 @@ const WebPlayback: React.FC = () => {
 
   const handleOpenLyric = (event: React.MouseEvent) => {
     event.stopPropagation();
-    setShowFullPlayer(false);
+    handleAfterClickLink();
     history.push('/lyric');
   };
 
@@ -473,7 +473,7 @@ const WebPlayback: React.FC = () => {
     setShowFullScreen(true);
   };
 
-  const handleCloseScreen = async () => {
+  const handleCloseScreen = useCallback(async () => {
     setShowFullScreen(false);
     if (showFullPlayer && showDeviceSelector) {
       setShowFullPlayer(false);
@@ -484,6 +484,26 @@ const WebPlayback: React.FC = () => {
       setShowFullPlayer(false)
     }
     setShowDeviceSelector(false);
+  }, [showFullPlayer, showDeviceSelector]);
+
+  
+  useEffect(() => {
+    const unblock = history.block((location, action) => {
+      // when in mobile and back button pressed, close full screen player
+      if (action === 'POP' && showFullScreen) {
+        handleCloseScreen();
+        return false;
+      } else {
+        unblock();
+      }
+    });
+
+    return () => unblock();
+  }, [history, showFullScreen, handleCloseScreen]);
+
+  const handleAfterClickLink = () => {
+    setShowFullScreen(false);
+    setShowFullPlayer(false);
   }
 
   return (
@@ -733,7 +753,7 @@ const WebPlayback: React.FC = () => {
           handleShuffle={handleShuffle}
           handleRepeatMode={handleRepeatMode}
           handleOpenLyric={handleOpenLyric}
-          setShowFullScreen={setShowFullScreen}
+          handleAfterClickLink={handleAfterClickLink}
           handleShowDeviceSelector={handleShowDeviceSelector}
         />
       )}

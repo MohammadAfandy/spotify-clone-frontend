@@ -40,8 +40,8 @@ type FullPlayerProps = {
   handleShuffle: (event: React.MouseEvent) => Promise<void>;
   handleRepeatMode: (event: React.MouseEvent) => Promise<void>;
   handleOpenLyric: (event: React.MouseEvent) => void;
+  handleAfterClickLink: () => void;
   handleShowDeviceSelector: (event: React.MouseEvent) => void;
-  setShowFullScreen: (showFullScreen: boolean) => void;
 };
 
 const FullPlayer: React.FC<FullPlayerProps> = ({
@@ -64,13 +64,11 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
   handleShuffle,
   handleRepeatMode,
   handleOpenLyric,
+  handleAfterClickLink,
   handleShowDeviceSelector,
-  setShowFullScreen,
 }) => {
 
   const trackRef = useRef<HTMLDivElement>(null);
-
-
   const [isOverFlow, setIsOverflow] = useState(false);
   const { width: windowWidth, height: windowHeight } = useWindowSize();
 
@@ -118,7 +116,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
                 className="font-semibold"
                 text={currentTrack.name}
                 url={'/episode/' + currentTrack.id}
-                afterClick={() => setShowFullScreen(false)}
+                afterClick={handleAfterClickLink}
               />
             )}
           </div>
@@ -133,7 +131,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
                         ? '/artist/'
                         : '/show/') + artist.uri.split(':')[2]
                     }
-                    afterClick={() => setShowFullScreen(false)}
+                    afterClick={handleAfterClickLink}
                   />
                   {idx !== currentTrack.artists.length - 1 && ', '}
                 </Fragment>
