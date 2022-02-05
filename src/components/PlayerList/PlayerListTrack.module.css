@@ -1,16 +1,16 @@
 .playerGrid [data-wrapper] {
-  @apply grid py-2 text-sm gap-4;
-  grid-template-columns: .2fr 5.7fr 0 0 1fr .5fr .1fr;
+  @apply grid py-3 text-sm gap-4;
+  grid-template-columns: .2fr 7.7fr 0 0 0 0 .1fr;
 }
 
 @screen md {
   .playerGrid [data-wrapper] {
-    grid-template-columns: .2fr 4.2fr 0 1.5fr 1fr .5fr .1fr;
+    grid-template-columns: .2fr 4.7fr 0 1.5fr 1fr .5fr .1fr;
   }
 }
 
 @screen lg {
   .playerGrid [data-wrapper] {
-    grid-template-columns: .2fr 3fr 1.7fr 1fr 1fr .5fr .1fr;
+    grid-template-columns: .2fr 3.5fr 1.7fr 1fr 1fr .5fr .1fr;
   }
 }

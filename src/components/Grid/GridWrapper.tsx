@@ -1,5 +1,3 @@
-import { GRID_COUNT } from '../../utils/constants';
-
 type GridWrapperProps = {
   className?: string;
 };
@@ -10,7 +8,7 @@ const GridWrapper: React.FC<GridWrapperProps> = ({
 }) => {
 
   return (
-    <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-${GRID_COUNT} gap-4 ${className}`}>
+    <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ${className}`}>
       {children}
     </div>
   );

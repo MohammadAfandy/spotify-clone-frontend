@@ -66,8 +66,8 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
             DATE ADDED
           </div>
         )}
-        <div className="col-start-5 col-end-5"></div>
-        <div className="col-start-6 col-end-6">
+        <div className="hidden sm:block col-start-5 col-end-5"></div>
+        <div className="hidden sm:block col-start-6 col-end-6">
           <MdAccessTime className="h-4 w-4" />
         </div>
         <div className="col-start-7 col-end-7"></div>

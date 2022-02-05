@@ -156,24 +156,33 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
             <div className="truncate">{track.name}</div>
           )}
           {track.type === 'episode' && (
-            <TextLink
-              className="truncate"
-              text={track.name}
-              url={'/episode/' + track.id}
-            />
+            <>
+              <TextLink
+                className="truncate hidden sm:flex"
+                text={track.name}
+                url={'/episode/' + track.id}
+              />
+              <div className="truncate flex sm:hidden">
+                {track.name}
+              </div>
+            </>
           )}
-          <div className="font-light truncate">
+          <div className="flex font-light truncate">
             {track.explicit && <Explicit />}
             {track.artists &&
               track.artists.map((artist, idx) => (
                 <Fragment key={artist.id}>
                   <TextLink
+                    className="hidden sm:block"
                     text={artist.name}
                     url={
                       (track.type === 'track' ? '/artist/' : '/show/') +
                       artist.id
                     }
                   />
+                  <div className="block sm:hidden">
+                    {artist.name}
+                  </div>
                   {idx !== track.artists.length - 1 && ', '}
                 </Fragment>
               ))}
@@ -194,7 +203,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
           {fromNow(track.added_at)}
         </div>
       )}
-      <div className="flex items-center col-start-5 col-end-5">
+      <div className="hidden sm:flex items-center col-start-5 col-end-5">
         {track.type === 'track' && (
           <LikeButton
             isActive={isSaved}
@@ -215,7 +224,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
           ))
         }
       </div>
-      <div className="flex items-center col-start-6 col-end-6">
+      <div className="hidden sm:flex items-center col-start-6 col-end-6">
         {duration(track.duration_ms)}
       </div>
       <div className="flex items-center col-start-7 col-end-7">

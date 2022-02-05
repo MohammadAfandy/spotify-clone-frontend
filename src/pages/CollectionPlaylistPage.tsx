@@ -103,7 +103,7 @@ const CollectionPlaylistPage: React.FC = () => {
           <CardItem
             key={playlist.id}
             name={playlist.name}
-            description={''}
+            description={playlist.description || 'By ' + playlist.owner.display_name}
             image={getHighestImage(playlist.images)}
             uri={playlist.uri}
             href={'/playlist/' + playlist.id}
