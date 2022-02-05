@@ -23,6 +23,13 @@ const PlayerListEpisode: React.FC<PlayerListEpisodeProps> = ({
   handleNext,
   hasMore,
 }) => {
+
+  const EpisodeLoading = (
+    [...Array(4)].map((_, idx) => (
+      <PlayerListEpisodeItem key={idx} isLoading />
+    ))
+  );
+
   return (
     <div className="flex flex-col">
       {episodes && (
@@ -30,7 +37,7 @@ const PlayerListEpisode: React.FC<PlayerListEpisodeProps> = ({
           dataLength={episodes.length}
           next={handleNext}
           hasMore={hasMore}
-          loader={<h4>Loading ...</h4>}
+          loader={EpisodeLoading}
           scrollableTarget="main-container"
         >
           {episodes.map((episode, idx) => (

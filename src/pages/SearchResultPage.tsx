@@ -70,6 +70,12 @@ const SearchResultPage: React.FC = () => {
     ))
   );
 
+  const TrackLoading = (
+    [...Array(GRID_COUNT)].map((_, idx) => (
+      <PlayerListTrackMini key={idx} isLoading />
+    ))
+  );
+
   return (
     <div className="flex flex-col px-4 py-4">
       <div className="mb-8">
@@ -77,6 +83,7 @@ const SearchResultPage: React.FC = () => {
           <div className="text-lg md:text-2xl truncate">Songs</div>
           {tracks.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/track'} />}
         </div>
+        {isLoading && TrackLoading}
         {!isLoading && tracks.map((track) => (
           <PlayerListTrackMini
             key={track.id}

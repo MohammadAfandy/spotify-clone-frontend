@@ -13,6 +13,7 @@ const useFetchTracks = (url: string) => {
   const [pageData, setPageData] = useState<Page>({} as Page);
   const [tracks, setTracks] = useState<Track[] & Episode[]>([]);
   const [error, setError] = useState<Error | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { isLoggedIn } = useContext(AuthContext);
 
@@ -23,6 +24,7 @@ const useFetchTracks = (url: string) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const params = {
           limit: ITEM_LIST_LIMIT,
         };
@@ -130,13 +132,15 @@ const useFetchTracks = (url: string) => {
         }
       } catch (error) {
         setError(error as Error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
   }, [nextUrl, increment, url, isLoggedIn]);
 
-  return { setNextUrl, tracks, pageData, error, forceUpdate };
+  return { setNextUrl, tracks, pageData, error, forceUpdate, isLoading };
 };
 
 export default useFetchTracks;

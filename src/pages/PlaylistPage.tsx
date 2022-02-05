@@ -36,6 +36,7 @@ const PlaylistPage: React.FC = () => {
   const [isOwnPlaylist, setIsOwnPlaylist] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [suggested, setSuggested] = useState<Track[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [playlistForm, setPlaylistForm] = useState(initialPlaylistForm);
@@ -51,18 +52,25 @@ const PlaylistPage: React.FC = () => {
 
   useEffect(() => {
     const fetchPlaylist = async () => {
-      const dataPlaylist = await makeRequest('/playlists/' + params.id, {}, isLoggedIn);
-      if (isLoggedIn) {
-        const dataFollowed = await ApiSpotify.get('/playlists/' + params.id + '/followers/contains', {
-          params: {
-            ids: user.id,
-          },
-        });
-        setIsFollowed(dataFollowed.data[0]);
+      try {
+        setIsLoading(true);
+        const dataPlaylist = await makeRequest('/playlists/' + params.id, {}, isLoggedIn);
+        if (isLoggedIn) {
+          const dataFollowed = await ApiSpotify.get('/playlists/' + params.id + '/followers/contains', {
+            params: {
+              ids: user.id,
+            },
+          });
+          setIsFollowed(dataFollowed.data[0]);
+        }
+  
+        setPlaylist(dataPlaylist.data);
+        setIsOwnPlaylist(dataPlaylist.data.owner.id === user.id);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
-
-      setPlaylist(dataPlaylist.data);
-      setIsOwnPlaylist(dataPlaylist.data.owner.id === user.id);
     };
     if (!isOpenModal) fetchPlaylist();
   }, [params.id, user.id, isLoggedIn, isOpenModal]);
@@ -187,100 +195,94 @@ const PlaylistPage: React.FC = () => {
 
   return (
     <div className="px-4 py-4">
-      {playlist.id ? (
-        <>
-          <div className="mb-4">
-            <PlayerListHeader
-              image={getHighestImage(playlist.images)}
-              name={playlist.name}
-              type="PLAYLIST"
-              description={playlist.description}
-              footer={[
-                playlist.owner.display_name,
-                `${playlist.followers.total.toLocaleString()} likes`,
-                `${playlist.tracks.total} songs, ${duration(
-                  totalDuration,
-                  true
-                )}`,
-              ]}
-            />
+      <div className="mb-4">
+        <PlayerListHeader
+          image={getHighestImage(playlist.images)}
+          name={playlist.name}
+          type="PLAYLIST"
+          description={playlist.description}
+          footer={[
+            playlist.owner?.display_name,
+            `${playlist.followers?.total.toLocaleString()} likes`,
+            `${playlist.tracks?.total} songs, ${duration(
+              totalDuration,
+              true
+            )}`,
+          ]}
+          isLoading={isLoading}
+        />
+      </div>
+      <div className="flex items-center justify-center sm:justify-start mb-4">
+        <PlayButton
+          className="w-16 h-16"
+          onClick={handlePlayFromStart}
+        />
+        {isOwnPlaylist ? (
+          <Button
+            className="ml-6"
+            text="Edit Playlist"
+            onClick={handleEditPlaylist}
+          />
+        ) : (
+          <LikeButton
+            className="w-8 h-8 ml-6"
+            onClick={handleFollow}
+            isActive={isFollowed}
+          />
+        )}
+      </div>
+      <div className="mb-4">
+        <PlayerListTrack
+          tracks={tracks}
+          showAlbum
+          showDateAdded
+          onRemoveFromPlaylist={
+            isOwnPlaylist ? handleRemoveFromPlaylist : undefined
+          }
+          currentTrack={currentTrack}
+          isPlaying={isPlaying}
+          handlePlayTrack={handlePlayTrack}
+          handlePauseTrack={handlePauseTrack}
+          handleNext={() => setNextUrl(pageData.next)}
+          hasMore={!!pageData.next}
+          isIncludeEpisode
+        />
+      </div>
+
+      {isOwnPlaylist && (
+        <div className="mb-4 py-2 border-t-2 border-opacity-10 border-gray-500">
+          <div className="font-bold text-xl mb-2">
+            Let's find something for your playlist
           </div>
-          <div className="flex items-center justify-center sm:justify-start mb-4">
-            <PlayButton
-              className="w-16 h-16"
-              onClick={handlePlayFromStart}
-            />
-            {isOwnPlaylist ? (
-              <Button
-                className="ml-6"
-                text="Edit Playlist"
-                onClick={handleEditPlaylist}
+          <div className="font-bold text-xl">
+            <div className="mb-4">
+              <SearchInput
+                className="bg-light-black-2 text-white w-96 text-sm"
+                placeholder="Search for songs or episodes"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
               />
-            ) : (
-              <LikeButton
-                className="w-8 h-8 ml-6"
-                onClick={handleFollow}
-                isActive={isFollowed}
-              />
+            </div>
+            {suggested.length > 0 && (
+              <>
+                {suggested.map((suggest) => (
+                  <PlayerListTrackMini
+                    track={suggest as Track & Episode}
+                    handlePlayTrack={() =>
+                      handlePlaySuggestedTrack(suggest.uri)
+                    }
+                    showAddLibrary
+                    onAddToPlaylist={() =>
+                      handleAddTrackToPlaylist(suggest)
+                    }
+                  />
+                ))}
+              </>
             )}
           </div>
-          {tracks.length > 0 && (
-            <div className="mb-4">
-              <PlayerListTrack
-                tracks={tracks}
-                showAlbum
-                showDateAdded
-                onRemoveFromPlaylist={
-                  isOwnPlaylist ? handleRemoveFromPlaylist : undefined
-                }
-                currentTrack={currentTrack}
-                isPlaying={isPlaying}
-                handlePlayTrack={handlePlayTrack}
-                handlePauseTrack={handlePauseTrack}
-                handleNext={() => setNextUrl(pageData.next)}
-                hasMore={!!pageData.next}
-                isIncludeEpisode
-              />
-            </div>
-          )}
-
-          {isOwnPlaylist && (
-            <div className="mb-4 py-2 border-t-2 border-opacity-10 border-gray-500">
-              <div className="font-bold text-xl mb-2">
-                Let's find something for your playlist
-              </div>
-              <div className="font-bold text-xl">
-                <div className="mb-4">
-                  <SearchInput
-                    className="bg-light-black-2 text-white w-96 text-sm"
-                    placeholder="Search for songs or episodes"
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                  />
-                </div>
-                {suggested.length > 0 && (
-                  <>
-                    {suggested.map((suggest) => (
-                      <PlayerListTrackMini
-                        track={suggest as Track & Episode}
-                        handlePlayTrack={() =>
-                          handlePlaySuggestedTrack(suggest.uri)
-                        }
-                        showAddLibrary
-                        onAddToPlaylist={() =>
-                          handleAddTrackToPlaylist(suggest)
-                        }
-                      />
-                    ))}
-                  </>
-                )}
-              </div>
-            </div>
-          )}
-        </>
-      ) : (
-        ''
+        </div>
       )}
+
       <Modal
         show={isOpenModal}
         title="Playlist"

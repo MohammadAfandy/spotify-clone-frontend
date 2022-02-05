@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import { FiMusic } from 'react-icons/fi';
+import Skeleton from 'react-loading-skeleton';
 import { ellipsis } from '../../utils/helpers';
 
 type PlayerListHeaderProps = {
@@ -8,6 +9,7 @@ type PlayerListHeaderProps = {
   name: string;
   description?: string;
   footer?: Array<React.ReactNode | string>;
+  isLoading?: boolean;
 };
 
 const defaultProps: PlayerListHeaderProps = {
@@ -16,6 +18,7 @@ const defaultProps: PlayerListHeaderProps = {
   name: '',
   description: '',
   footer: [],
+  isLoading: false,
 };
 
 const PlayerListHeader: React.FC<PlayerListHeaderProps> = ({
@@ -24,32 +27,54 @@ const PlayerListHeader: React.FC<PlayerListHeaderProps> = ({
   name,
   description,
   footer,
+  isLoading,
 }) => {
+
+  const LoadingComponent = (
+    <>
+      <div className="h-52 w-52 sm:mr-6 rounded-md">
+        <Skeleton className="h-full" />
+      </div>
+      <div className="w-52 text-center sm:text-left mt-4 sm:mt-0">
+        <Skeleton />
+        <Skeleton />
+        <Skeleton />
+        <Skeleton />
+      </div>
+    </>
+  );
+
+  const ImageComponent = image ? (
+    <img src={image} alt={name} className="w-52 h-52 sm:mr-6 rounded-md" />
+  ) : (
+    <div className="flex justify-center items-center w-52 h-52 sm:mr-6 rounded-md bg-light-black-2">
+      <FiMusic className="w-24 h-24" />
+    </div>
+  );
+
   return (
     <div className="flex flex-col items-center sm:flex-row sm:items-end mb-3 pb-3 border-b-2 border-opacity-10">
-      {image ? (
-        <img src={image} alt={name} className="w-52 h-52 sm:mr-6 rounded-md" />
-      ) : (
-        <div className="flex justify-center items-center w-52 h-52 sm:mr-6 rounded-md bg-light-black-2">
-          <FiMusic className="w-24 h-24" />
-        </div>
+      {isLoading && LoadingComponent}
+      {!isLoading && (
+        <>
+          {ImageComponent}
+          <div className="font-bold text-center sm:text-left mt-4 sm:mt-0">
+            <div className="mb-2 text-lg">{type}</div>
+            <div className="mb-4 text-4xl">{name}</div>
+            <div className="mb-2 text-sm font-light">
+              {description && ellipsis(description, 150)}
+            </div>
+            <div className="text-sm">
+              {footer && footer.map((foot, idx) => (
+                <Fragment key={idx}>
+                  {foot}
+                  {idx !== footer.length - 1 && ' • '}
+                </Fragment>
+              ))}
+            </div>
+          </div>
+        </>
       )}
-      <div className="font-bold text-center sm:text-left mt-4 sm:mt-0">
-        <div className="mb-2 text-lg">{type}</div>
-        <div className="mb-4 text-4xl">{name}</div>
-        <div className="mb-2 text-sm font-light">
-          {description && ellipsis(description, 150)}
-        </div>
-        <div className="text-sm">
-          {footer &&
-            footer.map((foot, idx) => (
-              <Fragment key={idx}>
-                {foot}
-                {idx !== footer.length - 1 && ' • '}
-              </Fragment>
-            ))}
-        </div>
-      </div>
     </div>
   );
 };

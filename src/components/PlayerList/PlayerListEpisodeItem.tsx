@@ -4,6 +4,7 @@ import {
   MdAddCircle,
   MdCheck,
 } from 'react-icons/md';
+import Skeleton from 'react-loading-skeleton';
 import Episode from '../../types/Episode';
 import ApiSpotify from '../../utils/api-spotify';
 import {
@@ -16,27 +17,30 @@ import Explicit from '../Text/Explicit';
 import TextLink from '../Text/TextLink';
 
 type PlayerListEpisodeItemProps = {
-  episode: Episode;
-  number: number;
-  handlePlayEpisode: (offset: number, positionMs: number) => void;
+  episode?: Episode;
+  number?: number;
+  handlePlayEpisode?: (offset: number, positionMs: number) => void;
+  isLoading?: boolean;
 };
 
 const defaultProps: PlayerListEpisodeItemProps = {
   episode: {} as Episode,
   number: 0,
   handlePlayEpisode: (offset: number, positionMs: number) => {},
+  isLoading: false,
 };
 
 const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
   episode,
   number,
   handlePlayEpisode,
+  isLoading,
 }) => {
-  const [isSaved, setIsSaved] = useState(episode.is_saved);
+  const [isSaved, setIsSaved] = useState(episode?.is_saved);
 
   useEffect(() => {
-    setIsSaved(episode.is_saved);
-  }, [episode.is_saved]);
+    setIsSaved(episode?.is_saved);
+  }, [episode?.is_saved]);
 
   const handleAddToSavedEpisode = async (id: string) => {
     const params = {
@@ -53,52 +57,69 @@ const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
     }
   };
 
+  const LoadingComponent = (
+    <>
+      <div className="mr-4 w-24 h-24 rounded-xl">
+        <Skeleton className="h-full" />
+      </div>
+      <div className="flex flex-col w-full">
+        <Skeleton className="h-full" />
+        <Skeleton className="h-full" />
+        <Skeleton className="h-full" />
+      </div>
+    </>
+  );
+
   return (
     <div
       className="group flex items-center px-2 py-4 border-t-2 border-opacity-10 hover:bg-gray-500 hover:bg-opacity-25"
-      key={episode.id}
     >
-      <img
-        src={getHighestImage(episode.images)}
-        alt={episode.name}
-        className="mr-4 w-24 h-24 rounded-xl"
-      />
-      <div className="flex flex-col w-full">
-        <TextLink
-          className="mb-2"
-          text={episode.name}
-          url={'/episode/' + episode.id}
-        />
-        <div className="mb-2 text-sm font-light line-clamp-2">
-          {episode.description}
-        </div>
-        <div className="flex items-center text-xs">
-          <div className="flex items-center mr-auto">
-            <MdPlayCircle
-              className="mr-4 w-8 h-8 cursor-pointer"
-              onClick={() => handlePlayEpisode(number - 1, 0)}
+      {isLoading && LoadingComponent}
+      {!isLoading && episode && (
+        <>
+          <img
+            src={getHighestImage(episode.images)}
+            alt={episode.name}
+            className="mr-4 w-24 h-24 rounded-xl"
+          />
+          <div className="flex flex-col w-full">
+            <TextLink
+              className="mb-2"
+              text={episode.name}
+              url={'/episode/' + episode.id}
             />
-            {episode.explicit && <Explicit />}
-            <div className="mr-2">
-              {formatDate(episode.release_date, 'MMM DD')}
+            <div className="mb-2 text-sm font-light line-clamp-2">
+              {episode.description}
             </div>
-            <div>{duration(episode.duration_ms, true)}</div>
+            <div className="flex items-center text-xs">
+              <div className="flex items-center mr-auto">
+                <MdPlayCircle
+                  className="mr-4 w-8 h-8 cursor-pointer"
+                  onClick={() => handlePlayEpisode && number && handlePlayEpisode(number - 1, 0)}
+                />
+                {episode.explicit && <Explicit />}
+                <div className="mr-2">
+                  {formatDate(episode.release_date, 'MMM DD')}
+                </div>
+                <div>{duration(episode.duration_ms, true)}</div>
+              </div>
+              <div className="flex canhover:hidden canhover:group-hover:flex items-center">
+                {isSaved ? (
+                  <MdCheck
+                    className="mr-4 w-8 h-8 cursor-pointer text-green-400"
+                    onClick={() => handleAddToSavedEpisode(episode.id)}
+                  />
+                ) : (
+                  <MdAddCircle
+                    className="mr-4 w-8 h-8 cursor-pointer"
+                    onClick={() => handleAddToSavedEpisode(episode.id)}
+                  />
+                )}
+              </div>
+            </div>
           </div>
-          <div className="flex canhover:hidden canhover:group-hover:flex items-center">
-            {isSaved ? (
-              <MdCheck
-                className="mr-4 w-8 h-8 cursor-pointer text-green-400"
-                onClick={() => handleAddToSavedEpisode(episode.id)}
-              />
-            ) : (
-              <MdAddCircle
-                className="mr-4 w-8 h-8 cursor-pointer"
-                onClick={() => handleAddToSavedEpisode(episode.id)}
-              />
-            )}
-          </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };

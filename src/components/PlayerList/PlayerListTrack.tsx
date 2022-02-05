@@ -48,6 +48,11 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
   isIncludeEpisode,
 }) => {
   let number = 0;
+  const TrackLoading = (
+    [...Array(4)].map((_, idx) => (
+      <PlayerListTrackItem key={idx} isLoading />
+    ))
+  );
   return (
     <div className={styles.playerGrid + " flex flex-col w-full"}>
       <div className="border-b-2 border-opacity-10 px-2" data-wrapper>
@@ -77,7 +82,7 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
           dataLength={tracks.length}
           next={handleNext}
           hasMore={hasMore}
-          loader={<h4>Loading ...</h4>}
+          loader={TrackLoading}
           scrollableTarget="main-container"
           style={{ overflow: 'unset' }}
         >

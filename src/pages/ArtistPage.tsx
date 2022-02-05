@@ -117,99 +117,94 @@ const ArtistPage: React.FC = () => {
 
   return (
     <div className="px-4 py-4">
-      {artist.id ? (
-        <>
-          <div className="mb-4">
-            <PlayerListHeader
-              image={artist.images && artist.images[0]?.url}
-              name={artist.name}
-              type={ucwords(artist.type)}
-              footer={[
-                `${artist.followers?.total.toLocaleString()} Followers`,
-              ]}
+      <div className="mb-4">
+        <PlayerListHeader
+          image={artist.images && artist.images[0]?.url}
+          name={artist.name}
+          type={ucwords(artist.type)}
+          footer={[
+            `${artist.followers?.total.toLocaleString()} Followers`,
+          ]}
+          isLoading={isLoading}
+        />
+        <div className="flex items-center justify-center sm:justify-start">
+          <PlayButton className="w-16 h-16 mr-6" onClick={handlePlay} />
+          <FolllowButton
+            isFollowed={isFollowed}
+            onClick={handleFollow}
+          />
+        </div>
+      </div>
+      <div className="mb-4">
+        <div className="mb-4 flex justify-between items-end font-bold w-full">
+          <div className="text-lg md:text-2xl truncate">Popular</div>
+        </div>
+        <PlayerListTrack
+          tracks={!isShowMore ? tracks.slice(0, 5) : tracks}
+          showAlbum
+          currentTrack={currentTrack}
+          isPlaying={isPlaying}
+          handlePlayTrack={handlePlayTrack}
+          handlePauseTrack={handlePauseTrack}
+          handleNext={() => setNextUrl(pageData.next)}
+          hasMore={!!pageData.next}
+        />
+        <span
+          className="cursor-pointer hover:underline"
+          onClick={() => setIsShowMore((prevState) => !prevState)}
+        >
+          {!isShowMore ? 'See More' : 'See Less'}
+        </span>
+      </div>
+      <div className="mb-4">
+        <div className="mb-4 flex justify-between items-end font-bold w-full">
+          <div className="text-lg md:text-2xl truncate">Albums</div>
+          <TextLink
+            className="ml-6 whitespace-pre"
+            text="See All"
+            url={'/artist/' + params.id + '/albums'}
+          />
+        </div>
+        <GridWrapper>
+          {isLoading && CardLoading}
+          {!isLoading && albums.map((album) => (
+            <CardItem
+              key={album.id}
+              name={album.name}
+              description={getArtistNames(album.artists)}
+              image={album.images && album.images[0] && album.images[0].url}
+              uri={album.uri}
+              href={'/album/' + album.id}
             />
-            <div className="flex items-center justify-center sm:justify-start">
-              <PlayButton className="w-16 h-16 mr-6" onClick={handlePlay} />
-              <FolllowButton
-                isFollowed={isFollowed}
-                onClick={handleFollow}
-              />
-            </div>
-          </div>
-          <div className="mb-4">
-            <div className="mb-4 flex justify-between items-end font-bold w-full">
-              <div className="text-lg md:text-2xl truncate">Popular</div>
-            </div>
-            <PlayerListTrack
-              tracks={!isShowMore ? tracks.slice(0, 5) : tracks}
-              showAlbum
-              currentTrack={currentTrack}
-              isPlaying={isPlaying}
-              handlePlayTrack={handlePlayTrack}
-              handlePauseTrack={handlePauseTrack}
-              handleNext={() => setNextUrl(pageData.next)}
-              hasMore={!!pageData.next}
-            />
-            <span
-              className="cursor-pointer hover:underline"
-              onClick={() => setIsShowMore((prevState) => !prevState)}
-            >
-              {!isShowMore ? 'See More' : 'See Less'}
-            </span>
-          </div>
-          <div className="mb-4">
-            <div className="mb-4 flex justify-between items-end font-bold w-full">
-              <div className="text-lg md:text-2xl truncate">Albums</div>
-              <TextLink
-                className="ml-6 whitespace-pre"
-                text="See All"
-                url={'/artist/' + params.id + '/albums'}
-              />
-            </div>
-            <GridWrapper>
-              {isLoading && CardLoading}
-              {!isLoading && albums.map((album) => (
-                <CardItem
-                  key={album.id}
-                  name={album.name}
-                  description={getArtistNames(album.artists)}
-                  image={album.images && album.images[0] && album.images[0].url}
-                  uri={album.uri}
-                  href={'/album/' + album.id}
-                />
-              ))}
-            </GridWrapper>
-          </div>
+          ))}
+        </GridWrapper>
+      </div>
 
-          <div className="mb-4">
-            <div className="mb-4 flex justify-between items-end font-bold w-full">
-              <div className="text-lg md:text-2xl truncate">Fans Also Like</div>
-              <TextLink
-                className="ml-6 whitespace-pre"
-                text="See All"
-                url={'/artist/' + params.id + '/related'}
-              />
-            </div>
-            <GridWrapper>
-              {isLoading && CardLoading}
-              {!isLoading && relatedAtists.slice(0, 4).map((artist) => (
-                <CardItem
-                  key={artist.id}
-                  name={artist.name}
-                  description={artist.name}
-                  image={
-                    artist.images && artist.images[0] && artist.images[0].url
-                  }
-                  uri={artist.uri}
-                  href={'/artist/' + artist.id}
-                />
-              ))}
-            </GridWrapper>
-          </div>
-        </>
-      ) : (
-        ''
-      )}
+      <div className="mb-4">
+        <div className="mb-4 flex justify-between items-end font-bold w-full">
+          <div className="text-lg md:text-2xl truncate">Fans Also Like</div>
+          <TextLink
+            className="ml-6 whitespace-pre"
+            text="See All"
+            url={'/artist/' + params.id + '/related'}
+          />
+        </div>
+        <GridWrapper>
+          {isLoading && CardLoading}
+          {!isLoading && relatedAtists.slice(0, 4).map((artist) => (
+            <CardItem
+              key={artist.id}
+              name={artist.name}
+              description={artist.name}
+              image={
+                artist.images && artist.images[0] && artist.images[0].url
+              }
+              uri={artist.uri}
+              href={'/artist/' + artist.id}
+            />
+          ))}
+        </GridWrapper>
+      </div>
     </div>
   );
 };

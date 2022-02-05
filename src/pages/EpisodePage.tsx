@@ -20,23 +20,31 @@ const EpisodePage: React.FC = () => {
   const history = useHistory();
   const [episode, setEpisode] = useState<Episode>(Object);
   const [isSaved, setIsSaved] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { user } = useContext(AuthContext);
   const { togglePlay } = useContext(PlayerContext);
 
   useEffect(() => {
     const fetchEpisode = async () => {
-      const [dataEpisode, dataSaved] = await Promise.all([
-        ApiSpotify.get('/episodes/' + params.id),
-        ApiSpotify.get('/me/episodes/contains', {
-          params: {
-            ids: params.id,
-          },
-        }),
-      ]);
-
-      setEpisode(dataEpisode.data);
-      setIsSaved(dataSaved.data[0]);
+      try {
+        setIsLoading(true);
+        const [dataEpisode, dataSaved] = await Promise.all([
+          ApiSpotify.get('/episodes/' + params.id),
+          ApiSpotify.get('/me/episodes/contains', {
+            params: {
+              ids: params.id,
+            },
+          }),
+        ]);
+  
+        setEpisode(dataEpisode.data);
+        setIsSaved(dataSaved.data[0]);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchEpisode();
   }, [params.id, user.id]);
@@ -66,57 +74,52 @@ const EpisodePage: React.FC = () => {
   };
 
   return (
-    <div className="">
-      {episode.id ? (
-        <div className="px-4 py-4">
-          <PlayerListHeader
-            image={episode.images && episode.images[0].url}
-            name={episode.name}
-            type="PODCAST EPISODE"
-            footer={[
-              <TextLink
-                text={episode.show.name}
-                url={'/show/' + episode.show.id}
-              />,
-            ]}
-          />
-          <div className="mb-4">
-            <div className="text-sm">
-              {formatDate(episode.release_date, 'MMM YY')} · {duration(episode.duration_ms, true, true)}
-            </div>
-          </div>
-          <div className="flex items-center justify-center sm:justify-start mb-4">
-            <PlayButton
-              className="w-16 h-16 mr-6"
-              onClick={handlePlayEpisode}
-            />
-            {isSaved ? (
-              <MdCheck
-                className="mr-4 w-10 h-10 cursor-pointer text-green-400"
-                onClick={handleSave}
-              />
-            ) : (
-              <MdAddCircle
-                className="mr-4 w-10 h-10 cursor-pointer"
-                onClick={handleSave}
-              />
-            )}
-          </div>
-
-          <div className="">
-            <div className="w-8/12">
-              <div className="text-lg font-bold mb-4">Episode Description</div>
-              <div className="font-light mb-4">{episode.description}</div>
-              <Button
-                text="SEE ALL EPISODES"
-                onClick={() => history.push('/show/' + episode.show.id)}
-              />
-            </div>
-          </div>
+    <div className="px-4 py-4">
+      <PlayerListHeader
+        image={episode.images && episode.images[0]?.url}
+        name={episode.name}
+        type="PODCAST EPISODE"
+        footer={[
+          <TextLink
+            text={episode.show?.name}
+            url={'/show/' + episode.show?.id}
+          />,
+        ]}
+        isLoading={isLoading}
+      />
+      <div className="mb-4">
+        <div className="text-sm">
+          {formatDate(episode.release_date, 'MMM YY')} · {duration(episode.duration_ms, true, true)}
         </div>
-      ) : (
-        ''
-      )}
+      </div>
+      <div className="flex items-center justify-center sm:justify-start mb-4">
+        <PlayButton
+          className="w-16 h-16 mr-6"
+          onClick={handlePlayEpisode}
+        />
+        {isSaved ? (
+          <MdCheck
+            className="mr-4 w-10 h-10 cursor-pointer text-green-400"
+            onClick={handleSave}
+          />
+        ) : (
+          <MdAddCircle
+            className="mr-4 w-10 h-10 cursor-pointer"
+            onClick={handleSave}
+          />
+        )}
+      </div>
+
+      <div className="">
+        <div className="w-8/12">
+          <div className="text-lg font-bold mb-4">Episode Description</div>
+          <div className="font-light mb-4">{episode.description}</div>
+          <Button
+            text="SEE ALL EPISODES"
+            onClick={() => history.push('/show/' + episode.show.id)}
+          />
+        </div>
+      </div>
     </div>
   );
 };
