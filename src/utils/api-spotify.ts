@@ -11,13 +11,14 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: false,
   params: {},
 });
 
 // before request, set the access token and country param
 axiosInstance.interceptors.request.use(
   async (config) => {
-    // await sleep(600000);
+    // await sleep(3000);
     const { url = '', method } = config;
     const urlWithoutCountry = ['/me/top/tracks', '/me/top/artists'];
     if (
@@ -43,12 +44,12 @@ axiosInstance.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    const refreshToken = getCookie('refresh_token');
+    // const refreshToken = getCookie('refresh_token');
     if (
       error.response &&
       error.config &&
-      !error.config._retry &&
-      refreshToken
+      !error.config._retry
+      // refreshToken
     ) {
       const isExpired = (
         error.response.status === 401 &&
@@ -65,11 +66,14 @@ axiosInstance.interceptors.response.use(
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ refresh_token: refreshToken }),
+          credentials: 'include',
+          // body: JSON.stringify({ refresh_token: refreshToken }),
         });
         const res = await response.json();
-        setCookie('access_token', res.access_token, { expires: ACCESS_TOKEN_AGE });
-        return axiosInstance(originalRequest);
+        if (res.access_token) {
+          setCookie('access_token', res.access_token, { expires: ACCESS_TOKEN_AGE });
+          return axiosInstance(originalRequest);
+        }
       }
     }
     return Promise.reject(error);

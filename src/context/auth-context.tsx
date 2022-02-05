@@ -30,7 +30,7 @@ export const AuthContext = createContext<AuthContextObj>({
 
 const AuthProvider: React.FC = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
-    !!getCookie('refresh_token')
+    !!getCookie('access_token')
   );
   const [user, setUser] = useState<User>({} as User);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -47,10 +47,11 @@ const AuthProvider: React.FC = ({ children }) => {
   };
 
   useEffect(() => {
-    const { access_token, refresh_token, country } = getHashValue();
+    // const { access_token, refresh_token, country } = getHashValue();
+    const { access_token, country } = getHashValue();
     if (access_token) {
       setCookie('access_token', access_token, { expires: ACCESS_TOKEN_AGE });
-      setCookie('refresh_token', refresh_token, { expires: REFRESH_TOKEN_AGE });
+      // setCookie('refresh_token', refresh_token, { expires: REFRESH_TOKEN_AGE });
       setCookie('country', country, { expires: REFRESH_TOKEN_AGE });
       setIsLoggedIn(true);
       window.location.hash = '';

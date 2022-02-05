@@ -128,22 +128,21 @@ const WebPlayback: React.FC = () => {
       initPlayer = new window.Spotify.Player({
         name: CURRENT_PLAYER_NAME,
         getOAuthToken: async (cb: (token: string) => {}) => {
-          const refreshToken = getCookie('refresh_token');
-          if (refreshToken) {
-            const response = await fetch(BACKEND_URI + '/refresh_token', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ refresh_token: refreshToken }),
-            });
-            const res = await response.json();
-            const accessToken = res.access_token;
+          const response = await fetch(BACKEND_URI + '/refresh_token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            // body: JSON.stringify({ refresh_token: refreshToken }),
+            credentials: 'include',
+          });
+          const res = await response.json();
+          const accessToken = res.access_token;
+          if (accessToken) {
             setCookie('access_token', accessToken, { expires: ACCESS_TOKEN_AGE });
             cb(accessToken);
           } else {
-            console.error('refresh token not set');
-            cb(getCookie('access_token'));
+            console.error('Failed to get token');
           }
         },
         // volume: 1,
