@@ -50,7 +50,6 @@ const PlaylistPage: React.FC = () => {
   const { setNextUrl, tracks, pageData, forceUpdate } = useFetchTracks(
     '/playlists/' + params.id + '/tracks'
   );
-  
 
   useEffect(() => {
     const fetchPlaylist = async () => {
@@ -145,11 +144,11 @@ const PlaylistPage: React.FC = () => {
     togglePlay([uri], 0, 0);
   };
 
-  const handleAddTrackToPlaylist = async (track: Track) => {
+  const handleAddTrackToPlaylist = async (trackUri: string) => {
     const params = {
-      uris: track.uri,
+      uris: trackUri,
     };
-    await ApiSpotify.post('/playlists/' + playlist.id + '/tracks', null, {
+    await ApiSpotify.post('/playlists/' + playlist.id + '/tracks', {}, {
       params,
     });
     forceUpdate();
@@ -159,11 +158,12 @@ const PlaylistPage: React.FC = () => {
     return acc + curr.duration_ms;
   }, 0);
 
-  const handleRemoveFromPlaylist = async (trackUri: string) => {
+  const handleRemoveFromPlaylist = async (trackUri: string, position?: number) => {
     const body = {
       tracks: [
         {
           uri: trackUri,
+          positions: position !== undefined ? [position] : undefined,
         },
       ],
     };
@@ -241,6 +241,9 @@ const PlaylistPage: React.FC = () => {
           onRemoveFromPlaylist={
             isOwnPlaylist ? handleRemoveFromPlaylist : undefined
           }
+          handleAddTrackToPlaylist={
+            isOwnPlaylist ? handleAddTrackToPlaylist : undefined
+          }
           currentTrack={currentTrack}
           isPlaying={isPlaying}
           handlePlayTrack={handlePlayTrack}
@@ -270,7 +273,7 @@ const PlaylistPage: React.FC = () => {
           </div>
           <div className="font-bold text-xl mb-4">
             <SearchInput
-              className="bg-light-black-2 text-white w-96 text-sm"
+              className="bg-light-black-2 text-white w-3/4 md:w-96 text-sm"
               placeholder="Search for songs or episodes"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
@@ -288,7 +291,7 @@ const PlaylistPage: React.FC = () => {
                   }
                   showAddLibrary
                   onAddToPlaylist={() =>
-                    handleAddTrackToPlaylist(suggest)
+                    handleAddTrackToPlaylist(suggest.uri)
                   }
                 />
               ))}

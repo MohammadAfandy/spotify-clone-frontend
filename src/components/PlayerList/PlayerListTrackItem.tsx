@@ -32,7 +32,8 @@ type PlayerListTrackItemProps = {
   isPlaying?: boolean;
   showAlbum?: boolean;
   showDateAdded?: boolean;
-  onRemoveFromPlaylist?: (trackId: string) => void;
+  onRemoveFromPlaylist?: (trackId: string, position?: number) => void;
+  handleAddTrackToPlaylist?: (trackId: string) => void;
   handlePlayTrack?: (offset: number, positionMs: number) => void;
   handlePauseTrack?: () => void;
   isLoading?: boolean;
@@ -47,6 +48,7 @@ const defaultProps: PlayerListTrackItemProps = {
   showAlbum: false,
   showDateAdded: false,
   onRemoveFromPlaylist: undefined,
+  handleAddTrackToPlaylist: undefined,
   handlePlayTrack: (offset: number, positionMs: number) => {},
   handlePauseTrack: () => {},
   isLoading: false,
@@ -61,6 +63,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
   showAlbum,
   showDateAdded,
   onRemoveFromPlaylist,
+  handleAddTrackToPlaylist,
   handlePlayTrack,
   handlePauseTrack,
   isLoading,
@@ -106,11 +109,11 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
     }
   };
 
-  const handleAddTrackToPlaylist = async (playlistId: string, trackUris: string) => {
+  const addToPlaylist = async (playlistId: string, trackUris: string) => {
     const params = {
       uris: trackUris,
     };
-    await ApiSpotify.post('/playlists/' + playlistId + '/tracks', null, {
+    await ApiSpotify.post('/playlists/' + playlistId + '/tracks', {}, {
       params,
     });
   };
@@ -271,7 +274,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
                 {isSaved ? 'Remove from your Liked Songs' : 'Save to your Liked Songs'}
               </MenuItem>
               {onRemoveFromPlaylist && (
-                <MenuItem onClick={() => onRemoveFromPlaylist(track.uri)}>
+                <MenuItem onClick={() => onRemoveFromPlaylist(track.uri, offset)}>
                   Remove from this playlist
                 </MenuItem>
               )}
@@ -281,7 +284,13 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
                   .map((playlist) => (
                     <MenuItem
                       key={playlist.id}
-                      onClick={() => handleAddTrackToPlaylist(playlist.id, track.uri)}
+                      onClick={() => {
+                        if (handleAddTrackToPlaylist) {
+                          handleAddTrackToPlaylist(track.uri)
+                        } else {
+                          addToPlaylist(playlist.id, track.uri);
+                        }
+                      }}
                     >
                       {playlist.name}
                     </MenuItem>

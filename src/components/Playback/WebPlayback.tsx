@@ -38,6 +38,7 @@ import {
   MdVolumeUp,
   MdForward10,
   MdReplay10,
+  MdQueueMusic,
 } from 'react-icons/md';
 import { FiMaximize2 } from 'react-icons/fi';
 import FullPlayer from './FullPlayer';
@@ -88,6 +89,7 @@ const WebPlayback: React.FC = () => {
   const [volume, setVolume] = useState(100);
   const [devices, setDevices] = useState<Device[]>([]);
   const [positionMs, setPositionMs] = useState(0);
+  const [contextUri, setContextUri] = useState('');
 
   const { width: windowWidth, height: windowHeight } = useWindowSize();
   const [isMobilePlayer, setIsMobilePlayer] = useState(false);
@@ -181,15 +183,19 @@ const WebPlayback: React.FC = () => {
                 shuffle,
                 repeat_mode,
                 track_window,
+                context,
               } = state;
-              const { current_track } = track_window;
+              const {
+                current_track,
+              } = track_window;
               setDuration(duration);
               setPositionMs(position);
               changeIsPlaying(!paused);
               setShuffle(shuffle);
               setRepeatMode(repeat_mode);
-              changeCurrentTrack(current_track);
               setIsPlayerActive(true);
+              changeCurrentTrack(current_track);
+              setContextUri(context?.uri || '');
 
               const currentDeviceId = getCookie('device_id');
               if (currentDeviceId) {
@@ -366,6 +372,7 @@ const WebPlayback: React.FC = () => {
         shuffle_state,
         repeat_state,
         is_playing,
+        context,
       } = responseData;
 
       const {
@@ -404,6 +411,7 @@ const WebPlayback: React.FC = () => {
         newTrack = item;
       }
       changeCurrentTrack(newTrack);
+      setContextUri(context?.uri || '');
     }
   }, [changeCurrentTrack, changeIsPlaying, deviceId, transferPlayback]);
 
@@ -452,6 +460,24 @@ const WebPlayback: React.FC = () => {
     event.stopPropagation();
     handleAfterClickLink();
     history.push('/lyric');
+  };
+
+  const handleOpenQueue = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    handleAfterClickLink();
+
+    if (contextUri.startsWith('spotify:user')) {
+      history.push('/collection/tracks');
+      return;
+    }
+
+    const [, type, id] = contextUri.split(':');
+    if (type && id) {
+      history.push(`/${type}/${id}`);
+      return;
+    }
+
+    console.info('Queue still not supported :(');
   };
 
   const handleshowFullPlayer = () => {
@@ -652,13 +678,15 @@ const WebPlayback: React.FC = () => {
             <div className="flex flex-col items-end justify-center pr-2 lg:pr-4 h-full">
               <div className="flex mb-2">
                 {currentTrack && currentTrack.type === 'track' && (
-                  <div>
-                    <MdMic
-                      className="h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer"
-                      onClick={handleOpenLyric}
-                    />
-                  </div>
+                  <MdMic
+                    className={`h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer ${contextUri ? 'hidden lg:flex' : ''}`}
+                    onClick={handleOpenLyric}
+                  />
                 )}
+                <MdQueueMusic
+                  className={`h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer ${!contextUri ? 'hidden lg:flex' : ''}`}
+                  onClick={handleOpenQueue}
+                />
                 <MdDevices
                   className="h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer"
                   onClick={handleShowDeviceSelector}
@@ -749,6 +777,7 @@ const WebPlayback: React.FC = () => {
           handleShuffle={handleShuffle}
           handleRepeatMode={handleRepeatMode}
           handleOpenLyric={handleOpenLyric}
+          handleOpenQueue={handleOpenQueue}
           handleAfterClickLink={handleAfterClickLink}
           handleShowDeviceSelector={handleShowDeviceSelector}
         />

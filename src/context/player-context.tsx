@@ -6,8 +6,6 @@ import ApiSpotify from '../utils/api-spotify';
 import { getArtistNames } from '../utils/helpers';
 
 type PlayerContextObj = {
-  uris: string[];
-  changeUris: (uris: string[]) => void;
   offset: number;
   changeOffset: (offset: number) => void;
   positionMs: number;
@@ -16,14 +14,14 @@ type PlayerContextObj = {
   changeCurrentTrack: (currentTrack: Track) => void;
   isPlaying: boolean;
   changeIsPlaying: (isPlaying: boolean) => void;
+  currentUri: string;
+  changeCurrentUri: (currentUri: string) => void;
 
   togglePlay: (uris: string[], offset: number, positionMs?: number) => void;
   togglePause: () => void;
 };
 
 export const PlayerContext = React.createContext<PlayerContextObj>({
-  uris: [],
-  changeUris: (uris: string[]) => {},
   offset: 0,
   changeOffset: (offset: number) => {},
   positionMs: 0,
@@ -32,13 +30,15 @@ export const PlayerContext = React.createContext<PlayerContextObj>({
   changeCurrentTrack: (currentTrack: Track) => {},
   isPlaying: false,
   changeIsPlaying: (isPlaying: boolean) => {},
+  currentUri: '',
+  changeCurrentUri: (currentUri: string) => {},
 
   togglePlay: (uris: string[], offset: number, positionMs?: number) => {},
   togglePause: () => {},
 });
 
 const PlayerProvider: React.FC = ({ children }) => {
-  const [uris, setUris] = useState<string[]>([]);
+  const [currentUri, setCurrentUri] = useState<string>('');
   const [offset, setOffset] = useState<number>(0);
   const [positionMs, setPositionMs] = useState<number>(0);
   const [currentTrack, setCurrentTrack] = useState<Track>({} as Track);
@@ -47,14 +47,16 @@ const PlayerProvider: React.FC = ({ children }) => {
   const changeCurrentTrack = useCallback((currentTrack: Track) => {
     setCurrentTrack(currentTrack);
   }, []);
-
+  
   const changeIsPlaying = useCallback((isPlaying: boolean) => {
     setIsPlaying(isPlaying);
   }, []);
 
+  const changeCurrentUri = useCallback((currentUri: string) => {
+    setCurrentUri(currentUri);
+  }, []);
+
   const contextValue = {
-    uris,
-    changeUris: (uris: string[]) => setUris(uris),
     offset,
     changeOffset: (offset: number) => setOffset(offset),
     positionMs,
@@ -63,6 +65,8 @@ const PlayerProvider: React.FC = ({ children }) => {
     changeCurrentTrack,
     isPlaying,
     changeIsPlaying,
+    currentUri,
+    changeCurrentUri,
 
     togglePlay: async (uris: string[], offset: number, positionMs = 0) => {
       let newUris = [];
@@ -111,7 +115,6 @@ const PlayerProvider: React.FC = ({ children }) => {
       try {
         const response = await ApiSpotify.put('/me/player/play', body);
         if (response.status === 204) {
-          setUris(uris);
           setPositionMs(positionMs);
           setOffset(offset);
         }

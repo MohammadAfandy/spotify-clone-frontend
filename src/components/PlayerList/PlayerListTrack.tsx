@@ -13,6 +13,7 @@ type PlayerListTrackProps = {
   showAlbum?: boolean;
   showDateAdded?: boolean;
   onRemoveFromPlaylist?: (trackId: string) => void;
+  handleAddTrackToPlaylist?: (trackId: string) => void;
   handlePlayTrack: (offset: number, positionMs: number) => void;
   handlePauseTrack: () => void;
   handleNext: () => void;
@@ -27,6 +28,7 @@ const defaultProps: PlayerListTrackProps = {
   showAlbum: false,
   showDateAdded: false,
   onRemoveFromPlaylist: undefined,
+  handleAddTrackToPlaylist: undefined,
   handlePlayTrack: (offset: number, positionMs: number) => {},
   handlePauseTrack: () => {},
   handleNext: () => {},
@@ -41,6 +43,7 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
   showAlbum,
   showDateAdded,
   onRemoveFromPlaylist,
+  handleAddTrackToPlaylist,
   handlePlayTrack,
   handlePauseTrack,
   handleNext,
@@ -92,13 +95,14 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
               number++;
               return (
                 <PlayerListTrackItem
-                  key={track.id}
+                  key={track.id + '-' + idx}
                   track={track}
                   offset={idx}
                   number={number}
                   showAlbum={showAlbum}
                   showDateAdded={showDateAdded}
                   onRemoveFromPlaylist={onRemoveFromPlaylist}
+                  handleAddTrackToPlaylist={handleAddTrackToPlaylist}
                   currentTrack={currentTrack}
                   isPlaying={isPlaying}
                   handlePlayTrack={handlePlayTrack}

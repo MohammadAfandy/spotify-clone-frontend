@@ -40,6 +40,7 @@ type FullPlayerProps = {
   handleShuffle: (event: React.MouseEvent) => Promise<void>;
   handleRepeatMode: (event: React.MouseEvent) => Promise<void>;
   handleOpenLyric: (event: React.MouseEvent) => void;
+  handleOpenQueue: (event: React.MouseEvent) => void;
   handleAfterClickLink: () => void;
   handleShowDeviceSelector: (event: React.MouseEvent) => void;
 };
@@ -64,6 +65,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
   handleShuffle,
   handleRepeatMode,
   handleOpenLyric,
+  handleOpenQueue,
   handleAfterClickLink,
   handleShowDeviceSelector,
 }) => {
@@ -90,7 +92,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
     <div className="flex flex-col text-md md:text-sm h-full">
       <div className="flex flex-col flex-1 justify-around">
         <div className="flex w-full justify-center">
-          <div className="">
+          <div className="cursor-pointer" onClick={handleOpenQueue}>
             {currentTrack.album?.name}
           </div>
         </div>
