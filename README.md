@@ -11,7 +11,7 @@ This repo is a clone application of spotify web player. It uses the official Spo
 ## Credits
 * Lyrics by [lyrics-finder](https://www.npmjs.com/package/lyrics-finder)
 * Routing by [react-router-dom](https://www.npmjs.com/package/react-router-dom)
-* Icons by [react-feather](https://www.npmjs.com/package/react-feather)
+* Icons by [react-icons](https://www.npmjs.com/package/react-icons)
 * [react-infinite-scroll-component](https://www.npmjs.com/package/react-infinite-scroll-component)
 * [axios](https://www.npmjs.com/package/axios)
 * .. and other modules
