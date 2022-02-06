@@ -86,11 +86,11 @@ const LyricPage: React.FC = () => {
   const RunningLyricComponent = (
     <>
       {showedLyric.length > 0 && (
-        <div className="flex flex-col justify-center items-center text-4xl lg:text-5xl h-full">
-          <div className="text-green-500 text-center">
+        <div className="text-4xl lg:text-5xl h-full flex flex-col justify-center">
+          <div className="text-green-500">
             {showedLyric[0].lyrics}
           </div>
-          <div className="text-center mt-10">
+          <div className="mt-10">
             {showedLyric[1].lyrics}
           </div>
         </div>
@@ -99,16 +99,16 @@ const LyricPage: React.FC = () => {
   );
 
   return (
-    <div className="px-4 py-4 h-full">
+    <div className={`relative px-4 py-4 ${isShowRunningLyric ? 'h-full' : ''}`}>
       {lyric.length > 0 && plainLyric && (
-        <span
-          className="cursor-pointer mb-4 hover:bg-light-black-2 p-2 rounded-md w-auto text-gray-300"
+        <div
+          className="absolute top-2 left-2 cursor-pointer mb-4 bg-light-black-2 py-2 px-6 rounded-md text-gray-300"
           onClick={() => setIsShowRunningLyric((prevState) => !prevState)}
         >
           {isShowRunningLyric ? 'Show all lyric' : 'Show running lyric'}
-        </span>
+        </div>
       )}
-      <div className={`h-full flex flex-col items-center whitespace-pre-wrap ml-6 font-bold ${lyric.length > 0 && isShowRunningLyric ? 'justify-center' : ''}`}>
+      <div className="whitespace-pre-wrap font-bold pt-10 h-full text-center">
         {isLoading && 'Loading...'}
         {!isLoading && (
           <>
@@ -117,7 +117,7 @@ const LyricPage: React.FC = () => {
               <>
                 {isShowRunningLyric && lyric.length > 0 && RunningLyricComponent}
                 {!isShowRunningLyric && 
-                  <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-center">
+                  <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl">
                     {plainLyric ? plainLyric : lyric.map((lyr) => lyr.lyrics).join('\n')}
                   </div>
                 }
