@@ -174,7 +174,7 @@ const WebPlayback: React.FC = () => {
         });
 
         initPlayer.addListener('player_state_changed', (state: PlaybackState) => {
-          console.info('state from player_state_changed', state);
+          // console.info('state from player_state_changed', state);
           if (state) {
             try {
               const {

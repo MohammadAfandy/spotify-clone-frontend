@@ -30,7 +30,7 @@ export const AuthContext = createContext<AuthContextObj>({
 
 const AuthProvider: React.FC = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
-    !!getCookie('access_token')
+    !!getCookie('is_logged_in')
   );
   const [user, setUser] = useState<User>({} as User);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -41,9 +41,10 @@ const AuthProvider: React.FC = ({ children }) => {
     setPlaylists([]);
     setSavedTracks([]);
     setUser({} as User);
-    removeCookie('refresh_token');
+    // removeCookie('refresh_token');
     removeCookie('access_token');
     removeCookie('country');
+    removeCookie('is_logged_in');
   };
 
   useEffect(() => {
@@ -53,6 +54,7 @@ const AuthProvider: React.FC = ({ children }) => {
       setCookie('access_token', access_token, { expires: ACCESS_TOKEN_AGE });
       // setCookie('refresh_token', refresh_token, { expires: REFRESH_TOKEN_AGE });
       setCookie('country', country, { expires: REFRESH_TOKEN_AGE });
+      setCookie('is_logged_in', 'true', { expires: REFRESH_TOKEN_AGE });
       setIsLoggedIn(true);
       window.location.hash = '';
     }
