@@ -56,11 +56,16 @@ const PlayerProvider: React.FC = ({ children }) => {
     setCurrentUri(currentUri);
   }, []);
 
+  const changePositionMs = useCallback((positionMs: number) => {
+    setPositionMs(positionMs);
+  }, []);
+
   const contextValue = {
     offset,
     changeOffset: (offset: number) => setOffset(offset),
     positionMs,
-    changePositionMs: (positionMs: number) => setPositionMs(positionMs),
+    // changePositionMs: (positionMs: number) => setPositionMs(positionMs),
+    changePositionMs,
     currentTrack,
     changeCurrentTrack,
     isPlaying,

@@ -1,6 +1,6 @@
 import { Fragment, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import Skeleton from "react-loading-skeleton";
 import { PlayerContext } from '../../context/player-context';
 import Track from '../../types/Track';
 import Episode from '../../types/Episode';
@@ -64,71 +64,69 @@ const CardCollection: React.FC<CardCollectionProps> = ({
       className={`group relative flex flex-col min-h-72 h-full p-4 justify-end rounded-md cursor-pointer ${bgColor} ${className}`}
       onClick={handleClick}
     >
-      <SkeletonTheme color="rgba(255,255,255, .3)" highlightColor="rgba(255,255,255,.1)">
-        <div className="text-justify mb-4 text-sm">
-          {isLoading && <Skeleton />}
-          {!isLoading && (
-            <Fragment>
-              {type === 'track' &&
-                tracks &&
-                tracks.map((track, idx) => (
-                  <Fragment key={idx}>
-                    <span className="font-bold">
-                      {track.artists[0].name}
-                      &nbsp;
-                    </span>
-                    <span className="font-light">
-                      {track.name}
-                      &nbsp;
-                    </span>
-                    {idx !== tracks.length - 1 && <span>•&nbsp;</span>}
-                  </Fragment>
-                ))}
-      
-              {type === 'episode' &&
-                episodes &&
-                episodes.map((episode, idx) => (
-                  <Fragment key={idx}>
-                    <span className="font-bold">
-                      {episode.name}
-                      &nbsp;
-                    </span>
-                    <span className="font-light">
-                      {episode.show.name}
-                      &nbsp;
-                    </span>
-                    {idx !== episodes.length - 1 && <span>•&nbsp;</span>}
-                  </Fragment>
-                ))}
-            </Fragment>
-          )}
-        </div>
-        <div className="text-3xl font-bold">
-          {isLoading && <Skeleton />}
-          {!isLoading && (
-            <Fragment>
-              {type === 'track' && 'Liked Songs'}
-              {type === 'episode' && 'Your Episodes'}
-            </Fragment>
-          )}
-        </div>
-        <div className="">
-          {isLoading && <Skeleton />}
-          {!isLoading && (
-            <Fragment>
-              {type === 'track' && total + ' songs'}
-              {type === 'episode' && total + ' episodes'}
-            </Fragment>
-          )}
-        </div>
-
+      <div className="text-justify mb-4 text-sm">
+        {isLoading && <Skeleton className="react-loading-skeleton-white" />}
         {!isLoading && (
-          <PlayButton
-            className="opacity-0 group-hover:opacity-100 absolute bottom-4 right-5 h-12 w-12"
-            onClick={handleClickPlay}
-          />
+          <Fragment>
+            {type === 'track' &&
+              tracks &&
+              tracks.map((track, idx) => (
+                <Fragment key={idx}>
+                  <span className="font-bold">
+                    {track.artists[0].name}
+                    &nbsp;
+                  </span>
+                  <span className="font-light">
+                    {track.name}
+                    &nbsp;
+                  </span>
+                  {idx !== tracks.length - 1 && <span>•&nbsp;</span>}
+                </Fragment>
+              ))}
+    
+            {type === 'episode' &&
+              episodes &&
+              episodes.map((episode, idx) => (
+                <Fragment key={idx}>
+                  <span className="font-bold">
+                    {episode.name}
+                    &nbsp;
+                  </span>
+                  <span className="font-light">
+                    {episode.show.name}
+                    &nbsp;
+                  </span>
+                  {idx !== episodes.length - 1 && <span>•&nbsp;</span>}
+                </Fragment>
+              ))}
+          </Fragment>
         )}
-      </SkeletonTheme>
+      </div>
+      <div className="text-3xl font-bold">
+        {isLoading && <Skeleton className="react-loading-skeleton-white" />}
+        {!isLoading && (
+          <Fragment>
+            {type === 'track' && 'Liked Songs'}
+            {type === 'episode' && 'Your Episodes'}
+          </Fragment>
+        )}
+      </div>
+      <div className="">
+        {isLoading && <Skeleton className="react-loading-skeleton-white" />}
+        {!isLoading && (
+          <Fragment>
+            {type === 'track' && total + ' songs'}
+            {type === 'episode' && total + ' episodes'}
+          </Fragment>
+        )}
+      </div>
+
+      {!isLoading && (
+        <PlayButton
+          className="opacity-0 group-hover:opacity-100 absolute bottom-4 right-5 h-12 w-12"
+          onClick={handleClickPlay}
+        />
+      )}
     </div>
   );
 };

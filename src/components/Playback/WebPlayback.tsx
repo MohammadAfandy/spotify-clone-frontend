@@ -6,7 +6,7 @@ import React, {
   useRef,
   useCallback,
 } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import {
   getCookie,
   setCookie,
@@ -70,11 +70,13 @@ const mapRepeatMode: RepeatMode = [
 const WebPlayback: React.FC = () => {
   const trackRef = useRef<HTMLDivElement>(null);
   const history = useHistory();
+  const location = useLocation();
   const {
     isPlaying,
     changeIsPlaying,
     currentTrack,
     changeCurrentTrack,
+    changePositionMs,
   } = useContext(PlayerContext);
 
   const [player, setPlayer] = useState<Player>(undefined);
@@ -172,7 +174,7 @@ const WebPlayback: React.FC = () => {
         });
 
         initPlayer.addListener('player_state_changed', (state: PlaybackState) => {
-          // console.info('state from player_state_changed', state);
+          console.info('state from player_state_changed', state);
           if (state) {
             try {
               const {
@@ -194,6 +196,7 @@ const WebPlayback: React.FC = () => {
               setRepeatMode(repeat_mode);
               setIsPlayerActive(true);
               changeCurrentTrack(current_track);
+              // changePositionMs(position);
               setContextUri(context?.uri || '');
 
               const currentDeviceId = getCookie('device_id');
@@ -410,6 +413,7 @@ const WebPlayback: React.FC = () => {
         newTrack = item;
       }
       changeCurrentTrack(newTrack);
+      // changePositionMs(progress_ms);
       setContextUri(context?.uri || '');
     }
   }, [changeCurrentTrack, changeIsPlaying, deviceId, transferPlayback]);
@@ -449,11 +453,14 @@ const WebPlayback: React.FC = () => {
           getPlaybackState();
         }
         setPositionMs(newPositionMs);
+        if (location.pathname === '/lyric') {
+          changePositionMs(newPositionMs);
+        }
       }, intervalSecond);
 
       return () => clearInterval(interval);
     }
-  }, [positionMs, isPlaying, duration, getPlaybackState]);
+  }, [positionMs, isPlaying, duration, getPlaybackState, changePositionMs, location.pathname]);
 
   const handleOpenLyric = (event: React.MouseEvent) => {
     event.stopPropagation();
