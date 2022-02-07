@@ -12,7 +12,7 @@ import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { StaleWhileRevalidate, CacheFirst } from 'workbox-strategies';
+import { StaleWhileRevalidate, CacheFirst, NetworkFirst } from 'workbox-strategies';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 
 declare const self: ServiceWorkerGlobalScope;
@@ -87,11 +87,11 @@ registerRoute(
       url.pathname.startsWith('/v1/me/player') === false
     )
   ),
-  new StaleWhileRevalidate({
+  new NetworkFirst({
     cacheName: `api-spotify`,
     plugins: [
       new ExpirationPlugin({
-        maxEntries: 1000,
+        maxEntries: 500,
       }),
     ],
   }),
@@ -117,13 +117,16 @@ registerRoute(
   ),
   new CacheFirst({
     cacheName: 'cache-images',
+    fetchOptions: {
+      mode: 'cors',
+      credentials: 'omit',
+    },
     plugins: [
       new CacheableResponsePlugin({
         statuses: [0, 200],
       }),
       new ExpirationPlugin({
-        maxEntries: 60,
-        maxAgeSeconds: 24 * 60 * 60, // 1 Days
+        maxEntries: 300,
         purgeOnQuotaError: true,
       }),
     ],
