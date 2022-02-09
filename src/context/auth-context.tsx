@@ -54,7 +54,6 @@ const AuthProvider: React.FC = ({ children }) => {
   useEffect(() => {
     // const { access_token, refresh_token, country } = getHashValue();
     const { access_token, country, product } = getHashValue();
-    console.log( { access_token, country, product });
     if (access_token) {
       setCookie('access_token', access_token, { expires: ACCESS_TOKEN_AGE });
       // setCookie('refresh_token', refresh_token, { expires: REFRESH_TOKEN_AGE });
