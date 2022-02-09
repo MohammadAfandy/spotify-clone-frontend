@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import {
   MdPlayArrow,
   MdPause,
 } from 'react-icons/md';
+import ReactTooltip from 'react-tooltip';
 
 type PlayButtonProps = {
   isPlaying?: boolean;
@@ -19,6 +21,9 @@ const PlayButton: React.FC<PlayButtonProps> = ({
   onClick,
   isPlaying,
 }) => {
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  }, []);
   const Prop = isPlaying ? MdPause : MdPlayArrow;
   return (
     <Prop
@@ -26,7 +31,7 @@ const PlayButton: React.FC<PlayButtonProps> = ({
       onClick={onClick}
       fill="#fff"
       data-tip="play"
-      data-for="login-tooltip"
+      data-for="play-tooltip"
       data-event="click"
     />
   );

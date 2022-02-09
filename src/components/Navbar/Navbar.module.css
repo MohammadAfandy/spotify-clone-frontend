@@ -1,6 +1,6 @@
 
 .navbar {
-  @apply flex fixed flex-col bg-black w-full sm:w-52 pr-2 pt-5 z-20;
+  @apply flex fixed flex-col bg-black w-full sm:w-56 pr-2 pt-5 z-20;
   transform: translate(-100%, 0);
   transition: transform 0.3s ease-in-out;
 }

@@ -88,7 +88,7 @@ const HomePage: React.FC = () => {
         </GridWrapper>
       </div>
 
-      {isLoggedIn && (
+      {isLoggedIn && topTracks.length > 0 && (
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-center font-bold w-full">
             <div className="text-lg md:text-2xl truncate">Your Top Tracks</div>
@@ -110,7 +110,7 @@ const HomePage: React.FC = () => {
         </div>
       )}
 
-      {isLoggedIn && (
+      {isLoggedIn && topTracks.length > 0 && (
         <div className="mb-8">
           <div className="mb-4 flex justify-between items-center font-bold w-full">
             <div className="text-lg md:text-2xl truncate">Your Top Artists</div>

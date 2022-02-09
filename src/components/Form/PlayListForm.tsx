@@ -5,6 +5,8 @@ import { AuthContext } from '../../context/auth-context';
 import { toBase64 } from '../../utils/helpers';
 import ApiSpotify from '../../utils/api-spotify';
 import Button from '../Button/Button';
+import Track from '../../types/Track';
+import { useHistory } from 'react-router-dom';
 
 type PlayListFormProps = {
   className?: string;
@@ -15,7 +17,9 @@ type PlayListFormProps = {
   isPublic?: boolean;
   isOwn?: boolean;
   previewImage?: string;
-  onSuccess?: () => void;
+  onSave?: () => void;
+  onDelete?: () => void;
+  tracks?: Track[],
 };
 
 const defaultProps: PlayListFormProps = {
@@ -27,7 +31,9 @@ const defaultProps: PlayListFormProps = {
   isPublic: false,
   isOwn: false,
   previewImage: '',
-  onSuccess: () => {},
+  onSave: () => {},
+  onDelete: () => {},
+  tracks: [],
 };
 
 const PlayListForm: React.FC<PlayListFormProps> = ({
@@ -39,8 +45,12 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
   isPublic,
   isOwn,
   previewImage,
-  onSuccess,
+  onSave,
+  onDelete,
+  tracks,
 }) => {
+  const history = useHistory();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // form playlist
   const [playlistName, setPlaylistName] = useState(name);
@@ -59,38 +69,69 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
     if (!playlistName || playlistName.trim() === '') {
       return alert('Playlist name cannot empty');
     }
-    let savedPlaylistId = '';
-    const body = {
-      name: playlistName,
-      description: playlistDescription,
-      public: playlistIsPublic,
-    };
-    if (id) {
-      // updating playlist
-      await ApiSpotify.put('/playlists/' + id, body);
-      savedPlaylistId = id;
-    } else {
-      // create new playlist
-      const response = await ApiSpotify.post(
-        '/users/' + user.id + '/playlists',
-        body
-      );
-      savedPlaylistId = response.data.id;
-    }
 
-    if (playlistPreviewImage) {
-      await ApiSpotify.put(
-        '/playlists/' + savedPlaylistId + '/images',
-        playlistPreviewImage.replace('data:image/jpeg;base64,', ''),
-        {
-          headers: {
-            'Content-Type': 'image/jpeg',
+    try {
+      setIsLoading(true);
+      let mode = '';
+      let savedPlaylistId = '';
+      const body = {
+        name: playlistName,
+        description: playlistDescription,
+        public: playlistIsPublic,
+      };
+      if (id) {
+        // updating playlist
+        await ApiSpotify.put('/playlists/' + id, body);
+        mode = 'update';
+        savedPlaylistId = id;
+      } else {
+        // create new playlist
+        const response = await ApiSpotify.post(
+          '/users/' + user.id + '/playlists',
+          body
+        );
+        mode = 'create';
+        savedPlaylistId = response.data.id;
+      }
+  
+      // add image
+      if (playlistPreviewImage) {
+        await ApiSpotify.put(
+          '/playlists/' + savedPlaylistId + '/images',
+          playlistPreviewImage.replace('data:image/jpeg;base64,', ''),
+          {
+            headers: {
+              'Content-Type': 'image/jpeg',
+            },
+          }
+        );
+      }
+  
+      // add tracks
+      if (tracks && tracks.length > 0) {
+        await ApiSpotify.post(
+          '/playlists/' + savedPlaylistId + '/tracks',
+          {
+            uris: tracks.map((track) => track.uri),
           },
-        }
-      );
+          {
+            headers: {
+              'Content-Type': 'image/jpeg',
+            },
+          }
+        );
+      }
+
+      if (mode === 'create') {
+        history.push('/playlist/' + savedPlaylistId);
+      }
+      refreshPlaylists();
+      if (onSave) onSave();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
-    refreshPlaylists();
-    if (onSuccess) onSuccess();
   };
 
   // delete here just meant we unfollow our playlist, because no endpoint to delete playlist
@@ -98,7 +139,7 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
   const handleDeletePlaylist = async () => {
     await ApiSpotify.delete('/playlists/' + id + '/followers');
     refreshPlaylists();
-    if (onSuccess) onSuccess();
+    if (onDelete) onDelete();
   };
 
   // unfortunately, we cannot delete image from our playlist, we only can change it
@@ -219,6 +260,7 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
           text="Save"
           onClick={handleSavePlaylist}
           color="green"
+          isLoading={isLoading}
         />
       </div>
     </>

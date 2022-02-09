@@ -14,6 +14,7 @@ import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate, CacheFirst, NetworkFirst } from 'workbox-strategies';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
+import { BACKEND_URI, SPOTIFY_URI } from './utils/constants';
 
 declare const self: ServiceWorkerGlobalScope;
 
@@ -82,13 +83,28 @@ self.addEventListener('message', (event) => {
 
 registerRoute(
   ({ url }) => (
-    url.origin === 'https://api.spotify.com'
+    url.origin === new URL(SPOTIFY_URI).origin
     && (
       url.pathname.startsWith('/v1/me/player') === false
     )
   ),
   new NetworkFirst({
     cacheName: `api-spotify`,
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 500,
+      }),
+    ],
+  }),
+);
+
+registerRoute(
+  ({ url }) => (
+    url.origin === new URL(BACKEND_URI).origin
+    && url.pathname.startsWith('/spotify')
+  ),
+  new NetworkFirst({
+    cacheName: `api-backend`,
     plugins: [
       new ExpirationPlugin({
         maxEntries: 500,
@@ -128,6 +144,7 @@ registerRoute(
       new ExpirationPlugin({
         maxEntries: 300,
         purgeOnQuotaError: true,
+        maxAgeSeconds: 7 * 24 * 60 * 60,
       }),
     ],
   }),

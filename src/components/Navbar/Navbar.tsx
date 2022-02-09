@@ -5,6 +5,7 @@ import {
   MdOutlineQueueMusic,
   MdAddBox,
   MdClose,
+  MdOutlineRecommend,
 } from 'react-icons/md';
 import { AuthContext } from '../../context/auth-context';
 import ApiSpotify from '../../utils/api-spotify';
@@ -121,6 +122,12 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
               />
             )}
           </div>
+          <NavbarLink
+            to="/recommendations"
+            Icon={<MdOutlineRecommend className="w-6 h-6" />}
+            text="Recommendations"
+            onClick={() => handleIsNavOpen(false)}
+          />
         </ul>
       </div>
       <div className="mb-2">
@@ -213,7 +220,8 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
           isPublic={playlistForm.isPublic}
           isOwn={playlistForm.isOwn}
           previewImage={playlistForm.previewImage}
-          onSuccess={handleCloseModal}
+          onSave={handleCloseModal}
+          onDelete={handleCloseModal}
         />
       </Modal>
     </nav>

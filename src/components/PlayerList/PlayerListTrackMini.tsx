@@ -68,7 +68,7 @@ const PlayerListTrackMini: React.FC<PlayerListTrackMiniProps> = ({
               className="block canhover:hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 canhover:group-hover:block h-6 w-6"
               onClick={handlePlayTrack}
               data-tip="play"
-              data-for="login-tooltip"
+              data-for="play-tooltip"
               data-event="click"
             />
           </div>

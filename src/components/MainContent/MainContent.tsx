@@ -23,12 +23,13 @@ import CollectionEpisodePage from '../../pages/CollectionEpisodePage';
 import LyricPage from '../../pages/LyricPage';
 import NotFoundPage from '../../pages/NotFoundPage';
 import ScrollToTop from '../Scroll/ScrollToTop';
+import RecommendationPage from '../../pages/RecommendationPage';
 
 const MainContent: React.FC = () => {
   return (
     <div
       id="main-container"
-      className="relative main-content overflow-auto flex flex-col w-full sm:ml-52 mt-16"
+      className="relative main-content overflow-auto flex flex-col w-full sm:ml-56 mt-16"
     >
       <ScrollToTop />
       <Switch>
@@ -151,6 +152,11 @@ const MainContent: React.FC = () => {
               {...props}
             />
           )}
+        />
+        <Route
+          path="/recommendations"
+          exact
+          render={(props) => <RecommendationPage />}
         />
 
         {/* Private Route (Need Login) */}

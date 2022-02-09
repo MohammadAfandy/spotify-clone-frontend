@@ -10,7 +10,7 @@ import Footer from '../components/Footer/Footer';
 
 const MainPage: React.FC = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, isPremium } = useContext(AuthContext);
 
   const handleIsNavOpen = (state: boolean) => {
     setIsNavOpen(state);
@@ -32,6 +32,12 @@ const MainPage: React.FC = () => {
         id="login-tooltip"
         disable={isLoggedIn}
         isCapture={isLoggedIn}
+        backgroundColor="#2e77d0"
+      />
+      <ToolTip
+        id="play-tooltip"
+        disable={isPremium}
+        isCapture={isPremium}
         backgroundColor="#2e77d0"
       />
     </PlayerProvider>

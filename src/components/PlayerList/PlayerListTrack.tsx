@@ -43,7 +43,6 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
   showAlbum,
   showDateAdded,
   onRemoveFromPlaylist,
-  handleAddTrackToPlaylist,
   handlePlayTrack,
   handlePauseTrack,
   handleNext,
@@ -102,7 +101,6 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
                   showAlbum={showAlbum}
                   showDateAdded={showDateAdded}
                   onRemoveFromPlaylist={onRemoveFromPlaylist}
-                  handleAddTrackToPlaylist={handleAddTrackToPlaylist}
                   currentTrack={currentTrack}
                   isPlaying={isPlaying}
                   handlePlayTrack={handlePlayTrack}

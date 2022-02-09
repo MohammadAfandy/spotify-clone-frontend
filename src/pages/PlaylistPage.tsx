@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import Playlist from '../types/Playlist';
 import Track from '../types/Track';
 import Episode from '../types/Episode';
@@ -31,6 +31,7 @@ const initialPlaylistForm = {
 };
 
 const PlaylistPage: React.FC = () => {
+  const history = useHistory();
   const params = useParams<{ id: string }>();
   const [playlist, setPlaylist] = useState<Playlist>(Object);
   const [isFollowed, setIsFollowed] = useState(false);
@@ -241,9 +242,6 @@ const PlaylistPage: React.FC = () => {
           onRemoveFromPlaylist={
             isOwnPlaylist ? handleRemoveFromPlaylist : undefined
           }
-          handleAddTrackToPlaylist={
-            isOwnPlaylist ? handleAddTrackToPlaylist : undefined
-          }
           currentTrack={currentTrack}
           isPlaying={isPlaying}
           handlePlayTrack={handlePlayTrack}
@@ -313,7 +311,11 @@ const PlaylistPage: React.FC = () => {
           isPublic={playlistForm.isPublic}
           isOwn={playlistForm.isOwn}
           previewImage={playlistForm.previewImage}
-          onSuccess={handleCloseModal}
+          onSave={handleCloseModal}
+          onDelete={() => {
+            handleCloseModal();
+            history.push('/collection/playlists')
+          }}
         />
       </Modal>
     </div>

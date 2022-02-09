@@ -23,6 +23,7 @@ import ContextMenu from '../ContextMenu/ContextMenu';
 import Explicit from '../Text/Explicit';
 import TextLink from '../Text/TextLink';
 import Skeleton from 'react-loading-skeleton';
+import ReactTooltip from 'react-tooltip';
 
 type PlayerListTrackItemProps = {
   track?: Track;
@@ -33,7 +34,6 @@ type PlayerListTrackItemProps = {
   showAlbum?: boolean;
   showDateAdded?: boolean;
   onRemoveFromPlaylist?: (trackId: string, position?: number) => void;
-  handleAddTrackToPlaylist?: (trackId: string) => void;
   handlePlayTrack?: (offset: number, positionMs: number) => void;
   handlePauseTrack?: () => void;
   isLoading?: boolean;
@@ -48,7 +48,6 @@ const defaultProps: PlayerListTrackItemProps = {
   showAlbum: false,
   showDateAdded: false,
   onRemoveFromPlaylist: undefined,
-  handleAddTrackToPlaylist: undefined,
   handlePlayTrack: (offset: number, positionMs: number) => {},
   handlePauseTrack: () => {},
   isLoading: false,
@@ -63,17 +62,22 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
   showAlbum,
   showDateAdded,
   onRemoveFromPlaylist,
-  handleAddTrackToPlaylist,
   handlePlayTrack,
   handlePauseTrack,
   isLoading,
 }) => {
+
   const history = useHistory();
   const [isSaved, setIsSaved] = useState<boolean>(track?.is_saved || false);
   const {
     user,
     playlists,
+    isLoggedIn,
   } = useContext(AuthContext);
+
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  }, []);
 
   useEffect(() => {
     setIsSaved(track?.is_saved || false);
@@ -152,7 +156,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
                 className="w-6 h-6 cursor-pointer block canhover:hidden canhover:group-hover:block"
                 onClick={handlePauseTrack}
                 data-tip="play"
-                data-for="login-tooltip"
+                data-for="play-tooltip"
                 data-event="click"
               />
             ) : (
@@ -160,7 +164,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
                 className="w-6 h-6 cursor-pointer block canhover:hidden canhover:group-hover:block"
                 onClick={() => handlePlayTrack && handlePlayTrack(offset || 0, 0)}
                 data-tip="play"
-                data-for="login-tooltip"
+                data-for="play-tooltip"
                 data-event="click"
               />
             )}
@@ -270,33 +274,31 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
               </SubMenu>
               <MenuItem onClick={() => history.push('/album/' + track.album.id)}>Go to album</MenuItem>
               <MenuDivider />
-              <MenuItem onClick={() => handleAddToSavedTrack(track.id)}>
-                {isSaved ? 'Remove from your Liked Songs' : 'Save to your Liked Songs'}
-              </MenuItem>
+              {isLoggedIn && (
+                <MenuItem onClick={() => handleAddToSavedTrack(track.id)}>
+                  {isSaved ? 'Remove from your Liked Songs' : 'Save to your Liked Songs'}
+                </MenuItem>
+              )}
               {onRemoveFromPlaylist && (
                 <MenuItem onClick={() => onRemoveFromPlaylist(track.uri, offset)}>
                   Remove from this playlist
                 </MenuItem>
               )}
-              <SubMenu label="Add to playlist">
-                {playlists
-                  .filter((playlist) => playlist.owner.id === user.id)
-                  .map((playlist) => (
-                    <MenuItem
-                      key={playlist.id}
-                      onClick={() => {
-                        if (handleAddTrackToPlaylist) {
-                          handleAddTrackToPlaylist(track.uri)
-                        } else {
-                          addToPlaylist(playlist.id, track.uri);
-                        }
-                      }}
-                    >
-                      {playlist.name}
-                    </MenuItem>
-                  )
-                )}
-              </SubMenu>
+              {isLoggedIn && (
+                <SubMenu label="Add to playlist">
+                  {playlists
+                    .filter((playlist) => playlist.owner.id === user.id)
+                    .map((playlist) => (
+                      <MenuItem
+                        key={playlist.id}
+                        onClick={() => addToPlaylist(playlist.id, track.uri)}
+                      >
+                        {playlist.name}
+                      </MenuItem>
+                    )
+                  )}
+                </SubMenu>
+              )}
             </ContextMenu>
           </div>
         </div>

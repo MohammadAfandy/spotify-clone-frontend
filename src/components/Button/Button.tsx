@@ -4,6 +4,7 @@ type ButtonProps = {
   color?: string;
   fill?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  isLoading?: boolean;
 };
 
 const defaultProps: ButtonProps = {
@@ -11,6 +12,7 @@ const defaultProps: ButtonProps = {
   text: '',
   color: '',
   fill: '',
+  isLoading: false,
 };
 
 const Button: React.FC<ButtonProps> = ({
@@ -19,6 +21,7 @@ const Button: React.FC<ButtonProps> = ({
   color,
   fill,
   onClick,
+  isLoading,
 }) => {
   const colors: { [key: string]: string } = {
     default: 'text-white',
@@ -35,9 +38,10 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`border-2 rounded-3xl px-10 py-1 font-semibold transition duration-300 ease-in-out transform hover:scale-105 ${selectedColor} ${selectedBgColor} ${className}`}
+      className={`border-2 rounded-3xl px-10 py-1 font-semibold transition duration-300 ease-in-out transform hover:scale-105 ${selectedBgColor} ${isLoading ? 'cursor-not-allowed text-gray-500' : selectedColor} ${className}`}
+      disabled={isLoading}
     >
-      {text}
+      {isLoading ? 'Processing ...' : text}
     </button>
   );
 };

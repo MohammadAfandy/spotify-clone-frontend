@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use(
   async (config) => {
     // await sleep(3000);
     const { url = '', method } = config;
-    const urlWithoutCountry = ['/me/top/tracks', '/me/top/artists'];
+    const urlWithoutCountry = ['/me/top/tracks', '/me/top/artists', '/recommendations'];
     if (
       method?.toLowerCase() === 'get'
       && urlWithoutCountry.includes(url) === false
