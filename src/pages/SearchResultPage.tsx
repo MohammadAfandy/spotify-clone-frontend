@@ -12,7 +12,7 @@ import { makeRequest, getArtistNames, removeNull, duration, formatDate } from '.
 
 import CardItem from '../components/Card/CardItem';
 import TextLink from '../components/Text/TextLink';
-import GridWrapper from '../components/Grid/GridWrapper';
+import Slider from '../components/Slider/Slider';
 import { GRID_COUNT } from '../utils/constants';
 import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
 
@@ -85,7 +85,7 @@ const SearchResultPage: React.FC = () => {
           {tracks.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/track'} />}
         </div>
         <PlayerListTrack
-          tracks={tracks}
+          tracks={tracks.slice(5)}
           showAlbum
           currentTrack={currentTrack}
           isPlaying={isPlaying}
@@ -101,7 +101,7 @@ const SearchResultPage: React.FC = () => {
           <div className="text-lg md:text-2xl truncate">Artists</div>
           {artists.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/artist'} />}
         </div>
-        <GridWrapper>
+        <Slider>
           {isLoading && CardLoading}
           {!isLoading && artists.map((artist) => (
             <CardItem
@@ -115,7 +115,7 @@ const SearchResultPage: React.FC = () => {
               href={'/artist/' + artist.id}
             />
           ))}
-        </GridWrapper>
+        </Slider>
       </div>
 
       <div className="mb-8">
@@ -123,7 +123,7 @@ const SearchResultPage: React.FC = () => {
           <div className="text-lg md:text-2xl truncate">Albums</div>
           {albums.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/album'} />}
         </div>
-        <GridWrapper>
+        <Slider>
           {isLoading && CardLoading}
           {!isLoading && albums.map((album) => (
             <CardItem
@@ -135,7 +135,7 @@ const SearchResultPage: React.FC = () => {
               href={'/album/' + album.id}
             />
           ))}
-        </GridWrapper>
+        </Slider>
       </div>
 
       <div className="mb-8">
@@ -143,7 +143,7 @@ const SearchResultPage: React.FC = () => {
           <div className="text-lg md:text-2xl truncate">Playlists</div>
           {playlists.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/playlist'} />}
         </div>
-        <GridWrapper>
+        <Slider>
           {isLoading && CardLoading}
           {!isLoading && playlists.map((playlist) => (
             <CardItem
@@ -159,7 +159,7 @@ const SearchResultPage: React.FC = () => {
               href={'/playlist/' + playlist.id}
             />
           ))}
-        </GridWrapper>
+        </Slider>
       </div>
 
       <div className="mb-8">
@@ -167,7 +167,7 @@ const SearchResultPage: React.FC = () => {
           <div className="text-lg md:text-2xl truncate">Podcasts</div>
           {shows.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/show'} />}
         </div>
-        <GridWrapper>
+        <Slider>
           {isLoading && CardLoading}
           {!isLoading && shows.map((show) => (
             <CardItem
@@ -179,7 +179,7 @@ const SearchResultPage: React.FC = () => {
               href={'/show/' + show.id}
             />
           ))}
-        </GridWrapper>
+        </Slider>
       </div>
 
       <div className="mb-8">
@@ -187,7 +187,7 @@ const SearchResultPage: React.FC = () => {
           <div className="text-lg md:text-2xl truncate">Episodes</div>
           {episodes.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/episode'} />}
         </div>
-        <GridWrapper>
+        <Slider>
           {isLoading && CardLoading}
           {!isLoading && episodes.map((episode) => (
             <CardItem
@@ -201,7 +201,7 @@ const SearchResultPage: React.FC = () => {
               href={'/episode/' + episode.id}
             />
           ))}
-        </GridWrapper>
+        </Slider>
       </div>
     </div>
   );

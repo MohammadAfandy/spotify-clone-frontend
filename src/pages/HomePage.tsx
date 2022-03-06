@@ -10,8 +10,8 @@ import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 
 import CardItem from '../components/Card/CardItem';
 import TextLink from '../components/Text/TextLink';
-import GridWrapper from '../components/Grid/GridWrapper';
 import { GRID_COUNT } from '../utils/constants';
+import Slider from '../components/Slider/Slider';
 
 const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -73,7 +73,7 @@ const HomePage: React.FC = () => {
           {!isLoading && <div className="text-lg md:text-2xl truncate">{message}</div>}
           <TextLink className="ml-6 whitespace-pre" text="See All" url="/genre/featured-playlists" />
         </div>
-        <GridWrapper>
+        <Slider>
           {isLoading && CardLoading}
           {!isLoading && featuredPlaylists.map((playlist) => (
             <CardItem
@@ -85,7 +85,7 @@ const HomePage: React.FC = () => {
               href={'/playlist/' + playlist.id}
             />
           ))}
-        </GridWrapper>
+        </Slider>
       </div>
 
       {isLoggedIn && topTracks.length > 0 && (
@@ -94,7 +94,7 @@ const HomePage: React.FC = () => {
             <div className="text-lg md:text-2xl truncate">Your Top Tracks</div>
             <TextLink className="ml-6 whitespace-pre" text="See All" url="genre/top-tracks" />
           </div>
-          <GridWrapper>
+          <Slider>
             {isLoading && CardLoading}
             {!isLoading && topTracks.map((track) => (
               <CardItem
@@ -106,7 +106,7 @@ const HomePage: React.FC = () => {
                 href={'/album/' + track.album.id}
               />
             ))}
-          </GridWrapper>
+          </Slider>
         </div>
       )}
 
@@ -116,7 +116,7 @@ const HomePage: React.FC = () => {
             <div className="text-lg md:text-2xl truncate">Your Top Artists</div>
             <TextLink className="ml-6 whitespace-pre" text="See All" url="genre/top-artists" />
           </div>
-          <GridWrapper>
+          <Slider>
             {isLoading && CardLoading}
             {!isLoading && topArtists.map((artist) => (
               <CardItem
@@ -128,7 +128,7 @@ const HomePage: React.FC = () => {
                 href={'/artist/' + artist.id}
               />
             ))}
-          </GridWrapper>
+          </Slider>
         </div>
       )}
 
@@ -137,7 +137,7 @@ const HomePage: React.FC = () => {
           <div className="text-lg md:text-2xl truncate">New Releases</div>
           <TextLink className="ml-6 whitespace-pre" text="See All" url="genre/new-releases" />
         </div>
-        <GridWrapper>
+        <Slider>
           {isLoading && CardLoading}
           {!isLoading && newReleases.map((album) => (
             <CardItem
@@ -149,7 +149,7 @@ const HomePage: React.FC = () => {
               href={'/album/' + album.id}
             />
           ))}
-        </GridWrapper>
+        </Slider>
       </div>
     </div>
   );

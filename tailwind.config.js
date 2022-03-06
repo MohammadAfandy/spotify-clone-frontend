@@ -2,6 +2,7 @@
 module.exports = {
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   theme: {
+    namedGroups: ['slider'],
     extend: {
       fontSize: {
         'xxs': '.6rem',
@@ -75,5 +76,6 @@ module.exports = {
   },
   plugins: [
     require('@tailwindcss/line-clamp'),
+    require('tailwindcss-named-groups'),
   ],
 };

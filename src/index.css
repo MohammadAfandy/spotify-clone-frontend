@@ -21,6 +21,58 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+
+  .content-area {
+    height: calc(100vh - theme('spacing.20'));
+  }
+
+  .card-item {
+    min-width: 14rem;
+    min-height: 16rem;
+  }
+
+  .szh-menu {
+    @apply bg-light-black-2 text-white rounded-md border border-opacity-10 !important;
+  }
+
+  .szh-menu__item--hover {
+    @apply bg-gray-100 bg-opacity-25 !important;
+  }
+
+  .react-loading-skeleton {
+    background-color: #202020 !important;
+    background-image: linear-gradient(90deg,#202020,#444,#202020) !important;
+  }
+
+  .react-loading-skeleton-white {
+    background-color: rgba(255,255,255, .3) !important;
+    background-image: linear-gradient(90deg,rgba(255,255,255,.1),#444,rgba(255,255,255,.1)) !important;
+  }
+
+  .dropdown-heading-value {
+    overflow: auto !important;
+    @apply no-scrollbar !important;
+  }
+
+  /* width */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #000;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 }
 
 body {
@@ -41,63 +93,4 @@ img {
   position: relative;
   object-fit: cover;
   object-position: center;
-}
-
-.content-area {
-  height: calc(100vh - theme('spacing.20'));
-}
-
-.card-item {
-  min-width: 10rem;
-  min-height: 16rem;
-}
-
-@screen sm {
-  .card-item {
-    min-width: 12rem;
-    min-height: 20rem;
-  }
-}
-
-.szh-menu {
-  @apply bg-light-black-2 text-white rounded-md border border-opacity-10 !important;
-}
-
-.szh-menu__item--hover {
-  @apply bg-gray-100 bg-opacity-25 !important;
-}
-
-.react-loading-skeleton {
-  background-color: #202020 !important;
-  background-image: linear-gradient(90deg,#202020,#444,#202020) !important;
-}
-
-.react-loading-skeleton-white {
-  background-color: rgba(255,255,255, .3) !important;
-  background-image: linear-gradient(90deg,rgba(255,255,255,.1),#444,rgba(255,255,255,.1)) !important;
-}
-
-.dropdown-heading-value {
-  overflow: auto !important;
-  @apply no-scrollbar !important;
-}
-
-/* width */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: #000;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #888;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
 }

@@ -2,16 +2,23 @@ type GridWrapperProps = {
   className?: string;
 };
 
+const defaultProps: GridWrapperProps = {
+  className: '',
+};
+
 const GridWrapper: React.FC<GridWrapperProps> = ({
   children,
-  className
+  className,
 }) => {
-
   return (
-    <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ${className}`}>
+    <div
+      className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ${className}`}
+    >
       {children}
     </div>
-  );
+  )
 };
+
+GridWrapper.defaultProps = defaultProps;
 
 export default GridWrapper;

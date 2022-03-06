@@ -52,7 +52,7 @@ const CardItem: React.FC<CardItemProps> = ({
   
   const LoadingComponent = (
     <div className={`card-item p-4 bg-light-black hover:bg-light-black-2 rounded-md`}>
-      <Skeleton className="w-full h-5/6 rounded-md" />
+      <Skeleton className="w-full h-80% rounded-md" />
       <div className="text-sm font-bold mt-2">
         <Skeleton />
         <Skeleton />
