@@ -9,7 +9,7 @@ const defaultProps: SliderProps = {
   className: '',
 };
 
-const offset = 500;
+const offset = 800;
 
 const Slider: React.FC<SliderProps> = ({
   children,

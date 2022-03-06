@@ -88,7 +88,7 @@ const CardItem: React.FC<CardItemProps> = ({
           </div>
           <div className="text-xs sm:text-sm font-bold mt-2">
             <div className="truncate">{name}</div>
-            <div className="font-semibold text-gray-300 line-clamp-2">
+            <div className="font-semibold text-gray-300 line-clamp-1 sm:line-clamp-2">
               {description ? ucwords(description) : <span>&nbsp;</span>}
             </div>
           </div>

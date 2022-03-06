@@ -13,7 +13,7 @@ import { makeRequest, getArtistNames, removeNull, duration, formatDate } from '.
 import CardItem from '../components/Card/CardItem';
 import TextLink from '../components/Text/TextLink';
 import Slider from '../components/Slider/Slider';
-import { GRID_COUNT } from '../utils/constants';
+import { CARD_COUNT } from '../utils/constants';
 import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
 
 const SearchResultPage: React.FC = () => {
@@ -51,7 +51,7 @@ const SearchResultPage: React.FC = () => {
           params: {
             q: params.query,
             type: 'track,artist,album,playlist,show,episode',
-            limit: GRID_COUNT,
+            limit: CARD_COUNT,
           },
         }, isLoggedIn);
 
@@ -72,7 +72,7 @@ const SearchResultPage: React.FC = () => {
   }, [params.query, isLoggedIn]);
 
   const CardLoading = (
-    [...Array(GRID_COUNT)].map((_, idx) => (
+    [...Array(CARD_COUNT)].map((_, idx) => (
       <CardItem key={idx} isLoading />
     ))
   );

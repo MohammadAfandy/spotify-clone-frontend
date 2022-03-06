@@ -10,7 +10,7 @@ import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 
 import CardItem from '../components/Card/CardItem';
 import TextLink from '../components/Text/TextLink';
-import { GRID_COUNT } from '../utils/constants';
+import { CARD_COUNT } from '../utils/constants';
 import Slider from '../components/Slider/Slider';
 
 const HomePage: React.FC = () => {
@@ -28,7 +28,7 @@ const HomePage: React.FC = () => {
     const fetchHome = async () => {
       try {
         setIsLoading(true);
-        const params = { limit: GRID_COUNT };
+        const params = { limit: CARD_COUNT };
         const promises = [
           makeRequest('/browse/new-releases', { params }, isLoggedIn),
           makeRequest('/browse/featured-playlists', { params }, isLoggedIn)
@@ -60,7 +60,7 @@ const HomePage: React.FC = () => {
   }, [isLoggedIn]);
 
   const CardLoading = (
-    [...Array(GRID_COUNT)].map((_, idx) => (
+    [...Array(CARD_COUNT)].map((_, idx) => (
       <CardItem key={idx} isLoading />
     ))
   );

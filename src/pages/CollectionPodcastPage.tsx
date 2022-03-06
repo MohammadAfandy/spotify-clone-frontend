@@ -7,7 +7,7 @@ import { getHighestImage } from '../utils/helpers';
 import CardItem from '../components/Card/CardItem';
 import CardCollection from '../components/Card/CardCollection';
 import GridWrapper from '../components/Grid/GridWrapper';
-import { GRID_COUNT } from '../utils/constants';
+import { CARD_COUNT } from '../utils/constants';
 
 const CollectionPodcastPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -52,7 +52,7 @@ const CollectionPodcastPage: React.FC = () => {
   }, []);
 
   const CardLoading = (
-    [...Array(GRID_COUNT)].map((_, idx) => (
+    [...Array(CARD_COUNT)].map((_, idx) => (
       <CardItem key={idx} isLoading />
     ))
   );

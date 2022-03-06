@@ -15,7 +15,7 @@ import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
 import TextLink from '../components/Text/TextLink';
 import FolllowButton from '../components/Button/FollowButton';
 import GridWrapper from '../components/Grid/GridWrapper';
-import { GRID_COUNT } from '../utils/constants';
+import { CARD_COUNT } from '../utils/constants';
 
 const ArtistPage: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -42,14 +42,14 @@ const ArtistPage: React.FC = () => {
   
         const dataAlbums = await makeRequest('/artists/' + params.id + '/albums', {
           params: {
-            limit: GRID_COUNT,
+            limit: CARD_COUNT,
           },
         }, isLoggedIn);
         setAlbums(dataAlbums.data.items);
   
         const dataRelatedArtists = await makeRequest('/artists/' + params.id + '/related-artists', {
           params: {
-            limit: GRID_COUNT,
+            limit: CARD_COUNT,
           },
         }, isLoggedIn);
         setRelatedArtists(dataRelatedArtists.data.artists);
@@ -111,7 +111,7 @@ const ArtistPage: React.FC = () => {
   };
 
   const CardLoading = (
-    [...Array(GRID_COUNT)].map((_, idx) => (
+    [...Array(CARD_COUNT)].map((_, idx) => (
       <CardItem key={idx} isLoading />
     ))
   );
