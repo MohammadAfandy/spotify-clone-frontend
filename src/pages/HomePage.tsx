@@ -12,9 +12,11 @@ import CardItem from '../components/Card/CardItem';
 import TextLink from '../components/Text/TextLink';
 import { CARD_COUNT } from '../utils/constants';
 import Slider from '../components/Slider/Slider';
+import RecentlyPlayed from '../types/RecentlyPlayed';
 
 const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [recentlyPlayed, setRecentlyPlayed] = useState<RecentlyPlayed[]>([]);
   const [topTracks, setTopTracks] = useState<Track[]>([]);
   const [topArtists, setTopArtists] = useState<Artist[]>([]);
   const [newReleases, setNewReleases] = useState<Album[]>([]);
@@ -35,19 +37,26 @@ const HomePage: React.FC = () => {
         ];
         if (isLoggedIn) {
           promises.push(
+            ApiSpotify.get('/me/player/recently-played', { params }),
             ApiSpotify.get('/me/top/tracks', { params }),
             ApiSpotify.get('/me/top/artists', { params })
           );
         }
         const response = await Promise.all(promises);
-  
+
         setNewReleases(response[0].data.albums.items);
         setFeaturedPlaylists(response[1].data.playlists.items);
         setMessage(response[1].data.message);
-  
+
         if (isLoggedIn) {
-          setTopTracks(response[2].data.items);
-          setTopArtists(response[3].data.items);
+          setRecentlyPlayed(
+            response[2].data.items
+              .filter((v: RecentlyPlayed, i: number, a: RecentlyPlayed[]) => {
+                return a.findIndex((t) => t.track.id === v.track.id) === i;
+              })
+          );
+          setTopTracks(response[3].data.items);
+          setTopArtists(response[4].data.items);
         }
       } catch (error) {
         console.error(error);
@@ -87,6 +96,49 @@ const HomePage: React.FC = () => {
           ))}
         </Slider>
       </div>
+
+      <div className="mb-8">
+        <div className="mb-4 flex justify-between items-center font-bold w-full">
+          <div className="text-lg md:text-2xl truncate">New Releases</div>
+          <TextLink className="ml-6 whitespace-pre" text="See All" url="genre/new-releases" />
+        </div>
+        <Slider>
+          {isLoading && CardLoading}
+          {!isLoading && newReleases.map((album) => (
+            <CardItem
+              key={album.id}
+              name={album.name}
+              description={getArtistNames(album.artists)}
+              image={getHighestImage(album.images)}
+              uri={album.uri}
+              href={'/album/' + album.id}
+            />
+          ))}
+        </Slider>
+      </div>
+
+      {isLoggedIn && recentlyPlayed.length > 0 && (
+        <div className="mb-8">
+          <div className="mb-4 flex justify-between items-center font-bold w-full">
+            {isLoading && <Skeleton width={200} height={30} />}
+            {!isLoading && <div className="text-lg md:text-2xl truncate">Recently Played</div>}
+            <TextLink className="ml-6 whitespace-pre" text="See All" url="/genre/recently-played" />
+          </div>
+          <Slider>
+            {isLoading && CardLoading}
+            {!isLoading && recentlyPlayed.map(({ track }) => (
+              <CardItem
+                key={track.id}
+                name={track.name}
+                description={getArtistNames(track.artists)}
+                image={getHighestImage(track.album.images)}
+                uri={track.uri}
+                href={'/album/' + track.album.id}
+              />
+            ))}
+          </Slider>
+        </div>
+      )}
 
       {isLoggedIn && topTracks.length > 0 && (
         <div className="mb-8">
@@ -131,26 +183,6 @@ const HomePage: React.FC = () => {
           </Slider>
         </div>
       )}
-
-      <div className="mb-8">
-        <div className="mb-4 flex justify-between items-center font-bold w-full">
-          <div className="text-lg md:text-2xl truncate">New Releases</div>
-          <TextLink className="ml-6 whitespace-pre" text="See All" url="genre/new-releases" />
-        </div>
-        <Slider>
-          {isLoading && CardLoading}
-          {!isLoading && newReleases.map((album) => (
-            <CardItem
-              key={album.id}
-              name={album.name}
-              description={getArtistNames(album.artists)}
-              image={getHighestImage(album.images)}
-              uri={album.uri}
-              href={'/album/' + album.id}
-            />
-          ))}
-        </Slider>
-      </div>
     </div>
   );
 };

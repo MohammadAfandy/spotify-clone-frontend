@@ -11,11 +11,13 @@ import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 import CardItem from '../components/Card/CardItem';
 import GridWrapper from '../components/Grid/GridWrapper';
 import Skeleton from 'react-loading-skeleton';
+import RecentlyPlayed from '../types/RecentlyPlayed';
 
 const GenrePage: React.FC = () => {
   const { type } = useParams<{ query: string; type: string }>();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [recentlyPlayed, setRecentlyPlayed] = useState<RecentlyPlayed[]>([]);
   const [topTracks, setTopTracks] = useState<Track[]>([]);
   const [topArtists, setTopArtists] = useState<Artist[]>([]);
   const [newReleases, setNewReleases] = useState<Album[]>([]);
@@ -37,6 +39,17 @@ const GenrePage: React.FC = () => {
           }, isLoggedIn);
           setFeaturedPlaylists(response.data.playlists.items);
           setTypeText(response.data.message);
+        } else if (type === 'recently-played') {
+          const response = await ApiSpotify.get('/me/player/recently-played', {
+            params: { ...params, country: undefined },
+          });
+          setRecentlyPlayed(
+            response.data.items
+              .filter((v: RecentlyPlayed, i: number, a: RecentlyPlayed[]) => {
+                return a.findIndex((t) => t.track.id === v.track.id) === i;
+              })
+          );
+          setTypeText('Recently Played');
         } else if (type === 'top-tracks') {
           const response = await ApiSpotify.get('/me/top/tracks', {
             params: { ...params, country: undefined },
@@ -96,6 +109,21 @@ const GenrePage: React.FC = () => {
         <GridWrapper>
           {isLoading && CardLoading}
           {!isLoading && topTracks.map((track) => (
+            <CardItem
+              key={track.id}
+              name={track.name}
+              description={getArtistNames(track.artists)}
+              image={getHighestImage(track.album.images)}
+              uri={track.uri}
+              href={'/album/' + track.album.id}
+            />
+          ))}
+        </GridWrapper>
+      )}
+      {type === 'recently-played' && (
+        <GridWrapper>
+          {isLoading && CardLoading}
+          {!isLoading && recentlyPlayed.map(({ track }) => (
             <CardItem
               key={track.id}
               name={track.name}

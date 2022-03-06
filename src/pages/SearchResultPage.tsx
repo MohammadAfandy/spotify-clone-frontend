@@ -85,7 +85,7 @@ const SearchResultPage: React.FC = () => {
           {tracks.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/track'} />}
         </div>
         <PlayerListTrack
-          tracks={tracks.slice(5)}
+          tracks={tracks.slice(0, 5)}
           showAlbum
           currentTrack={currentTrack}
           isPlaying={isPlaying}

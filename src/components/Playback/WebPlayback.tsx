@@ -67,6 +67,15 @@ const mapRepeatMode: RepeatMode = [
   { state: 'track', mode: 2, text: '1' },
 ];
 
+const getVolumeFromStorage = () => {
+  const volume = Number(localStorage.getItem('volume'));
+  if (volume !== 0){
+    return Number((volume / 100).toFixed(2));
+  }
+
+  return 1;
+}
+
 const WebPlayback: React.FC = () => {
   const trackRef = useRef<HTMLDivElement>(null);
   const history = useHistory();
@@ -147,7 +156,7 @@ const WebPlayback: React.FC = () => {
             console.error('Failed to get token');
           }
         },
-        // volume: 1,
+        volume: getVolumeFromStorage(),
       });
 
       if (initPlayer) {
@@ -213,7 +222,7 @@ const WebPlayback: React.FC = () => {
               }
 
               initPlayer?.getVolume().then((volume) => {
-                setVolume(volume * 100);
+                saveVolume(volume * 100);
               });
 
             } catch (error) {
@@ -315,6 +324,11 @@ const WebPlayback: React.FC = () => {
     }
   };
 
+  const saveVolume = (volumePercent: number): void => {
+    localStorage.setItem('volume', volumePercent.toString());
+    setVolume(volumePercent);
+  }
+
   const handleRepeatMode = async (event: React.MouseEvent): Promise<void> => {
     event.stopPropagation();
     let state = '';
@@ -387,7 +401,7 @@ const WebPlayback: React.FC = () => {
       changeIsPlaying(is_playing);
       setShuffle(shuffle_state);
       setRepeatMode(mapRepeatMode.find((v) => v.state === repeat_state)?.mode || 0);
-      setVolume(device.volume_percent);
+      saveVolume(device.volume_percent);
 
       // episode have different structure from track
       let newTrack;
@@ -618,12 +632,10 @@ const WebPlayback: React.FC = () => {
                   className="h-6 w-6 sm:h-5 sm:w-5 mx-3 cursor-pointer"
                   onClick={handlePrev}
                 />
-                {currentTrack.type === 'episode' && (
-                  <MdReplay10
-                    className="h-6 w-6 sm:h-5 sm:w-5 mx-3 cursor-pointer"
-                    onClick={(e) => handleSeek(e, positionMs - (10 * 1000))}
-                  />
-                )}
+                <MdReplay10
+                  className="h-6 w-6 sm:h-5 sm:w-5 mx-3 cursor-pointer"
+                  onClick={(e) => handleSeek(e, positionMs - (10 * 1000))}
+                />
                 {isPlaying ? (
                   <MdPauseCircle
                     className="h-10 w-10 mx-3 cursor-pointer"
@@ -635,12 +647,10 @@ const WebPlayback: React.FC = () => {
                     onClick={handlePlay}
                   />
                 )}
-                {currentTrack.type === 'episode' && (
-                  <MdForward10
-                    className="h-6 w-6 sm:h-5 sm:w-5 mx-3 cursor-pointer"
-                    onClick={(e) => handleSeek(e, positionMs + (10 * 1000))}
-                  />
-                )}
+                <MdForward10
+                  className="h-6 w-6 sm:h-5 sm:w-5 mx-3 cursor-pointer"
+                  onClick={(e) => handleSeek(e, positionMs + (10 * 1000))}
+                />
                 <MdSkipNext
                   className="h-6 w-6 sm:h-5 sm:w-5 mx-3 cursor-pointer"
                   onClick={handleNext}
@@ -694,7 +704,7 @@ const WebPlayback: React.FC = () => {
                   onClick={handleOpenQueue}
                 />
                 <MdDevices
-                  className="h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer"
+                  className={`h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer ${activeDevice && activeDevice.id !== deviceId && 'text-green-400'}`}
                   onClick={handleShowDeviceSelector}
                 />
                 <div className="hidden lg:flex items-center mr-4">
@@ -707,7 +717,7 @@ const WebPlayback: React.FC = () => {
                     className="w-40 h-2 text-green-200"
                     max="100"
                     value={volume}
-                    onChange={(e) => setVolume(Number(e.target.value))}
+                    onChange={(e) => saveVolume(Number(e.target.value))}
                     onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
                       handleVolume(e, Number(e.currentTarget.value))
                     }

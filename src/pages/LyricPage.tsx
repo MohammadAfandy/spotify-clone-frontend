@@ -5,6 +5,7 @@ import { PlayerContext } from '../context/player-context';
 type Lyric = {
   seconds: number;
   lyrics: string;
+  highlight?: boolean;
 }[];
 
 const LyricPage: React.FC = () => {
@@ -66,15 +67,16 @@ const LyricPage: React.FC = () => {
 
         let newShowedLyric: Lyric;
         if (showedLineIndex !== -1) {
-          const nextLine = lyric[showedLineIndex + 1];
           newShowedLyric = [
-            lyric[showedLineIndex],
-            nextLine || { seconds: 0, lyrics: '...' },
+            lyric[showedLineIndex - 1] || { seconds: 0, lyrics: '...' },
+            { ...lyric[showedLineIndex], highlight: true },
+            lyric[showedLineIndex + 1] || { seconds: 0, lyrics: '...' },
           ];
         } else {
           newShowedLyric = [
             { seconds: 0, lyrics: '...' },
             lyric[0] || { seconds: 0, lyrics: '...' },
+            lyric[1] || { seconds: 0, lyrics: '...' },
           ];
         }
         setShowedLyric(newShowedLyric);
@@ -86,13 +88,12 @@ const LyricPage: React.FC = () => {
   const RunningLyricComponent = (
     <>
       {showedLyric.length > 0 && (
-        <div className="text-4xl lg:text-5xl h-full flex flex-col justify-center">
-          <div className="text-green-500">
-            {showedLyric[0].lyrics}
-          </div>
-          <div className="mt-10">
-            {showedLyric[1].lyrics}
-          </div>
+        <div className="text-3xl lg:text-5xl h-full flex flex-col justify-around">
+          {showedLyric.map((showedLyric) => (
+            <div className={`${showedLyric.highlight ? 'text-green-400' : ''}`}>
+              {showedLyric.lyrics}
+            </div>
+          ))}
         </div>
       )}
     </>
@@ -105,7 +106,7 @@ const LyricPage: React.FC = () => {
           className="absolute top-2 left-2 cursor-pointer mb-4 bg-light-black-2 py-2 px-6 rounded-md text-gray-300"
           onClick={() => setIsShowRunningLyric((prevState) => !prevState)}
         >
-          {isShowRunningLyric ? 'Show all lyric' : 'Show running lyric'}
+          {isShowRunningLyric ? 'Show full lyric' : 'Show running lyric'}
         </div>
       )}
       <div className="whitespace-pre-wrap font-bold pt-10 h-full text-center">
