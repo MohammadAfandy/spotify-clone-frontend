@@ -27,8 +27,15 @@
   }
 
   .card-item {
-    min-width: 14rem;
-    min-height: 16rem;
+    min-width: 10rem;
+    min-height: 12rem;
+  }
+
+  @screen sm {
+    .card-item {
+      min-width: 14rem;
+      min-height: 16rem;
+    }
   }
 
   .szh-menu {
