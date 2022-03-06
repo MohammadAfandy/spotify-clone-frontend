@@ -1,5 +1,4 @@
 import { useEffect, useState, useContext } from 'react';
-import Skeleton from 'react-loading-skeleton';
 import Track from '../types/Track';
 import Artist from '../types/Artist';
 import Album from '../types/Album';
@@ -8,6 +7,7 @@ import ApiSpotify from '../utils/api-spotify';
 import { AuthContext } from '../context/auth-context';
 import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 
+import Skeleton from '../components/Skeleton/Skeleton';
 import CardItem from '../components/Card/CardItem';
 import TextLink from '../components/Text/TextLink';
 import { CARD_COUNT } from '../utils/constants';

@@ -1,7 +1,8 @@
 import { Fragment } from 'react';
 import { FiMusic } from 'react-icons/fi';
-import Skeleton from 'react-loading-skeleton';
 import { ellipsis } from '../../utils/helpers';
+
+import Skeleton from '../Skeleton/Skeleton';
 
 type PlayerListHeaderProps = {
   image: string;

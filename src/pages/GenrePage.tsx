@@ -10,7 +10,7 @@ import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 
 import CardItem from '../components/Card/CardItem';
 import GridWrapper from '../components/Grid/GridWrapper';
-import Skeleton from 'react-loading-skeleton';
+import Skeleton from '../components/Skeleton/Skeleton';
 import RecentlyPlayed from '../types/RecentlyPlayed';
 
 const GenrePage: React.FC = () => {

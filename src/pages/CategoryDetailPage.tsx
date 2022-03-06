@@ -7,7 +7,7 @@ import { makeRequest } from '../utils/helpers';
 
 import CardItem from '../components/Card/CardItem';
 import GridWrapper from '../components/Grid/GridWrapper';
-import Skeleton from 'react-loading-skeleton';
+import Skeleton from '../components/Skeleton/Skeleton';
 
 const CategoryDetailPage: React.FC = () => {
   const params = useParams<{ id: string }>();

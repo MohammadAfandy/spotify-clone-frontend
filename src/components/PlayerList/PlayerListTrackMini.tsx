@@ -8,7 +8,7 @@ import Episode from '../../types/Episode';
 import { getSmallestImage, duration } from '../../utils/helpers';
 
 import TextLink from '../Text/TextLink';
-import Skeleton from 'react-loading-skeleton';
+import Skeleton from '../Skeleton/Skeleton';
 
 type PlayerListTrackMiniProps = {
   track?: Track & Episode;

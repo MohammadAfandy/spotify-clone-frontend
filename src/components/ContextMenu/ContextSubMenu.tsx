@@ -1,26 +1,31 @@
 import {
-  Menu,
-  MenuProps,
+  applyStatics,
+  SubMenu,
+  SubMenuProps,
 } from '@szhsin/react-menu';
 import '@szhsin/react-menu/dist/index.css';
 import '@szhsin/react-menu/dist/transitions/slide.css';
 
 import styles from './ContextMenu.module.css';
 
-const ContextMenu: React.FC<MenuProps> = ({
+const ContextSubMenu: React.FC<SubMenuProps> = ({
   children,
   ...props
 }) => {
 
   return (
-    <Menu
-      transition
+    <SubMenu
       menuClassName={styles.contextMenu}
+      itemProps={{
+        className: ({ hover }) => (hover ? styles.contextMenuHover : styles.contextMenu),
+      }}
       {...props}
     >
       {children}
-    </Menu>
+    </SubMenu>
   );
 };
 
-export default ContextMenu;
+applyStatics(SubMenu)(ContextSubMenu);
+
+export default ContextSubMenu;

@@ -4,7 +4,6 @@ import {
   MdAddCircle,
   MdCheck,
 } from 'react-icons/md';
-import Skeleton from 'react-loading-skeleton';
 import Episode from '../../types/Episode';
 import ApiSpotify from '../../utils/api-spotify';
 import {
@@ -13,6 +12,7 @@ import {
   duration,
 } from '../../utils/helpers';
 
+import Skeleton from '../Skeleton/Skeleton';
 import Explicit from '../Text/Explicit';
 import TextLink from '../Text/TextLink';
 

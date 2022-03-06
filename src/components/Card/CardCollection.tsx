@@ -1,11 +1,11 @@
 import { Fragment, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import Skeleton from "react-loading-skeleton";
 import { PlayerContext } from '../../context/player-context';
 import Track from '../../types/Track';
 import Episode from '../../types/Episode';
 
 import PlayButton from '../Button/PlayButton';
+import Skeleton from '../Skeleton/Skeleton';
 type CardCollectionProps = {
   className?: string;
   uris?: string[];
@@ -64,8 +64,8 @@ const CardCollection: React.FC<CardCollectionProps> = ({
       className={`group relative flex flex-col min-h-72 h-full p-4 justify-end rounded-md cursor-pointer ${bgColor} ${className}`}
       onClick={handleClick}
     >
-      <div className="text-justify mb-4 text-sm">
-        {isLoading && <Skeleton className="react-loading-skeleton-white" />}
+      <div className="text-justify mb-4 text-sm line-clamp-3">
+        {isLoading && <Skeleton type="light" />}
         {!isLoading && (
           <Fragment>
             {type === 'track' &&
@@ -83,7 +83,7 @@ const CardCollection: React.FC<CardCollectionProps> = ({
                   {idx !== tracks.length - 1 && <span>•&nbsp;</span>}
                 </Fragment>
               ))}
-    
+
             {type === 'episode' &&
               episodes &&
               episodes.map((episode, idx) => (
@@ -103,7 +103,7 @@ const CardCollection: React.FC<CardCollectionProps> = ({
         )}
       </div>
       <div className="text-3xl font-bold">
-        {isLoading && <Skeleton className="react-loading-skeleton-white" />}
+        {isLoading && <Skeleton type="light" />}
         {!isLoading && (
           <Fragment>
             {type === 'track' && 'Liked Songs'}
@@ -112,7 +112,7 @@ const CardCollection: React.FC<CardCollectionProps> = ({
         )}
       </div>
       <div className="">
-        {isLoading && <Skeleton className="react-loading-skeleton-white" />}
+        {isLoading && <Skeleton type="light" />}
         {!isLoading && (
           <Fragment>
             {type === 'track' && total + ' songs'}

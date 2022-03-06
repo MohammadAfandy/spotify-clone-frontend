@@ -1,8 +1,9 @@
 import { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import Skeleton from 'react-loading-skeleton';
 import { FiMusic } from 'react-icons/fi';
 import { PlayerContext } from '../../context/player-context';
+
+import Skeleton from '../Skeleton/Skeleton';
 
 import PlayButton from '../Button/PlayButton';
 import { ucwords } from '../../utils/helpers';
@@ -52,7 +53,7 @@ const CardItem: React.FC<CardItemProps> = ({
   
   const LoadingComponent = (
     <div className={`card-item p-4 bg-light-black hover:bg-light-black-2 rounded-md`}>
-      <Skeleton className="w-full h-80% rounded-md" />
+      <Skeleton className="w-full h-75% rounded-md" />
       <div className="text-sm font-bold mt-2">
         <Skeleton />
         <Skeleton />
@@ -68,7 +69,7 @@ const CardItem: React.FC<CardItemProps> = ({
           className={`card-item group cursor-pointer transition duration-300 ease-in-out transform p-4 bg-light-black hover:bg-light-black-2 rounded-md ${className}`}
           onClick={handleClick}
         >
-          <div className="relative h-80%">
+          <div className="relative h-75%">
             {image ? (
               <img
                 src={image}
@@ -86,7 +87,7 @@ const CardItem: React.FC<CardItemProps> = ({
               />
             </div>
           </div>
-          <div className="text-xs sm:text-sm font-bold mt-2">
+          <div className="text-xs font-bold mt-2">
             <div className="truncate">{name}</div>
             <div className="font-semibold text-gray-300 line-clamp-1 sm:line-clamp-2">
               {description ? ucwords(description) : <span>&nbsp;</span>}

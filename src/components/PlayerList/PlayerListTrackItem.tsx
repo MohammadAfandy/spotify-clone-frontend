@@ -9,10 +9,8 @@ import {
 import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../../context/auth-context';
 import {
-  SubMenu,
   MenuDivider,
   MenuButton,
-  MenuItem,
 } from '@szhsin/react-menu';
 import Track from '../../types/Track';
 import ApiSpotify from '../../utils/api-spotify';
@@ -20,9 +18,11 @@ import { getSmallestImage, duration, fromNow } from '../../utils/helpers';
 
 import LikeButton from '../Button/LikeButton';
 import ContextMenu from '../ContextMenu/ContextMenu';
+import ContextSubMenu from '../ContextMenu/ContextSubMenu';
+import ContextMenuItem from '../ContextMenu/ContextMenuItem';
 import Explicit from '../Text/Explicit';
 import TextLink from '../Text/TextLink';
-import Skeleton from 'react-loading-skeleton';
+import Skeleton from '../Skeleton/Skeleton';
 import ReactTooltip from 'react-tooltip';
 
 type PlayerListTrackItemProps = {
@@ -262,42 +262,42 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
               )}
               direction="left"
             >
-              <SubMenu label="Go to artist">
+              <ContextSubMenu label="Go to artist">
                 {track.artists && track.artists.map((artist) => (
-                  <MenuItem
+                  <ContextMenuItem
                     key={artist.id}
                     onClick={() => history.push((track.type === 'track' ? '/artist/' : '/show/') + artist.id)}
                   >
                     {artist.name}
-                  </MenuItem>
+                  </ContextMenuItem>
                 ))}
-              </SubMenu>
-              <MenuItem onClick={() => history.push('/album/' + track.album.id)}>Go to album</MenuItem>
+              </ContextSubMenu>
+              <ContextMenuItem onClick={() => history.push('/album/' + track.album.id)}>Go to album</ContextMenuItem>
               <MenuDivider />
               {isLoggedIn && (
-                <MenuItem onClick={() => handleAddToSavedTrack(track.id)}>
+                <ContextMenuItem onClick={() => handleAddToSavedTrack(track.id)}>
                   {isSaved ? 'Remove from your Liked Songs' : 'Save to your Liked Songs'}
-                </MenuItem>
+                </ContextMenuItem>
               )}
               {onRemoveFromPlaylist && (
-                <MenuItem onClick={() => onRemoveFromPlaylist(track.uri, offset)}>
+                <ContextMenuItem onClick={() => onRemoveFromPlaylist(track.uri, offset)}>
                   Remove from this playlist
-                </MenuItem>
+                </ContextMenuItem>
               )}
               {isLoggedIn && (
-                <SubMenu label="Add to playlist">
+                <ContextSubMenu label="Add to playlist">
                   {playlists
                     .filter((playlist) => playlist.owner.id === user.id)
                     .map((playlist) => (
-                      <MenuItem
+                      <ContextMenuItem
                         key={playlist.id}
                         onClick={() => addToPlaylist(playlist.id, track.uri)}
                       >
                         {playlist.name}
-                      </MenuItem>
+                      </ContextMenuItem>
                     )
                   )}
-                </SubMenu>
+                </ContextSubMenu>
               )}
             </ContextMenu>
           </div>

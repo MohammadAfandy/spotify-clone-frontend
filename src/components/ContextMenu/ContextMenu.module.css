@@ -1,0 +1,7 @@
+.contextMenu {
+  @apply bg-light-black-2 text-white;
+}
+
+.contextMenuHover {
+  @apply bg-gray-100 bg-opacity-25;
+}
