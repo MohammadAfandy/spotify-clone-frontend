@@ -3,7 +3,9 @@ import { useParams } from 'react-router-dom';
 import Artist from '../types/Artist';
 import Album from '../types/Album';
 import ApiSpotify from '../utils/api-spotify';
-import { PlayerContext } from '../context/player-context';
+import { useSelector, useDispatch } from 'react-redux';
+import { togglePlay } from '../store/player-slice';
+import { RootState } from '../store';
 import { AuthContext } from '../context/auth-context';
 import { makeRequest, getArtistNames, ucwords } from '../utils/helpers';
 import useFetchTracks from '../hooks/useFetchTracks';
@@ -14,10 +16,11 @@ import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
 import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
 import TextLink from '../components/Text/TextLink';
 import FolllowButton from '../components/Button/FollowButton';
-import GridWrapper from '../components/Grid/GridWrapper';
+import Slider from '../components/Slider/Slider';
 import { CARD_COUNT } from '../utils/constants';
 
 const ArtistPage: React.FC = () => {
+  const dispatch = useDispatch();
   const params = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [artist, setArtist] = useState<Artist>(Object);
@@ -26,7 +29,8 @@ const ArtistPage: React.FC = () => {
   const [isShowMore, setIsShowMore] = useState(false);
   const [isFollowed, setIsFollowed] = useState(false);
 
-  const { currentTrack, isPlaying, togglePlay, togglePause } = useContext(PlayerContext);
+  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
+  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
   const { isLoggedIn } = useContext(AuthContext);
 
   const { setNextUrl, tracks, pageData } = useFetchTracks(
@@ -39,21 +43,21 @@ const ArtistPage: React.FC = () => {
         setIsLoading(true);
         const dataArtist = await makeRequest('/artists/' + params.id, {}, isLoggedIn);
         setArtist(dataArtist.data);
-  
+
         const dataAlbums = await makeRequest('/artists/' + params.id + '/albums', {
           params: {
             limit: CARD_COUNT,
           },
         }, isLoggedIn);
         setAlbums(dataAlbums.data.items);
-  
+
         const dataRelatedArtists = await makeRequest('/artists/' + params.id + '/related-artists', {
           params: {
             limit: CARD_COUNT,
           },
         }, isLoggedIn);
         setRelatedArtists(dataRelatedArtists.data.artists);
-  
+
         if (isLoggedIn) {
           const dataFollowed = await ApiSpotify.get('/me/following/contains', {
             params: {
@@ -95,19 +99,9 @@ const ArtistPage: React.FC = () => {
   };
 
   const handlePlay = () => {
-    togglePlay([artist.uri], 0);
-  };
-
-  const handlePlayTrack = (
-    selectedOffset: number,
-    selectedPositionMs: number
-  ) => {
-    const trackUris = tracks.map((v) => v.uri);
-    togglePlay(trackUris, selectedOffset, selectedPositionMs);
-  };
-
-  const handlePauseTrack = () => {
-    togglePause();
+    dispatch(togglePlay({
+      uris: [artist.uri],
+    }));
   };
 
   const CardLoading = (
@@ -145,8 +139,7 @@ const ArtistPage: React.FC = () => {
           showAlbum
           currentTrack={currentTrack}
           isPlaying={isPlaying}
-          handlePlayTrack={handlePlayTrack}
-          handlePauseTrack={handlePauseTrack}
+          uris={[artist.uri]}
           handleNext={() => setNextUrl(pageData.next)}
           hasMore={!!pageData.next}
         />
@@ -166,7 +159,7 @@ const ArtistPage: React.FC = () => {
             url={'/artist/' + params.id + '/albums'}
           />
         </div>
-        <GridWrapper>
+        <Slider>
           {isLoading && CardLoading}
           {!isLoading && albums.map((album) => (
             <CardItem
@@ -178,7 +171,7 @@ const ArtistPage: React.FC = () => {
               href={'/album/' + album.id}
             />
           ))}
-        </GridWrapper>
+        </Slider>
       </div>
 
       <div className="mb-4">
@@ -190,9 +183,9 @@ const ArtistPage: React.FC = () => {
             url={'/artist/' + params.id + '/related'}
           />
         </div>
-        <GridWrapper>
+        <Slider>
           {isLoading && CardLoading}
-          {!isLoading && relatedAtists.slice(0, 4).map((artist) => (
+          {!isLoading && relatedAtists.map((artist) => (
             <CardItem
               key={artist.id}
               name={artist.name}
@@ -204,7 +197,7 @@ const ArtistPage: React.FC = () => {
               href={'/artist/' + artist.id}
             />
           ))}
-        </GridWrapper>
+        </Slider>
       </div>
     </div>
   );

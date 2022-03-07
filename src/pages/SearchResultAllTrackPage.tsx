@@ -1,6 +1,6 @@
-import { useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { PlayerContext } from '../context/player-context';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 import useFetchTracks from '../hooks/useFetchTracks';
 
 import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
@@ -8,23 +8,12 @@ import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
 const SearchResultAllTrackPage: React.FC = () => {
   const { query } = useParams<{ query: string }>();
 
-  const { currentTrack, isPlaying, togglePlay, togglePause } = useContext(PlayerContext);
+  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
+  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
 
   const { setNextUrl, tracks, pageData } = useFetchTracks(
     `/search?q=${query}&type=track`
   );
-
-  const handlePlayTrack = (
-    selectedOffset: number,
-    selectedPositionMs: number
-  ) => {
-    const trackUris = tracks.map((track) => track.uri);
-    togglePlay(trackUris, selectedOffset, selectedPositionMs);
-  };
-
-  const handlePauseTrack = () => {
-    togglePause();
-  };
 
   return (
     <div className="flex flex-col px-4 py-4">
@@ -36,8 +25,7 @@ const SearchResultAllTrackPage: React.FC = () => {
         showAlbum
         currentTrack={currentTrack}
         isPlaying={isPlaying}
-        handlePlayTrack={handlePlayTrack}
-        handlePauseTrack={handlePauseTrack}
+        uris={tracks.map((track) => track.uri)}
         handleNext={() => setNextUrl(pageData.next)}
         hasMore={!!pageData.next}
       />

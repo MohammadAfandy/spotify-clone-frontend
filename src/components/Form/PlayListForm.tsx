@@ -1,4 +1,6 @@
 import { useState, useContext } from 'react';
+import { useDispatch } from 'react-redux';
+import { getUserPlaylist } from '../../store/playlist-slice';
 import { FiMusic } from 'react-icons/fi';
 import { MdModeEditOutline, MdDeleteOutline } from 'react-icons/md';
 import { AuthContext } from '../../context/auth-context';
@@ -49,6 +51,7 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
   onDelete,
   tracks,
 }) => {
+  const dispatch = useDispatch();
   const history = useHistory();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -60,10 +63,7 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
 
   const [playlistPreviewImage, setPlaylistPreviewImage] = useState(previewImage);
 
-  const {
-    user,
-    refreshPlaylists
-  } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const handleSavePlaylist = async () => {
     if (!playlistName || playlistName.trim() === '') {
@@ -106,7 +106,7 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
           }
         );
       }
-  
+
       // add tracks
       if (tracks && tracks.length > 0) {
         await ApiSpotify.post(
@@ -125,7 +125,7 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
       if (mode === 'create') {
         history.push('/playlist/' + savedPlaylistId);
       }
-      refreshPlaylists();
+      dispatch(getUserPlaylist());
       if (onSave) onSave();
     } catch (error) {
       console.error(error);
@@ -138,7 +138,7 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
   // https://stackoverflow.com/questions/11015369/delete-spotify-playlist-programmatically
   const handleDeletePlaylist = async () => {
     await ApiSpotify.delete('/playlists/' + id + '/followers');
-    refreshPlaylists();
+    dispatch(getUserPlaylist());
     if (onDelete) onDelete();
   };
 

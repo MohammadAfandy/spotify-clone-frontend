@@ -1,7 +1,8 @@
 import { useContext } from 'react';
 import useFetchTracks from '../hooks/useFetchTracks';
 import { AuthContext } from '../context/auth-context';
-import { PlayerContext } from '../context/player-context';
+import { useDispatch } from 'react-redux';
+import { togglePlay } from '../store/player-slice';
 import { EPISODE_LOGO_IMAGE } from '../utils/constants';
 
 import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
@@ -9,15 +10,16 @@ import PlayerListEpisode from '../components/PlayerList/PlayerListEpisode';
 import PlayButton from '../components/Button/PlayButton';
 
 const CollectionEpisodePage: React.FC = () => {
+  const dispatch = useDispatch();
   const { user } = useContext(AuthContext);
-
-  const { togglePlay } = useContext(PlayerContext);
 
   const { setNextUrl, tracks: episodes, pageData, isLoading } = useFetchTracks('/me/episodes');
 
   const handlePlayFromStart = () => {
     const episodeUris = episodes.map((v) => v.uri);
-    togglePlay(episodeUris, 0);
+    dispatch(togglePlay({
+      uris: episodeUris
+    }));
   };
 
   const handlePlayEpisode = (
@@ -25,7 +27,11 @@ const CollectionEpisodePage: React.FC = () => {
     selectedPositionMs: number
   ) => {
     const episodeUris = episodes.map((v) => v.uri);
-    togglePlay(episodeUris, selectedOffset, selectedPositionMs);
+    dispatch(togglePlay({
+      uris: episodeUris,
+      offset: selectedOffset,
+      positionMs: selectedPositionMs,
+    }));
   };
 
   return (

@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import ApiSpotify from '../utils/api-spotify';
 import {
   getCookie,
@@ -8,8 +8,6 @@ import {
 } from '../utils/helpers';
 
 import User from '../types/User';
-import Playlist from '../types/Playlist';
-import Track from '../types/Track';
 import { ACCESS_TOKEN_AGE, REFRESH_TOKEN_AGE } from '../utils/constants';
 
 type AuthContextObj = {
@@ -17,8 +15,6 @@ type AuthContextObj = {
   isPremium: boolean;
   user: User;
   logout: () => void;
-  playlists: Playlist[];
-  refreshPlaylists: () => void;
 };
 
 export const AuthContext = createContext<AuthContextObj>({
@@ -26,8 +22,6 @@ export const AuthContext = createContext<AuthContextObj>({
   isPremium: false,
   user: {} as User,
   logout: () => {},
-  playlists: [],
-  refreshPlaylists: () => {},
 });
 
 const AuthProvider: React.FC = ({ children }) => {
@@ -36,14 +30,10 @@ const AuthProvider: React.FC = ({ children }) => {
   );
   const [isPremium, setIsPremium] = useState<boolean>(false);
   const [user, setUser] = useState<User>({} as User);
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
-  const [savedTracks, setSavedTracks] = useState<Track[]>([]);
 
   const logout = (): void => {
     setIsLoggedIn(false);
     setIsPremium(false);
-    setPlaylists([]);
-    setSavedTracks([]);
     setUser({} as User);
     // removeCookie('refresh_token');
     removeCookie('access_token');
@@ -82,25 +72,11 @@ const AuthProvider: React.FC = ({ children }) => {
     fetchUser();
   }, [isLoggedIn]);
 
-  const refreshPlaylists = useCallback(async () => {
-    try {
-      const response = await ApiSpotify.get('/me/playlists', {
-        params: { limit: 20 },
-      });
-      setPlaylists(response.data.items);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
   const contextValue = {
     user,
     logout,
     isLoggedIn,
     isPremium,
-    playlists,
-    refreshPlaylists,
-    savedTracks,
   };
 
   return (

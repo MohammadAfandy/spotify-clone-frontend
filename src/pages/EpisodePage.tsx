@@ -2,8 +2,9 @@ import { useState, useEffect, useContext } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import Episode from '../types/Episode';
 import ApiSpotify from '../utils/api-spotify';
+import { useDispatch } from 'react-redux';
+import { togglePlay } from '../store/player-slice';
 import { AuthContext } from '../context/auth-context';
-import { PlayerContext } from '../context/player-context';
 import {
   MdAddCircle,
   MdCheck,
@@ -16,6 +17,7 @@ import TextLink from '../components/Text/TextLink';
 import { duration, formatDate } from '../utils/helpers';
 
 const EpisodePage: React.FC = () => {
+  const dispatch = useDispatch();
   const params = useParams<{ id: string }>();
   const history = useHistory();
   const [episode, setEpisode] = useState<Episode>(Object);
@@ -23,7 +25,6 @@ const EpisodePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { user } = useContext(AuthContext);
-  const { togglePlay } = useContext(PlayerContext);
 
   useEffect(() => {
     const fetchEpisode = async () => {
@@ -70,7 +71,9 @@ const EpisodePage: React.FC = () => {
   };
 
   const handlePlayEpisode = () => {
-    togglePlay([episode.uri], 0);
+    dispatch(togglePlay({
+      uris: [episode.uri],
+    }));
   };
 
   return (

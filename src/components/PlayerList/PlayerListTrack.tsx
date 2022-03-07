@@ -1,4 +1,7 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useDispatch } from 'react-redux';
+import { togglePlay } from '../../store/player-slice';
+
 import Track from '../../types/Track';
 import { MdAccessTime } from 'react-icons/md';
 
@@ -12,10 +15,9 @@ type PlayerListTrackProps = {
   isPlaying?: boolean;
   showAlbum?: boolean;
   showDateAdded?: boolean;
+  uris: string[];
   onRemoveFromPlaylist?: (trackId: string) => void;
   handleAddTrackToPlaylist?: (trackId: string) => void;
-  handlePlayTrack: (offset: number, positionMs: number) => void;
-  handlePauseTrack: () => void;
   handleNext: () => void;
   hasMore: boolean;
   isIncludeEpisode?: boolean;
@@ -27,10 +29,9 @@ const defaultProps: PlayerListTrackProps = {
   isPlaying: false,
   showAlbum: false,
   showDateAdded: false,
+  uris: [],
   onRemoveFromPlaylist: undefined,
   handleAddTrackToPlaylist: undefined,
-  handlePlayTrack: (offset: number, positionMs: number) => {},
-  handlePauseTrack: () => {},
   handleNext: () => {},
   hasMore: false,
   isIncludeEpisode: false,
@@ -42,13 +43,24 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
   isPlaying,
   showAlbum,
   showDateAdded,
+  uris,
   onRemoveFromPlaylist,
-  handlePlayTrack,
-  handlePauseTrack,
   handleNext,
   hasMore,
   isIncludeEpisode,
 }) => {
+  const dispatch = useDispatch();
+  const handlePlayTrack = (
+    selectedOffset: number,
+    selectedPositionMs: number
+  ) => {
+    dispatch(togglePlay({
+      uris,
+      offset: selectedOffset,
+      positionMs: selectedPositionMs,
+    }));
+  };
+
   let number = 0;
   const TrackLoading = (
     [...Array(4)].map((_, idx) => (
@@ -104,7 +116,6 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
                   currentTrack={currentTrack}
                   isPlaying={isPlaying}
                   handlePlayTrack={handlePlayTrack}
-                  handlePauseTrack={handlePauseTrack}
                 />
               );
             }

@@ -1,11 +1,11 @@
 import React, {
   useState,
   useEffect,
-  useContext,
   Fragment,
   useRef,
   useCallback,
 } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import {
   getCookie,
@@ -15,7 +15,14 @@ import {
   randomAlphaNumeric,
   sleep,
 } from '../../utils/helpers';
-import { PlayerContext } from '../../context/player-context';
+import {
+  changeIsPlaying,
+  changeCurrentTrack,
+  changePositionMs,
+  toggleResume,
+  togglePause,
+} from '../../store/player-slice';
+import { RootState } from '../../store';
 import ApiSpotify from '../../utils/api-spotify';
 import Device from '../../types/Device';
 import RepeatMode from '../../types/RepeatMode';
@@ -77,16 +84,12 @@ const getVolumeFromStorage = () => {
 }
 
 const WebPlayback: React.FC = () => {
+  const dispatch = useDispatch();
   const trackRef = useRef<HTMLDivElement>(null);
   const history = useHistory();
   const location = useLocation();
-  const {
-    isPlaying,
-    changeIsPlaying,
-    currentTrack,
-    changeCurrentTrack,
-    changePositionMs,
-  } = useContext(PlayerContext);
+  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
+  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
 
   const [player, setPlayer] = useState<Player>(undefined);
   const [error, setError] = useState('');
@@ -183,7 +186,6 @@ const WebPlayback: React.FC = () => {
         });
 
         initPlayer.addListener('player_state_changed', (state: PlaybackState) => {
-          // console.info('state from player_state_changed', state);
           if (state) {
             try {
               const {
@@ -200,12 +202,9 @@ const WebPlayback: React.FC = () => {
               } = track_window;
               setDuration(duration);
               setPositionMs(position);
-              changeIsPlaying(!paused);
               setShuffle(shuffle);
               setRepeatMode(repeat_mode);
               setIsPlayerActive(true);
-              changeCurrentTrack(current_track);
-              // changePositionMs(position);
               setContextUri(context?.uri || '');
 
               const currentDeviceId = getCookie('device_id');
@@ -220,6 +219,10 @@ const WebPlayback: React.FC = () => {
                   volume_percent: 100,
                 });
               }
+
+              dispatch(changeIsPlaying(!paused));
+              dispatch(changeCurrentTrack(current_track));
+              dispatch(changePositionMs(position));
 
               initPlayer?.getVolume().then((volume) => {
                 saveVolume(volume * 100);
@@ -255,7 +258,7 @@ const WebPlayback: React.FC = () => {
     return () => {
       if (initPlayer) initPlayer.disconnect();
     };
-  }, [changeIsPlaying, changeCurrentTrack]);
+  }, [dispatch]);
 
   const handlePlay = async (event: React.MouseEvent): Promise<void> => {
     event.stopPropagation();
@@ -263,10 +266,10 @@ const WebPlayback: React.FC = () => {
       player && player.togglePlay();
     } else {
       if (isPlaying) {
-        await ApiSpotify.put('/me/player/pause');
+        dispatch(togglePause());
         getPlaybackState();
       } else {
-        await ApiSpotify.put('/me/player/play');
+        dispatch(toggleResume());
         getPlaybackState();
       }
     }
@@ -362,9 +365,6 @@ const WebPlayback: React.FC = () => {
   ): Promise<void> => {
     event.stopPropagation();
     await transferPlayback(selectedDeviceId);
-    if (!isPlayerActive) {
-      getPlaybackState();
-    }
   };
 
   const getUserDevices = async () => {
@@ -389,7 +389,11 @@ const WebPlayback: React.FC = () => {
         repeat_state,
         is_playing,
         context,
+        timestamp,
       } = responseData;
+
+      // probably device just get transferred and don't hold reliable data
+      if (timestamp === 0) return;
 
       const {
         duration_ms,
@@ -398,7 +402,6 @@ const WebPlayback: React.FC = () => {
 
       setDuration(duration_ms);
       setPositionMs(progress_ms);
-      changeIsPlaying(is_playing);
       setShuffle(shuffle_state);
       setRepeatMode(mapRepeatMode.find((v) => v.state === repeat_state)?.mode || 0);
       saveVolume(device.volume_percent);
@@ -426,20 +429,25 @@ const WebPlayback: React.FC = () => {
       } else {
         newTrack = item;
       }
-      changeCurrentTrack(newTrack);
-      // changePositionMs(progress_ms);
       setContextUri(context?.uri || '');
+
+      dispatch(changeIsPlaying(is_playing));
+      dispatch(changeCurrentTrack(newTrack));
+      dispatch(changePositionMs(progress_ms));
     }
-  }, [changeCurrentTrack, changeIsPlaying, deviceId, transferPlayback]);
+  }, [deviceId, transferPlayback, dispatch]);
 
   // get player state from another device if our device is not the current active device
   // because event player_state_changed not fired when we are not in local playback / device
   useEffect(() => {
-    getPlaybackState(); 
-    const interval = setInterval(() => {
+    const setPlayBackState = () => {
       if (!isPlayerActive && deviceId) {
         getPlaybackState();
       }
+    };
+    setPlayBackState();
+    const interval = setInterval(() => {
+      setPlayBackState();
     }, 10 * 1000);
 
     return () => clearInterval(interval);
@@ -468,13 +476,13 @@ const WebPlayback: React.FC = () => {
         }
         setPositionMs(newPositionMs);
         if (location.pathname === '/lyric') {
-          changePositionMs(newPositionMs);
+          dispatch(changePositionMs(newPositionMs));
         }
       }, intervalSecond);
 
       return () => clearInterval(interval);
     }
-  }, [positionMs, isPlaying, duration, getPlaybackState, changePositionMs, location.pathname]);
+  }, [positionMs, isPlaying, duration, getPlaybackState, location.pathname, dispatch]);
 
   const handleOpenLyric = (event: React.MouseEvent) => {
     event.stopPropagation();

@@ -1,6 +1,8 @@
 import { useContext } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { togglePlay } from '../store/player-slice';
+import { RootState } from '../store';
 import { AuthContext } from '../context/auth-context';
-import { PlayerContext } from '../context/player-context';
 import useFetchTracks from '../hooks/useFetchTracks';
 import { LIKED_SONG_IMAGE } from '../utils/constants';
 import { duration } from '../utils/helpers';
@@ -10,25 +12,18 @@ import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
 import PlayButton from '../components/Button/PlayButton';
 
 const CollectionTrackPage: React.FC = () => {
+  const dispatch = useDispatch();
   const { user } = useContext(AuthContext);
 
-  const { currentTrack, isPlaying, togglePlay, togglePause } = useContext(PlayerContext);
+  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
+  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
 
   const { setNextUrl, tracks, pageData, isLoading } = useFetchTracks('/me/tracks');
 
   const handlePlayFromStart = () => {
-    togglePlay([`spotify:user:${user.id}:collection`], 0);
-  };
-
-  const handlePlayTrack = (
-    selectedOffset: number,
-    selectedPositionMs: number
-  ) => {
-    togglePlay([`spotify:user:${user.id}:collection`], selectedOffset, selectedPositionMs);
-  };
-
-  const handlePauseTrack = () => {
-    togglePause();
+    dispatch(togglePlay({
+      uris: [`spotify:user:${user.id}:collection`],
+    }));
   };
 
   const totalDuration = tracks.reduce((acc, curr) => {
@@ -59,8 +54,7 @@ const CollectionTrackPage: React.FC = () => {
         showDateAdded
         currentTrack={currentTrack}
         isPlaying={isPlaying}
-        handlePlayTrack={handlePlayTrack}
-        handlePauseTrack={handlePauseTrack}
+        uris={[`spotify:user:${user.id}:collection`]}
         handleNext={() => setNextUrl(pageData.next)}
         hasMore={!!pageData.next}
       />

@@ -5,7 +5,10 @@ import Track from '../types/Track';
 import Episode from '../types/Episode';
 import ApiSpotify from '../utils/api-spotify';
 import { AuthContext } from '../context/auth-context';
-import { PlayerContext } from '../context/player-context';
+import { useSelector, useDispatch } from 'react-redux';
+import { togglePlay } from '../store/player-slice';
+import { getUserPlaylist } from '../store/playlist-slice';
+import { RootState } from '../store';
 import { getHighestImage, duration, makeRequest } from '../utils/helpers';
 import useFetchTracks from '../hooks/useFetchTracks';
 
@@ -31,6 +34,7 @@ const initialPlaylistForm = {
 };
 
 const PlaylistPage: React.FC = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   const params = useParams<{ id: string }>();
   const [playlist, setPlaylist] = useState<Playlist>(Object);
@@ -44,9 +48,10 @@ const PlaylistPage: React.FC = () => {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [playlistForm, setPlaylistForm] = useState(initialPlaylistForm);
 
-  const { isLoggedIn, user, refreshPlaylists } = useContext(AuthContext);
+  const { isLoggedIn, user } = useContext(AuthContext);
 
-  const { currentTrack, isPlaying, togglePlay, togglePause } = useContext(PlayerContext);
+  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
+  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
 
   const { setNextUrl, tracks, pageData, forceUpdate } = useFetchTracks(
     '/playlists/' + params.id + '/tracks'
@@ -122,27 +127,20 @@ const PlaylistPage: React.FC = () => {
     }
     if (response.status === 200) {
       setIsFollowed((prevState) => !prevState);
-      refreshPlaylists();
+      dispatch(getUserPlaylist());
     }
   };
 
   const handlePlayFromStart = () => {
-    togglePlay([playlist.uri], 0);
-  };
-
-  const handlePlayTrack = (
-    selectedOffset: number,
-    selectedPositionMs: number
-  ) => {
-    togglePlay([playlist.uri], selectedOffset, selectedPositionMs);
-  };
-
-  const handlePauseTrack = () => {
-    togglePause();
+    dispatch(togglePlay({
+      uris: [playlist.uri],
+    }));
   };
 
   const handlePlaySuggestedTrack = (uri: string) => {
-    togglePlay([uri], 0, 0);
+    dispatch(togglePlay({
+      uris: [uri],
+    }));
   };
 
   const handleAddTrackToPlaylist = async (trackUri: string) => {
@@ -244,8 +242,7 @@ const PlaylistPage: React.FC = () => {
           }
           currentTrack={currentTrack}
           isPlaying={isPlaying}
-          handlePlayTrack={handlePlayTrack}
-          handlePauseTrack={handlePauseTrack}
+          uris={[playlist.uri]}
           handleNext={() => setNextUrl(pageData.next)}
           hasMore={!!pageData.next}
           isIncludeEpisode

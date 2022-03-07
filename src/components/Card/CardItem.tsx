@@ -1,7 +1,7 @@
-import { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { FiMusic } from 'react-icons/fi';
-import { PlayerContext } from '../../context/player-context';
+import { useDispatch } from 'react-redux';
+import { togglePlay } from '../../store/player-slice';
 
 import Skeleton from '../Skeleton/Skeleton';
 
@@ -39,8 +39,8 @@ const CardItem: React.FC<CardItemProps> = ({
   uri,
   href,
 }) => {
+  const dispatch = useDispatch();
   const history = useHistory();
-  const { togglePlay } = useContext(PlayerContext);
   const handleClick = (event: React.MouseEvent) => {
     if (!href) return;
     history.push(href);
@@ -48,7 +48,9 @@ const CardItem: React.FC<CardItemProps> = ({
   const handleClickPlay = (event: React.MouseEvent) => {
     event.stopPropagation();
     if (!uri) return;
-    togglePlay([uri], 0, 0);
+    dispatch(togglePlay({
+      uris: [uri],
+    }));
   };
   
   const LoadingComponent = (

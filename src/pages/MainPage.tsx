@@ -1,6 +1,5 @@
 import { useContext, useState } from 'react';
 import { AuthContext } from '../context/auth-context';
-import PlayerProvider from '../context/player-context';
 
 import Navbar from '../components/Navbar/Navbar';
 import ToolBar from '../components/Toolbar/ToolBar';
@@ -17,7 +16,7 @@ const MainPage: React.FC = () => {
   };
 
   return (
-    <PlayerProvider>
+    <>
       <div className="flex">
         <div
           className="flex w-full content-area"
@@ -40,7 +39,7 @@ const MainPage: React.FC = () => {
         isCapture={isPremium}
         backgroundColor="#2e77d0"
       />
-    </PlayerProvider>
+    </>
   );
 };
 

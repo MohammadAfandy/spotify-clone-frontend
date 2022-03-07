@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from 'react';
-import { PlayerContext } from '../context/player-context';
+import { useDispatch } from 'react-redux';
+import { togglePlay } from '../store/player-slice';
 import { AuthContext } from '../context/auth-context';
 import Playlist from '../types/Playlist';
 import Track from '../types/Track';
@@ -13,6 +14,7 @@ import CardCollection from '../components/Card/CardCollection';
 import GridWrapper from '../components/Grid/GridWrapper';
 
 const CollectionPlaylistPage: React.FC = () => {
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [playlistTracks, setPlaylistTracks] = useState<Track[]>([]);
@@ -20,7 +22,6 @@ const CollectionPlaylistPage: React.FC = () => {
   const [playlistTotalEpisode, setplaylistTotalEpisode] = useState<number>(0);
 
   const { user } = useContext(AuthContext);
-  const { togglePlay } = useContext(PlayerContext);
 
   useEffect(() => {
     const fetchCollectionPlaylist = async () => {
@@ -66,7 +67,9 @@ const CollectionPlaylistPage: React.FC = () => {
     const episodeUris = response.data.items.map(
       (v: { added_at: Date; episode: Episode }) => v.episode.uri
     );
-    togglePlay(episodeUris, 0);
+    dispatch(togglePlay({
+      uris: episodeUris,
+    }));
   };
 
   const CardLoading = (

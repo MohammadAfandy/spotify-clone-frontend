@@ -7,6 +7,9 @@ import {
   MdOutlineMoreVert,
 } from 'react-icons/md';
 import { useHistory } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleResume, togglePause } from '../../store/player-slice';
+import { RootState } from '../../store';
 import { AuthContext } from '../../context/auth-context';
 import {
   MenuDivider,
@@ -35,7 +38,6 @@ type PlayerListTrackItemProps = {
   showDateAdded?: boolean;
   onRemoveFromPlaylist?: (trackId: string, position?: number) => void;
   handlePlayTrack?: (offset: number, positionMs: number) => void;
-  handlePauseTrack?: () => void;
   isLoading?: boolean;
 };
 
@@ -49,7 +51,6 @@ const defaultProps: PlayerListTrackItemProps = {
   showDateAdded: false,
   onRemoveFromPlaylist: undefined,
   handlePlayTrack: (offset: number, positionMs: number) => {},
-  handlePauseTrack: () => {},
   isLoading: false,
 };
 
@@ -63,17 +64,16 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
   showDateAdded,
   onRemoveFromPlaylist,
   handlePlayTrack,
-  handlePauseTrack,
   isLoading,
 }) => {
-
+  const dispatch = useDispatch();
   const history = useHistory();
   const [isSaved, setIsSaved] = useState<boolean>(track?.is_saved || false);
   const {
     user,
-    playlists,
     isLoggedIn,
   } = useContext(AuthContext);
+  const playlists = useSelector((state: RootState) => state.playlist.items);
 
   useEffect(() => {
     ReactTooltip.rebuild();
@@ -122,6 +122,18 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
     });
   };
 
+  const pauseTrack = () => {
+    dispatch(togglePause());
+  };
+
+  const playTrack = (trackUri: string, offset: number, positionMs: number) => {
+    if (currentTrack && trackUri === currentTrack.uri) {
+      dispatch(toggleResume());
+    } else {
+      handlePlayTrack && handlePlayTrack(offset, positionMs);
+    }
+  };
+
   const LoadingComponent = (
     <div className="rounded-md px-2" data-wrapper>
       <Skeleton className="h-full" />
@@ -154,7 +166,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
             {(isPlaying && currentTrack && track.uri === currentTrack.uri) ? (
               <MdPause
                 className="w-6 h-6 cursor-pointer block canhover:hidden canhover:group-hover:block"
-                onClick={handlePauseTrack}
+                onClick={pauseTrack}
                 data-tip="play"
                 data-for="play-tooltip"
                 data-event="click"
@@ -162,7 +174,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
             ) : (
               <MdPlayArrow
                 className="w-6 h-6 cursor-pointer block canhover:hidden canhover:group-hover:block"
-                onClick={() => handlePlayTrack && handlePlayTrack(offset || 0, 0)}
+                onClick={(e) => playTrack(track.uri, offset || 0, 0)}
                 data-tip="play"
                 data-for="play-tooltip"
                 data-event="click"

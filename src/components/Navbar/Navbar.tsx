@@ -7,6 +7,9 @@ import {
   MdClose,
   MdOutlineRecommend,
 } from 'react-icons/md';
+import { useSelector, useDispatch } from 'react-redux';
+import { getUserPlaylist } from '../../store/playlist-slice';
+import { RootState } from '../../store';
 import { AuthContext } from '../../context/auth-context';
 import ApiSpotify from '../../utils/api-spotify';
 import { EPISODE_LOGO_IMAGE, LIKED_SONG_IMAGE } from '../../utils/constants';
@@ -36,21 +39,21 @@ const initialPlaylistForm = {
 };
 
 const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
+  const dispatch = useDispatch();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [playlistForm, setPlaylistForm] = useState(initialPlaylistForm);
 
+  const playlists = useSelector((state: RootState) => state.playlist.items);
   const {
     isLoggedIn,
     user,
-    playlists,
-    refreshPlaylists
   } = useContext(AuthContext);
 
   useEffect(() => {
     if (isLoggedIn) {
-      refreshPlaylists();
+      dispatch(getUserPlaylist());
     }
-  }, [isLoggedIn, refreshPlaylists]);
+  }, [isLoggedIn, dispatch]);
 
   const handleEditPlaylist = async (
     event: React.MouseEvent,

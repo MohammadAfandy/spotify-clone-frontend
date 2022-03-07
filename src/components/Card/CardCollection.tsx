@@ -1,6 +1,7 @@
-import { Fragment, useContext } from 'react';
+import { Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
-import { PlayerContext } from '../../context/player-context';
+import { useDispatch } from 'react-redux';
+import { togglePlay } from '../../store/player-slice';
 import Track from '../../types/Track';
 import Episode from '../../types/Episode';
 
@@ -38,8 +39,8 @@ const CardCollection: React.FC<CardCollectionProps> = ({
   href,
   isLoading,
 }) => {
+  const dispatch = useDispatch();
   const history = useHistory();
-  const { togglePlay } = useContext(PlayerContext);
 
   const handleClick = (event: React.MouseEvent) => {
     if (!href) return;
@@ -49,7 +50,9 @@ const CardCollection: React.FC<CardCollectionProps> = ({
   const handleClickPlay = (event: React.MouseEvent) => {
     if (uris && uris.length) {
       event.stopPropagation();
-      togglePlay(uris, 0, 0);
+      dispatch(togglePlay({
+        uris,
+      }));
     }
   };
 
@@ -61,7 +64,7 @@ const CardCollection: React.FC<CardCollectionProps> = ({
 
   return (
     <div
-      className={`group relative flex flex-col min-h-72 h-full p-4 justify-end rounded-md cursor-pointer ${bgColor} ${className}`}
+      className={`group relative flex flex-col min-h-72 sm:min-h-0 h-full p-4 justify-end rounded-md cursor-pointer ${bgColor} ${className}`}
       onClick={handleClick}
     >
       <div className="text-justify mb-4 text-sm line-clamp-3">

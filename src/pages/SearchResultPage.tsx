@@ -6,7 +6,8 @@ import Album from '../types/Album';
 import Playlist from '../types/Playlist';
 import Show from '../types/Show';
 import Episode from '../types/Episode';
-import { PlayerContext } from '../context/player-context';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 import { AuthContext } from '../context/auth-context';
 import { makeRequest, getArtistNames, removeNull, duration, formatDate } from '../utils/helpers';
 
@@ -28,20 +29,9 @@ const SearchResultPage: React.FC = () => {
   const [shows, setShows] = useState<Show[]>([]);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
 
-  const { currentTrack, isPlaying, togglePlay, togglePause } = useContext(PlayerContext);
+  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
+  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
   const { isLoggedIn } = useContext(AuthContext);
-
-  const handlePlayTrack = (
-    selectedOffset: number,
-    selectedPositionMs: number
-  ) => {
-    const trackUris = tracks.map((v) => v.uri);
-    togglePlay(trackUris, selectedOffset, selectedPositionMs);
-  };
-
-  const handlePauseTrack = () => {
-    togglePause();
-  };
 
   useEffect(() => {
     const fetchSearch = async () => {
@@ -89,8 +79,7 @@ const SearchResultPage: React.FC = () => {
           showAlbum
           currentTrack={currentTrack}
           isPlaying={isPlaying}
-          handlePlayTrack={handlePlayTrack}
-          handlePauseTrack={handlePauseTrack}
+          uris={tracks.map((v) => v.uri)}
           handleNext={() => {}}
           hasMore={false}
         />

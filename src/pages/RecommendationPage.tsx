@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { MultiSelect } from 'react-multi-select-component';
-import { PlayerContext } from '../context/player-context';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
 import Track from '../types/Track';
@@ -66,7 +67,8 @@ const RecommendationPage: React.FC = () => {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [playlistForm, setPlaylistForm] = useState(initialPlaylistForm);
 
-  const { currentTrack, isPlaying, togglePlay, togglePause } = useContext(PlayerContext);
+  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
+  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
   const { isLoggedIn } = useContext(AuthContext);
 
 
@@ -106,18 +108,6 @@ const RecommendationPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handlePlayTrack = (
-    selectedOffset: number,
-    selectedPositionMs: number
-  ) => {
-    const trackUris = recommendationTracks.map((track) => track.uri);
-    togglePlay(trackUris, selectedOffset, selectedPositionMs);
-  };
-
-  const handlePauseTrack = () => {
-    togglePause();
   };
 
   const handleSearch = async (
@@ -324,8 +314,7 @@ const RecommendationPage: React.FC = () => {
                   showAlbum
                   currentTrack={currentTrack}
                   isPlaying={isPlaying}
-                  handlePlayTrack={handlePlayTrack}
-                  handlePauseTrack={handlePauseTrack}
+                  uris={recommendationTracks.map((track) => track.uri)}
                   handleNext={() => {}}
                   hasMore={false}
                 />

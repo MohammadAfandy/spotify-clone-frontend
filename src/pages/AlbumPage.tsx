@@ -1,6 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { PlayerContext } from '../context/player-context';
+import { useSelector, useDispatch } from 'react-redux';
+import { togglePlay } from '../store/player-slice';
+import { RootState } from '../store';
 import { AuthContext } from '../context/auth-context';
 import Album from '../types/Album';
 import ApiSpotify from '../utils/api-spotify';
@@ -14,12 +16,14 @@ import TextLink from '../components/Text/TextLink';
 import FolllowButton from '../components/Button/FollowButton';
 
 const AlbumPage: React.FC = () => {
+  const dispatch = useDispatch();
   const params = useParams<{ id: string }>();
   const [album, setAlbum] = useState<Album>(Object);
   const [isFollowed, setIsFollowed] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { currentTrack, isPlaying, togglePlay, togglePause } = useContext(PlayerContext);
+  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
+  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
   const { isLoggedIn } = useContext(AuthContext);
 
   const { setNextUrl, tracks, pageData } = useFetchTracks(
@@ -71,18 +75,9 @@ const AlbumPage: React.FC = () => {
   };
 
   const handlePlayFromStart = () => {
-    togglePlay([album.uri], 0);
-  };
-
-  const handlePlayTrack = (
-    selectedOffset: number,
-    selectedPositionMs: number
-  ) => {
-    togglePlay([album.uri], selectedOffset, selectedPositionMs);
-  };
-
-  const handlePauseTrack = () => {
-    togglePause();
+    dispatch(togglePlay({
+      uris: [album.uri],
+    }));
   };
 
   const totalDuration = tracks.reduce((acc, curr) => {
@@ -120,8 +115,7 @@ const AlbumPage: React.FC = () => {
         tracks={tracks}
         currentTrack={currentTrack}
         isPlaying={isPlaying}
-        handlePlayTrack={handlePlayTrack}
-        handlePauseTrack={handlePauseTrack}
+        uris={[album.uri]}
         handleNext={() => setNextUrl(pageData.next)}
         hasMore={!!pageData.next}
       />

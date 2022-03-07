@@ -3,7 +3,8 @@ import { useParams } from 'react-router-dom';
 import Show from '../types/Show';
 import ApiSpotify from '../utils/api-spotify';
 import { AuthContext } from '../context/auth-context';
-import { PlayerContext } from '../context/player-context';
+import { useDispatch } from 'react-redux';
+import { togglePlay } from '../store/player-slice';
 import useFetchTracks from '../hooks/useFetchTracks';
 
 import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
@@ -11,13 +12,13 @@ import PlayerListEpisode from '../components/PlayerList/PlayerListEpisode';
 import FolllowButton from '../components/Button/FollowButton';
 
 const ShowPage: React.FC = () => {
+  const dispatch = useDispatch();
   const params = useParams<{ id: string }>();
   const [show, setShow] = useState<Show>(Object);
   const [isFollowed, setIsFollowed] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { user } = useContext(AuthContext);
-  const { togglePlay } = useContext(PlayerContext);
 
   useEffect(() => {
     const fetchShow = async () => {
@@ -72,7 +73,11 @@ const ShowPage: React.FC = () => {
     selectedPositionMs: number
   ) => {
     const episodeUris = episodes.map((v) => v.uri);
-    togglePlay(episodeUris, selectedOffset, selectedPositionMs);
+    dispatch(togglePlay({
+      uris: episodeUris,
+      offset: selectedOffset,
+      positionMs: selectedPositionMs
+    }));
   };
 
   return (

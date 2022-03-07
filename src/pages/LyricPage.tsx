@@ -1,6 +1,7 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import ApiBackend from '../utils/api-backend';
-import { PlayerContext } from '../context/player-context';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 type Lyric = {
   seconds: number;
@@ -9,7 +10,10 @@ type Lyric = {
 }[];
 
 const LyricPage: React.FC = () => {
-  const { currentTrack, positionMs, isPlaying } = useContext(PlayerContext);
+  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
+  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
+  const positionMs = useSelector((state: RootState) => state.player.positionMs);
+
   const [lyric, setLyric] = useState<Lyric>([]);
   const [plainLyric, setPlainLyric] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -89,8 +93,8 @@ const LyricPage: React.FC = () => {
     <>
       {showedLyric.length > 0 && (
         <div className="text-3xl lg:text-5xl h-full flex flex-col justify-around">
-          {showedLyric.map((showedLyric) => (
-            <div className={`${showedLyric.highlight ? 'text-green-400' : ''}`}>
+          {showedLyric.map((showedLyric, idx) => (
+            <div key={idx} className={`${showedLyric.highlight ? 'text-green-400' : ''}`}>
               {showedLyric.lyrics}
             </div>
           ))}

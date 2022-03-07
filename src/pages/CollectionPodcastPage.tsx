@@ -65,7 +65,6 @@ const CollectionPodcastPage: React.FC = () => {
           <CardCollection
             className="bg-gradient-to-b from-green-300 to-green-800"
             uris={playlistEpisodes.map((episode) => episode.uri)}
-            // uris={[`spotify:user:afandy9895:collection:your-episodes`]}
             episodes={playlistEpisodes}
             type="episode"
             total={playlistTotalEpisode}
