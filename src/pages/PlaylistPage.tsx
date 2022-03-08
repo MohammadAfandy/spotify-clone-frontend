@@ -5,10 +5,9 @@ import Track from '../types/Track';
 import Episode from '../types/Episode';
 import ApiSpotify from '../utils/api-spotify';
 import { AuthContext } from '../context/auth-context';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { togglePlay } from '../store/player-slice';
 import { getUserPlaylist } from '../store/playlist-slice';
-import { RootState } from '../store';
 import { getHighestImage, duration, makeRequest } from '../utils/helpers';
 import useFetchTracks from '../hooks/useFetchTracks';
 
@@ -49,9 +48,6 @@ const PlaylistPage: React.FC = () => {
   const [playlistForm, setPlaylistForm] = useState(initialPlaylistForm);
 
   const { isLoggedIn, user } = useContext(AuthContext);
-
-  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
-  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
 
   const { setNextUrl, tracks, pageData, forceUpdate } = useFetchTracks(
     '/playlists/' + params.id + '/tracks'
@@ -157,11 +153,21 @@ const PlaylistPage: React.FC = () => {
     return acc + curr.duration_ms;
   }, 0);
 
-  const handleRemoveFromPlaylist = async (trackUri: string, position?: number) => {
+  
+
+  const handleRemoveFromPlaylist = async ({
+    playlistId,
+    uri,
+    position,
+  }: {
+    playlistId: string,
+    uri: string,
+    position?: number,
+  }) => {
     const body = {
       tracks: [
         {
-          uri: trackUri,
+          uri,
           positions: position !== undefined ? [position] : undefined,
         },
       ],
@@ -237,15 +243,11 @@ const PlaylistPage: React.FC = () => {
           tracks={tracks}
           showAlbum
           showDateAdded
-          onRemoveFromPlaylist={
-            isOwnPlaylist ? handleRemoveFromPlaylist : undefined
-          }
-          currentTrack={currentTrack}
-          isPlaying={isPlaying}
           uris={[playlist.uri]}
           handleNext={() => setNextUrl(pageData.next)}
           hasMore={!!pageData.next}
           isIncludeEpisode
+          handleRemoveFromPlaylist={handleRemoveFromPlaylist}
         />
       </div>
 

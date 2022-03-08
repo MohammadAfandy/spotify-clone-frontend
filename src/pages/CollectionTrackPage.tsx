@@ -1,7 +1,6 @@
 import { useContext } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { togglePlay } from '../store/player-slice';
-import { RootState } from '../store';
 import { AuthContext } from '../context/auth-context';
 import useFetchTracks from '../hooks/useFetchTracks';
 import { LIKED_SONG_IMAGE } from '../utils/constants';
@@ -14,9 +13,6 @@ import PlayButton from '../components/Button/PlayButton';
 const CollectionTrackPage: React.FC = () => {
   const dispatch = useDispatch();
   const { user } = useContext(AuthContext);
-
-  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
-  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
 
   const { setNextUrl, tracks, pageData, isLoading } = useFetchTracks('/me/tracks');
 
@@ -52,8 +48,6 @@ const CollectionTrackPage: React.FC = () => {
         tracks={tracks}
         showAlbum
         showDateAdded
-        currentTrack={currentTrack}
-        isPlaying={isPlaying}
         uris={[`spotify:user:${user.id}:collection`]}
         handleNext={() => setNextUrl(pageData.next)}
         hasMore={!!pageData.next}

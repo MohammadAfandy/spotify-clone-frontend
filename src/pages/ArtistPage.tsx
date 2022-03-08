@@ -3,9 +3,8 @@ import { useParams } from 'react-router-dom';
 import Artist from '../types/Artist';
 import Album from '../types/Album';
 import ApiSpotify from '../utils/api-spotify';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { togglePlay } from '../store/player-slice';
-import { RootState } from '../store';
 import { AuthContext } from '../context/auth-context';
 import { makeRequest, getArtistNames, ucwords } from '../utils/helpers';
 import useFetchTracks from '../hooks/useFetchTracks';
@@ -29,8 +28,6 @@ const ArtistPage: React.FC = () => {
   const [isShowMore, setIsShowMore] = useState(false);
   const [isFollowed, setIsFollowed] = useState(false);
 
-  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
-  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
   const { isLoggedIn } = useContext(AuthContext);
 
   const { setNextUrl, tracks, pageData } = useFetchTracks(
@@ -137,8 +134,6 @@ const ArtistPage: React.FC = () => {
         <PlayerListTrack
           tracks={!isShowMore ? tracks.slice(0, 5) : tracks}
           showAlbum
-          currentTrack={currentTrack}
-          isPlaying={isPlaying}
           uris={[artist.uri]}
           handleNext={() => setNextUrl(pageData.next)}
           hasMore={!!pageData.next}

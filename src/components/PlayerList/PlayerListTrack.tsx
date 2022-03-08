@@ -1,64 +1,124 @@
+import { useEffect, useState, useContext } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useDispatch } from 'react-redux';
-import { togglePlay } from '../../store/player-slice';
+import { AuthContext } from '../../context/auth-context';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../store';
+import { togglePlay, toggleResume, togglePause } from '../../store/player-slice';
 
 import Track from '../../types/Track';
 import { MdAccessTime } from 'react-icons/md';
 
 import PlayerListTrackItem from './PlayerListTrackItem';
+import ApiSpotify from '../../utils/api-spotify';
 
 import styles from './PlayerListTrack.module.css';
 
 type PlayerListTrackProps = {
   tracks: Track[];
-  currentTrack: Track;
-  isPlaying?: boolean;
   showAlbum?: boolean;
   showDateAdded?: boolean;
   uris: string[];
-  onRemoveFromPlaylist?: (trackId: string) => void;
-  handleAddTrackToPlaylist?: (trackId: string) => void;
   handleNext: () => void;
   hasMore: boolean;
   isIncludeEpisode?: boolean;
+  handleRemoveFromPlaylist?: ({ playlistId, uri, position }: { playlistId: string, uri: string, position?: number }) => void;
 };
 
 const defaultProps: PlayerListTrackProps = {
   tracks: [],
-  currentTrack: {} as Track,
-  isPlaying: false,
   showAlbum: false,
   showDateAdded: false,
   uris: [],
-  onRemoveFromPlaylist: undefined,
-  handleAddTrackToPlaylist: undefined,
   handleNext: () => {},
   hasMore: false,
   isIncludeEpisode: false,
+  handleRemoveFromPlaylist: ({ playlistId, uri, position }: { playlistId: string, uri: string, position?: number }) => {},
 };
 
 const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
   tracks,
-  currentTrack,
-  isPlaying,
   showAlbum,
   showDateAdded,
   uris,
-  onRemoveFromPlaylist,
   handleNext,
   hasMore,
   isIncludeEpisode,
+  handleRemoveFromPlaylist,
 }) => {
   const dispatch = useDispatch();
-  const handlePlayTrack = (
-    selectedOffset: number,
-    selectedPositionMs: number
-  ) => {
-    dispatch(togglePlay({
+
+  const [savedTrackIds, setSavedTrackIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    const initialSavedTracks = tracks.filter((track) => track.is_saved).map((track) => track.id);
+    setSavedTrackIds(initialSavedTracks);
+  }, [tracks]);
+
+  
+  const { user } = useContext(AuthContext);
+
+  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
+  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
+  const playlists = useSelector((state: RootState) => state.playlist.items);
+
+  const handlePlayTrack = ({
+    offset,
+    uri,
+  }: {
+    offset: number,
+    uri: string,
+  }) => {
+    if (currentTrack && uri === currentTrack.uri) {
+      dispatch(toggleResume());
+    } else {
+      dispatch(togglePlay({
+        uris,
+        offset,
+      }));
+    }
+  };
+
+  const handlePauseTrack = () => {
+    dispatch(togglePause());
+  };
+
+  const handleAddToPlaylist = async ({
+    playlistId,
+    uris,
+  }: {
+    playlistId: string,
+    uris: string,
+  }) => {
+    const params = {
       uris,
-      offset: selectedOffset,
-      positionMs: selectedPositionMs,
-    }));
+    };
+    await ApiSpotify.post('/playlists/' + playlistId + '/tracks', {}, {
+      params,
+    });
+  };
+
+  const handleAddToSavedTrack = async ({
+    id,
+    type,
+    isSaved,
+  }: {
+    id: string,
+    type: 'track' | 'episode',
+    isSaved: boolean,
+  }) => {
+    const params = {
+      ids: id,
+    };
+    if (isSaved) {
+      setSavedTrackIds((prevState) => prevState.filter((v) => v !== id));
+      await ApiSpotify.delete(`/me/${type}s`, { params });
+    } else {
+      setSavedTrackIds((prevState) => [
+        ...prevState,
+        id,
+      ]);
+      await ApiSpotify.put(`/me/${type}s`, {}, { params });
+    }
   };
 
   let number = 0;
@@ -67,6 +127,7 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
       <PlayerListTrackItem key={idx} isLoading />
     ))
   );
+
   return (
     <div className={styles.playerGrid + " flex flex-col w-full"}>
       <div className="border-b-2 border-opacity-10 px-2" data-wrapper>
@@ -108,14 +169,20 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
                 <PlayerListTrackItem
                   key={track.id + '-' + idx}
                   track={track}
+                  isSavedTrack={savedTrackIds.includes(track.id)}
                   offset={idx}
                   number={number}
                   showAlbum={showAlbum}
                   showDateAdded={showDateAdded}
-                  onRemoveFromPlaylist={onRemoveFromPlaylist}
                   currentTrack={currentTrack}
                   isPlaying={isPlaying}
+                  playlists={playlists}
+                  userId={user.id}
                   handlePlayTrack={handlePlayTrack}
+                  handlePauseTrack={handlePauseTrack}
+                  handleAddToPlaylist={handleAddToPlaylist}
+                  handleRemoveFromPlaylist={handleRemoveFromPlaylist}
+                  handleAddToSavedTrack={handleAddToSavedTrack}
                 />
               );
             }

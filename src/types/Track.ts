@@ -4,7 +4,7 @@ import Album from './Album';
 type Track = {
   id: string;
   name: string;
-  type: string;
+  type: 'track' | 'episode';
   uri: string;
   href: string;
   track_number: number;

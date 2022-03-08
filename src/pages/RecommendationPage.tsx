@@ -1,7 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
 import { MultiSelect } from 'react-multi-select-component';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
 
 import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
 import Track from '../types/Track';
@@ -29,14 +27,18 @@ interface IDefaultItemRendererProps {
   onClick?: () => {};
 }
 
-const mapDropDown = (item: Artist & Track) => {
+const isArtist = (item: any): item is Artist => {
+  return item.type === 'artist';
+};
+
+const mapDropDown = (item: Artist | Track) => {
   const returnData = {
     value: item.id,
     label: item.name,
     key: item.id,
     image: '',
   };
-  if (item.type === 'artist') {
+  if (isArtist(item)) {
     returnData.image = getSmallestImage(item.images);
   } else {
     returnData.label = `${item.artists[0].name} - ${item.name}`;
@@ -67,8 +69,6 @@ const RecommendationPage: React.FC = () => {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [playlistForm, setPlaylistForm] = useState(initialPlaylistForm);
 
-  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
-  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
   const { isLoggedIn } = useContext(AuthContext);
 
 
@@ -312,8 +312,6 @@ const RecommendationPage: React.FC = () => {
                 <PlayerListTrack
                   tracks={recommendationTracks}
                   showAlbum
-                  currentTrack={currentTrack}
-                  isPlaying={isPlaying}
                   uris={recommendationTracks.map((track) => track.uri)}
                   handleNext={() => {}}
                   hasMore={false}

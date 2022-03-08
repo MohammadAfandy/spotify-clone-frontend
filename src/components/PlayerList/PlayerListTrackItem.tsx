@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, Fragment } from 'react';
+import { useEffect, Fragment } from 'react';
 import {
   MdAddCircle,
   MdPlayArrow,
@@ -7,17 +7,13 @@ import {
   MdOutlineMoreVert,
 } from 'react-icons/md';
 import { useHistory } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { toggleResume, togglePause } from '../../store/player-slice';
-import { RootState } from '../../store';
-import { AuthContext } from '../../context/auth-context';
 import {
   MenuDivider,
   MenuButton,
 } from '@szhsin/react-menu';
 import Track from '../../types/Track';
-import ApiSpotify from '../../utils/api-spotify';
 import { getSmallestImage, duration, fromNow } from '../../utils/helpers';
+import Playlist from '../../types/Playlist';
 
 import LikeButton from '../Button/LikeButton';
 import ContextMenu from '../ContextMenu/ContextMenu';
@@ -30,6 +26,7 @@ import ReactTooltip from 'react-tooltip';
 
 type PlayerListTrackItemProps = {
   track?: Track;
+  isSavedTrack?: boolean;
   offset?: number;
   number?: number;
   currentTrack?: Track;
@@ -37,12 +34,19 @@ type PlayerListTrackItemProps = {
   showAlbum?: boolean;
   showDateAdded?: boolean;
   onRemoveFromPlaylist?: (trackId: string, position?: number) => void;
-  handlePlayTrack?: (offset: number, positionMs: number) => void;
+  playlists?: Playlist[];
+  userId?: string;
+  handlePlayTrack?: ({ offset, uri }: { offset: number, uri: string }) => void;
+  handlePauseTrack?: () => void;
+  handleAddToPlaylist?: ({ playlistId, uris }: { playlistId: string, uris: string }) => void;
+  handleRemoveFromPlaylist?: ({ playlistId, uri, position }: { playlistId: string, uri: string, position?: number }) => void;
+  handleAddToSavedTrack?: ({ id, type, isSaved }: { id: string, type: 'episode' | 'track', isSaved: boolean }) => void;
   isLoading?: boolean;
 };
 
 const defaultProps: PlayerListTrackItemProps = {
   track: {} as Track,
+  isSavedTrack: false,
   offset: 0,
   number: 0,
   currentTrack: {} as Track,
@@ -50,12 +54,19 @@ const defaultProps: PlayerListTrackItemProps = {
   showAlbum: false,
   showDateAdded: false,
   onRemoveFromPlaylist: undefined,
-  handlePlayTrack: (offset: number, positionMs: number) => {},
+  playlists: [],
+  userId: '',
+  handlePlayTrack: ({ offset, uri }: { offset: number, uri: string }) => {},
+  handlePauseTrack: () => {},
+  handleAddToPlaylist: ({ playlistId, uris }: { playlistId: string, uris: string }) => {},
+  handleRemoveFromPlaylist: ({ playlistId, uri, position }: { playlistId: string, uri: string, position?: number }) => {},
+  handleAddToSavedTrack: ({ id, type, isSaved }: { id: string, type: 'episode' | 'track', isSaved: boolean }) => {},
   isLoading: false,
 };
 
 const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
   track,
+  isSavedTrack,
   offset,
   number,
   currentTrack,
@@ -63,76 +74,28 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
   showAlbum,
   showDateAdded,
   onRemoveFromPlaylist,
+  playlists,
+  userId,
   handlePlayTrack,
+  handlePauseTrack,
+  handleAddToPlaylist,
+  handleRemoveFromPlaylist,
+  handleAddToSavedTrack,
   isLoading,
 }) => {
-  const dispatch = useDispatch();
   const history = useHistory();
-  const [isSaved, setIsSaved] = useState<boolean>(track?.is_saved || false);
-  const {
-    user,
-    isLoggedIn,
-  } = useContext(AuthContext);
-  const playlists = useSelector((state: RootState) => state.playlist.items);
 
   useEffect(() => {
     ReactTooltip.rebuild();
   }, []);
 
-  useEffect(() => {
-    setIsSaved(track?.is_saved || false);
-  }, [track?.is_saved]);
-
-  const handleAddToSavedTrack = async (id: string) => {
-    const params = {
-      ids: id,
-    };
-    let response;
-    if (isSaved) {
-      response = await ApiSpotify.delete('/me/tracks', { params });
-    } else {
-      response = await ApiSpotify.put('/me/tracks', {}, { params });
-    }
-    if (response.status === 200) {
-      setIsSaved((prevState) => !prevState);
-    }
-  };
-
-  const handleAddToSavedEpisode = async (id: string) => {
-    const params = {
-      ids: id,
-    };
-    let response;
-    if (isSaved) {
-      response = await ApiSpotify.delete('/me/episodes', { params });
-    } else {
-      response = await ApiSpotify.put('/me/episodes', {}, { params });
-    }
-    if (response.status === 200) {
-      setIsSaved((prevState) => !prevState);
-    }
-  };
-
-  const addToPlaylist = async (playlistId: string, trackUris: string) => {
-    const params = {
-      uris: trackUris,
-    };
-    await ApiSpotify.post('/playlists/' + playlistId + '/tracks', {}, {
-      params,
+  const saveTrack = (track: Track) => {
+    handleAddToSavedTrack && handleAddToSavedTrack({
+      id: track.id,
+      type: track.type,
+      isSaved: isSavedTrack as boolean,
     });
-  };
-
-  const pauseTrack = () => {
-    dispatch(togglePause());
-  };
-
-  const playTrack = (trackUri: string, offset: number, positionMs: number) => {
-    if (currentTrack && trackUri === currentTrack.uri) {
-      dispatch(toggleResume());
-    } else {
-      handlePlayTrack && handlePlayTrack(offset, positionMs);
-    }
-  };
+  }
 
   const LoadingComponent = (
     <div className="rounded-md px-2" data-wrapper>
@@ -159,6 +122,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
                 }
                 alt="playing"
                 className="hidden canhover:block canhover:group-hover:hidden"
+                loading="lazy"
               />
             ) : (
               <div className="hidden canhover:block canhover:group-hover:hidden">{number}</div>
@@ -166,7 +130,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
             {(isPlaying && currentTrack && track.uri === currentTrack.uri) ? (
               <MdPause
                 className="w-6 h-6 cursor-pointer block canhover:hidden canhover:group-hover:block"
-                onClick={pauseTrack}
+                onClick={handlePauseTrack}
                 data-tip="play"
                 data-for="play-tooltip"
                 data-event="click"
@@ -174,7 +138,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
             ) : (
               <MdPlayArrow
                 className="w-6 h-6 cursor-pointer block canhover:hidden canhover:group-hover:block"
-                onClick={(e) => playTrack(track.uri, offset || 0, 0)}
+                onClick={(e) => handlePlayTrack && handlePlayTrack({ offset: offset || 0, uri: track.uri })}
                 data-tip="play"
                 data-for="play-tooltip"
                 data-event="click"
@@ -187,6 +151,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
                 src={getSmallestImage(track.album.images)}
                 alt={track.album.name}
                 className="w-10 mr-2"
+                loading="lazy"
               />
             )}
             <div className="flex flex-col justify-end truncate">
@@ -244,20 +209,20 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
           <div className="hidden sm:flex items-center col-start-5 col-end-5">
             {track.type === 'track' && (
               <LikeButton
-                isActive={isSaved}
-                onClick={() => handleAddToSavedTrack(track.id)}
+                isActive={isSavedTrack}
+                onClick={() => saveTrack(track)}
               />
             )}
             {track.type === 'episode' &&
-              (isSaved ? (
+              (isSavedTrack ? (
                 <MdCheck
                   className="cursor-pointer text-green-400"
-                  onClick={() => handleAddToSavedEpisode(track.id)}
+                  onClick={() => saveTrack(track)}
                 />
               ) : (
                 <MdAddCircle
                   className="cursor-pointer"
-                  onClick={() => handleAddToSavedEpisode(track.id)}
+                  onClick={() => saveTrack(track)}
                 />
               ))
             }
@@ -286,24 +251,24 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
               </ContextSubMenu>
               <ContextMenuItem onClick={() => history.push('/album/' + track.album.id)}>Go to album</ContextMenuItem>
               <MenuDivider />
-              {isLoggedIn && (
-                <ContextMenuItem onClick={() => handleAddToSavedTrack(track.id)}>
-                  {isSaved ? 'Remove from your Liked Songs' : 'Save to your Liked Songs'}
+              {userId && (
+                <ContextMenuItem onClick={() => saveTrack(track)}>
+                  {isSavedTrack ? 'Remove from your Liked Songs' : 'Save to your Liked Songs'}
                 </ContextMenuItem>
               )}
-              {onRemoveFromPlaylist && (
-                <ContextMenuItem onClick={() => onRemoveFromPlaylist(track.uri, offset)}>
+              {handleRemoveFromPlaylist && (
+                <ContextMenuItem onClick={() => handleRemoveFromPlaylist({ playlistId: '', uri: track.uri, position: offset })}>
                   Remove from this playlist
                 </ContextMenuItem>
               )}
-              {isLoggedIn && (
+              {userId && (
                 <ContextSubMenu label="Add to playlist">
-                  {playlists
-                    .filter((playlist) => playlist.owner.id === user.id)
+                  {playlists && playlists
+                    .filter((playlist) => playlist.owner.id === userId)
                     .map((playlist) => (
                       <ContextMenuItem
                         key={playlist.id}
-                        onClick={() => addToPlaylist(playlist.id, track.uri)}
+                        onClick={() => handleAddToPlaylist && handleAddToPlaylist({ playlistId: playlist.id, uris: track.uri })}
                       >
                         {playlist.name}
                       </ContextMenuItem>

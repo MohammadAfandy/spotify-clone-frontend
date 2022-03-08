@@ -6,8 +6,6 @@ import Album from '../types/Album';
 import Playlist from '../types/Playlist';
 import Show from '../types/Show';
 import Episode from '../types/Episode';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
 import { AuthContext } from '../context/auth-context';
 import { makeRequest, getArtistNames, removeNull, duration, formatDate } from '../utils/helpers';
 
@@ -29,8 +27,6 @@ const SearchResultPage: React.FC = () => {
   const [shows, setShows] = useState<Show[]>([]);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
 
-  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
-  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
   const { isLoggedIn } = useContext(AuthContext);
 
   useEffect(() => {
@@ -77,8 +73,6 @@ const SearchResultPage: React.FC = () => {
         <PlayerListTrack
           tracks={tracks.slice(0, 5)}
           showAlbum
-          currentTrack={currentTrack}
-          isPlaying={isPlaying}
           uris={tracks.map((v) => v.uri)}
           handleNext={() => {}}
           hasMore={false}
