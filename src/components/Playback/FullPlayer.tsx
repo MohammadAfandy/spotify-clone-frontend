@@ -96,7 +96,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
   return (
     <div className="flex flex-col text-lg h-full">
       <div className="flex flex-col flex-1 justify-around">
-        <div className="flex w-full justify-center">
+        <div className="flex w-full justify-center text-sm">
           <div className="cursor-pointer" onClick={handleOpenQueue}>
             {currentTrack.album?.name}
           </div>
@@ -111,7 +111,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
         <div className="flex justify-between items-center">
           <div
             ref={trackRef}
-            className="flex flex-col w-90% whitespace-nowrap overflow-hidden"
+            className="flex flex-col w-80% whitespace-nowrap overflow-hidden"
           >
             <div className={`flex w-full lg:text-2xl relative ${isOverFlow ? 'animate-marquee' : ''}`}>
               {currentTrack.type === 'track' && (
@@ -129,7 +129,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
               )}
             </div>
             <div className="flex w-full relative">
-              <div className="font-semibold">
+              <div className="font-semibold text-sm">
                 {currentTrack.artists?.map((artist: Artist, idx: number) => (
                   <Fragment key={artist.uri}>
                     <TextLink
