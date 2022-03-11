@@ -8,6 +8,8 @@ import Skeleton from '../Skeleton/Skeleton';
 import PlayButton from '../Button/PlayButton';
 import { ucwords } from '../../utils/helpers';
 
+import styles from './Card.module.css';
+
 type CardItemProps = {
   className?: string;
   name?: string;
@@ -54,7 +56,7 @@ const CardItem: React.FC<CardItemProps> = ({
   };
   
   const LoadingComponent = (
-    <div className={`card-item p-4 bg-light-black hover:bg-light-black-2 rounded-md`}>
+    <div className={`${styles.cardItem} p-4 bg-light-black hover:bg-light-black-2 rounded-md`}>
       <Skeleton className="w-full h-75% rounded-md" />
       <div className="text-sm font-bold mt-2">
         <Skeleton />
@@ -68,7 +70,7 @@ const CardItem: React.FC<CardItemProps> = ({
       {isLoading && LoadingComponent}
       {!isLoading && (
         <div
-          className={`card-item group cursor-pointer transition duration-300 ease-in-out transform p-4 bg-light-black hover:bg-light-black-2 rounded-md ${className}`}
+          className={`${styles.cardItem} group cursor-pointer transition duration-300 ease-in-out transform p-4 bg-light-black hover:bg-light-black-2 rounded-md ${className}`}
           onClick={handleClick}
         >
           <div className="relative h-75%">

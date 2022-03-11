@@ -10,7 +10,7 @@ const Footer: React.FC = ({ children }) => {
   const { isLoggedIn } = useContext(AuthContext);
 
   return (
-    <div className="fixed bottom-0 w-full h-20 z-30">
+    <div className="fixed bottom-0 w-full h-16 lg:h-20 z-30">
       {isLoggedIn ? (
           <WebPlayback />
       ) : (

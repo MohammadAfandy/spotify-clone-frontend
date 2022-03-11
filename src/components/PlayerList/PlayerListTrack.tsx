@@ -1,9 +1,19 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { AuthContext } from '../../context/auth-context';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
-import { togglePlay, toggleResume, togglePause } from '../../store/player-slice';
+import {
+  togglePlay,
+  toggleResume,
+  togglePause,
+  changeIsSaved
+} from '../../store/player-slice';
+import {
+  addSavedTrackIds,
+  removeSavedTrackIds,
+  setSavedTrackIds
+} from '../../store/playlist-slice';
 
 import Track from '../../types/Track';
 import { MdAccessTime } from 'react-icons/md';
@@ -32,7 +42,7 @@ const defaultProps: PlayerListTrackProps = {
   handleNext: () => {},
   hasMore: false,
   isIncludeEpisode: false,
-  handleRemoveFromPlaylist: ({ playlistId, uri, position }: { playlistId: string, uri: string, position?: number }) => {},
+  handleRemoveFromPlaylist: undefined,
 };
 
 const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
@@ -47,19 +57,17 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const [savedTrackIds, setSavedTrackIds] = useState<string[]>([]);
-
   useEffect(() => {
     const initialSavedTracks = tracks.filter((track) => track.is_saved).map((track) => track.id);
-    setSavedTrackIds(initialSavedTracks);
-  }, [tracks]);
+    dispatch(setSavedTrackIds(initialSavedTracks));
+  }, [tracks, dispatch]);
 
-  
   const { user } = useContext(AuthContext);
 
   const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
   const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
   const playlists = useSelector((state: RootState) => state.playlist.items);
+  const savedTrackIds = useSelector((state: RootState) => state.playlist.savedTrackIds);
 
   const handlePlayTrack = ({
     offset,
@@ -110,20 +118,25 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
       ids: id,
     };
     if (isSaved) {
-      setSavedTrackIds((prevState) => prevState.filter((v) => v !== id));
       await ApiSpotify.delete(`/me/${type}s`, { params });
+      dispatch(removeSavedTrackIds([id]));
+
+      if (currentTrack.id === id) {
+        dispatch(changeIsSaved(false));
+      }
     } else {
-      setSavedTrackIds((prevState) => [
-        ...prevState,
-        id,
-      ]);
       await ApiSpotify.put(`/me/${type}s`, {}, { params });
+      dispatch(addSavedTrackIds([id]));
+
+      if (currentTrack.id === id) {
+        dispatch(changeIsSaved(true));
+      }
     }
   };
 
   let number = 0;
   const TrackLoading = (
-    [...Array(4)].map((_, idx) => (
+    [...Array(1)].map((_, idx) => (
       <PlayerListTrackItem key={idx} isLoading />
     ))
   );

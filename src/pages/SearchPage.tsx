@@ -7,6 +7,8 @@ import { makeRequest } from '../utils/helpers';
 import GridWrapper from '../components/Grid/GridWrapper';
 import CardItem from '../components/Card/CardItem';
 
+import cardStyles from '../components/Card/Card.module.css';
+
 const SearchPage: React.FC = () => {
   const history = useHistory();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -44,7 +46,7 @@ const SearchPage: React.FC = () => {
         {!isLoading && categories.map((category) => (
           <div
             key={category.id}
-            className="card-item relative cursor-pointer transition duration-300 ease-in-out transform hover:scale-105"
+            className={`${cardStyles.cardItem} relative cursor-pointer transition duration-300 ease-in-out transform hover:scale-105`}
             onClick={() => history.push('/category/' + category.id)}
           >
             <img

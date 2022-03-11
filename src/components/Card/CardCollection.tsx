@@ -7,6 +7,9 @@ import Episode from '../../types/Episode';
 
 import PlayButton from '../Button/PlayButton';
 import Skeleton from '../Skeleton/Skeleton';
+
+import styles from './Card.module.css';
+
 type CardCollectionProps = {
   className?: string;
   uris?: string[];
@@ -64,7 +67,7 @@ const CardCollection: React.FC<CardCollectionProps> = ({
 
   return (
     <div
-      className={`group relative flex flex-col min-h-72 sm:min-h-0 h-full p-4 justify-end rounded-md cursor-pointer ${bgColor} ${className}`}
+      className={`${styles.cardCollection} group relative flex flex-col p-4 justify-end rounded-md cursor-pointer ${bgColor} ${className}`}
       onClick={handleClick}
     >
       <div className="text-justify mb-4 text-sm line-clamp-3">

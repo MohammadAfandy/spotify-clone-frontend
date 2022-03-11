@@ -19,9 +19,11 @@ import {
   changeIsPlaying,
   changeCurrentTrack,
   changePositionMs,
+  changeIsSaved,
   toggleResume,
   togglePause,
 } from '../../store/player-slice';
+import { addSavedTrackIds, removeSavedTrackIds } from '../../store/playlist-slice';
 import { RootState } from '../../store';
 import ApiSpotify from '../../utils/api-spotify';
 import Device from '../../types/Device';
@@ -56,6 +58,7 @@ import Button from '../Button/Button';
 import TextLink from '../Text/TextLink';
 import FullScreen from '../FullScreen/FullScreen';
 import DeviceSelector from './DeviceSelector';
+import LikeButton from '../Button/LikeButton';
 
 declare global {
   interface Window {
@@ -90,6 +93,7 @@ const WebPlayback: React.FC = () => {
   const location = useLocation();
   const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
   const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
+  const isSaved = useSelector((state: RootState) => state.player.isSaved);
 
   const [player, setPlayer] = useState<Player>(undefined);
   const [error, setError] = useState('');
@@ -114,13 +118,21 @@ const WebPlayback: React.FC = () => {
   const [showDeviceSelector, setShowDeviceSelector] = useState(false);
 
   useEffect(() => {
-    if (trackRef.current) {
-      if (trackRef.current.clientWidth < trackRef.current.scrollWidth) {
-        setIsOverflow(true);
-        return;
-      }
-    }
-    setIsOverflow(false);
+    const getSavedTrack = async () => {
+      const response = await ApiSpotify.get('/me/tracks/contains', {
+        params: {
+          ids: currentTrack.id,
+        },
+      });
+
+      dispatch(changeIsSaved(response.data[0]));
+    };
+
+    if (currentTrack.id) getSavedTrack();
+  }, [dispatch, currentTrack.id]);
+
+  useEffect(() => {
+    setIsOverflow(trackRef.current ? trackRef.current.clientWidth < trackRef.current.scrollWidth : false);
     setIsMobilePlayer(!!(windowWidth && windowWidth < 1024));
   }, [currentTrack.id, windowWidth, windowHeight]);
 
@@ -186,6 +198,7 @@ const WebPlayback: React.FC = () => {
         });
 
         initPlayer.addListener('player_state_changed', (state: PlaybackState) => {
+          // console.info('player_state_changed', state);
           if (state) {
             try {
               const {
@@ -374,6 +387,25 @@ const WebPlayback: React.FC = () => {
     setActiveDevice(devices.find((device: Device) => device.is_active));
   };
 
+  const handleSaveTrack = async (event: React.MouseEvent, type: string, trackId: string) => {
+    event.stopPropagation();
+
+    const params = {
+      ids: trackId,
+    };
+
+    if (isSaved) {
+      await ApiSpotify.delete(`/me/${type}s`, { params });
+      dispatch(changeIsSaved(false));
+      dispatch(removeSavedTrackIds([trackId]));
+    } else {
+      await ApiSpotify.put(`/me/${type}s`, {}, { params });
+      dispatch(changeIsSaved(true));
+      dispatch(addSavedTrackIds([trackId]));
+    }
+
+  };
+
   const getPlaybackState = useCallback(async (): Promise<void> => {
     const { data: responseData } = await ApiSpotify.get('/me/player', {
       params: { additional_types: 'track,episode' }
@@ -557,7 +589,7 @@ const WebPlayback: React.FC = () => {
   }
 
   return (
-    <div className="h-full w-full border-t-2 border-light-black-1 bg-light-black text-sm sm:text-xs">
+    <div className="h-full w-full border-t-2 border-light-black-1 bg-light-black text-xs">
       {error && (
         <div className="flex flex-col items-center justify-center h-full">
           <div className="mb-2 text-red-400">{error}</div>
@@ -577,59 +609,66 @@ const WebPlayback: React.FC = () => {
       {!error && deviceId && !showFullPlayer && (
         <div className="flex flex-col w-full h-full justify-center items-between">
           <div
-            className="grid grid-cols-3 gap-4 items-center h-85%"
+            className="grid grid-cols-12 gap-4 items-center"
             onClick={isMobilePlayer ? handleshowFullPlayer : undefined}
           >
-            <div ref={trackRef} className="flex items-center col-span-2 lg:col-span-1 whitespace-nowrap overflow-x-hidden">
-              {currentTrack && currentTrack.uri && (
-                <>
-                  <img
-                    src={getSmallestImage(currentTrack.album?.images)}
-                    alt={currentTrack.album?.name}
-                    className="pl-2 lg:pl-4 pr-4 z-10 bg-light-black"
-                  />
-                  <div className={`flex flex-col mr-2 relative ${isOverFlow ? 'animate-marquee' : ''}`}>
-                    {currentTrack.type === 'track' && (
-                      <div className="font-semibold text-sm">
-                        {currentTrack.name}
-                      </div>
-                    )}
-                    {(currentTrack.type === 'episode' && isMobilePlayer) && (
-                      <div className="font-semibold text-sm">
-                        {currentTrack.name}
-                      </div>
-                    )}
-                    {(currentTrack.type === 'episode' && !isMobilePlayer) && (
-                      <TextLink
-                        className="font-semibold text-sm"
-                        text={currentTrack.name}
-                        url={'/episode/' + currentTrack.id}
-                      />
-                    )}
-                    <div className="font-light">
-                      {isMobilePlayer && (
-                        <div>{currentTrack.artists?.map((artist) => artist.name).join(', ')}</div>
+            <div className="flex items-center col-span-9 lg:col-span-4">
+              <div ref={trackRef} className="flex items-center whitespace-nowrap overflow-x-hidden">
+                {currentTrack && currentTrack.uri && (
+                  <>
+                    <img
+                      src={getSmallestImage(currentTrack.album?.images)}
+                      alt={currentTrack.album?.name}
+                      className="w-16 lg:w-24 pl-2 lg:pl-4 pr-2 lg:pr-4 z-10 bg-light-black"
+                    />
+                    <div className={`flex flex-col mr-2 relative ${isOverFlow ? 'animate-marquee' : ''}`}>
+                      {currentTrack.type === 'track' && (
+                        <div className="font-semibold text-sm">
+                          {currentTrack.name}
+                        </div>
                       )}
-                      {!isMobilePlayer && currentTrack.artists?.map((artist, idx) => (
-                        <Fragment key={artist.uri}>
-                          <TextLink
-                            text={artist.name}
-                            url={
-                              (currentTrack.type === 'track'
-                                ? '/artist/'
-                                : '/show/') + artist.uri.split(':')[2]
-                            }
-                          />
-                          {idx !== currentTrack.artists.length - 1 && ', '}
-                        </Fragment>
-                      ))}
+                      {(currentTrack.type === 'episode' && isMobilePlayer) && (
+                        <div className="font-semibold text-sm">
+                          {currentTrack.name}
+                        </div>
+                      )}
+                      {(currentTrack.type === 'episode' && !isMobilePlayer) && (
+                        <TextLink
+                          className="font-semibold text-sm"
+                          text={currentTrack.name}
+                          url={'/episode/' + currentTrack.id}
+                        />
+                      )}
+                      <div className="font-light">
+                        {isMobilePlayer && (
+                          <div>{currentTrack.artists?.map((artist) => artist.name).join(', ')}</div>
+                        )}
+                        {!isMobilePlayer && currentTrack.artists?.map((artist, idx) => (
+                          <Fragment key={artist.uri}>
+                            <TextLink
+                              text={artist.name}
+                              url={
+                                (currentTrack.type === 'track'
+                                  ? '/artist/'
+                                  : '/show/') + artist.uri.split(':')[2]
+                              }
+                            />
+                            {idx !== currentTrack.artists.length - 1 && ', '}
+                          </Fragment>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
+              </div>
+              <LikeButton
+                className="hidden lg:flex h-6 w-6 sm:h-5 sm:w-5 ml-4 cursor-pointer"
+                isActive={isSaved}
+                onClick={(e) => handleSaveTrack(e, currentTrack.type, currentTrack.id)}
+              />
             </div>
 
-            <div className="hidden lg:flex flex-col items-center justify-around">
+            <div className="hidden lg:flex flex-col items-center justify-around col-span-4">
               <div className="flex justify-center items-center">
                 <MdShuffle
                   className="h-6 w-6 sm:h-5 sm:w-5 mx-3 cursor-pointer"
@@ -699,16 +738,21 @@ const WebPlayback: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex flex-col items-end justify-center pr-2 lg:pr-4 h-full">
+            <div className="flex flex-col items-end justify-center pr-2 lg:pr-4 h-full col-span-3 lg:col-span-4">
               <div className="flex mb-2">
+                <LikeButton
+                  className="flex lg:hidden h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer"
+                  isActive={isSaved}
+                  onClick={(e) => handleSaveTrack(e, currentTrack.type, currentTrack.id)}
+                />
                 {currentTrack && currentTrack.type === 'track' && (
                   <MdMic
-                    className={`h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer ${contextUri ? 'hidden lg:flex' : ''}`}
+                    className="hidden lg:flex h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer"
                     onClick={handleOpenLyric}
                   />
                 )}
                 <MdQueueMusic
-                  className={`h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer ${!contextUri ? 'hidden lg:flex' : ''}`}
+                  className="hidden lg:flex h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer"
                   onClick={handleOpenQueue}
                 />
                 <MdDevices
@@ -763,7 +807,7 @@ const WebPlayback: React.FC = () => {
           </div>
 
           {activeDevice && activeDevice.id !== deviceId && (
-            <div className="block lg:hidden text-green-400 text-xs text-center w-full">
+            <div className="block lg:hidden text-green-400 text-xxs text-center w-full">
               Listening on {activeDevice.name}
             </div>
           )}
@@ -792,6 +836,7 @@ const WebPlayback: React.FC = () => {
           positionMs={positionMs}
           currentTrack={currentTrack}
           isPlaying={isPlaying}
+          isSaved={isSaved}
           handlePlay={handlePlay}
           handlePrev={handlePrev}
           handleNext={handleNext}
@@ -804,6 +849,7 @@ const WebPlayback: React.FC = () => {
           handleOpenQueue={handleOpenQueue}
           handleAfterClickLink={handleAfterClickLink}
           handleShowDeviceSelector={handleShowDeviceSelector}
+          handleSaveTrack={handleSaveTrack}
         />
       )}
     </FullScreen>

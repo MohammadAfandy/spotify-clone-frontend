@@ -27,6 +27,7 @@ axiosInstance.interceptors.request.use(
       && url.startsWith('/me/player') === false
     ) {
       config.params.country = getCookie('country') || 'US';
+      config.params.market = 'from_token';
     }
 
     const accessToken = getCookie('access_token');

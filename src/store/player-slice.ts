@@ -14,6 +14,7 @@ export type PlayerState = {
   uris: string[];
   currentTrack: Track;
   isPlaying: boolean;
+  isSaved: boolean;
 };
 
 export type TogglePlayParams = {
@@ -28,6 +29,7 @@ const initialState: PlayerState = {
   uris: [],
   currentTrack: {} as Track,
   isPlaying: false,
+  isSaved: false,
 };
 
 export const togglePlay = createAsyncThunk(
@@ -133,6 +135,9 @@ export const playerSlice = createSlice({
     changeIsPlaying: (state, action: PayloadAction<boolean>) => {
       state.isPlaying = action.payload;
     },
+    changeIsSaved: (state, action: PayloadAction<boolean>) => {
+      state.isSaved = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(togglePlay.fulfilled, (state, action) => {
@@ -161,4 +166,5 @@ export const {
   changeUris,
   changeCurrentTrack,
   changeIsPlaying,
+  changeIsSaved,
 } = playerSlice.actions;

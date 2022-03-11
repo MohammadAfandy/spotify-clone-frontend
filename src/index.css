@@ -67,18 +67,12 @@
   }
 
   .content-area {
-    height: calc(100vh - theme('spacing.20'));
+    height: calc(100vh - theme('spacing.16'));
   }
 
-  .card-item {
-    min-width: 10rem;
-    min-height: 12rem;
-  }
-
-  @screen sm {
-    .card-item {
-      min-width: 12rem;
-      min-height: 14rem;
+  @screen lg {
+    .content-area {
+      height: calc(100vh - theme('spacing.20'));
     }
   }
 

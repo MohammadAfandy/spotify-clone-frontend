@@ -49,7 +49,7 @@ const PlaylistPage: React.FC = () => {
 
   const { isLoggedIn, user } = useContext(AuthContext);
 
-  const { setNextUrl, tracks, pageData, forceUpdate } = useFetchTracks(
+  const { setNextUrl, tracks, pageData, setTracks } = useFetchTracks(
     '/playlists/' + params.id + '/tracks'
   );
 
@@ -146,14 +146,15 @@ const PlaylistPage: React.FC = () => {
     await ApiSpotify.post('/playlists/' + playlist.id + '/tracks', {}, {
       params,
     });
-    forceUpdate();
+
+    const [, , trackId] = trackUri.split(':');
+    const responseTrack = await ApiSpotify.get('/tracks/' + trackId);
+    setTracks((prevState) => [...prevState, responseTrack.data]);
   };
 
   const totalDuration = tracks.reduce((acc, curr) => {
     return acc + curr.duration_ms;
   }, 0);
-
-  
 
   const handleRemoveFromPlaylist = async ({
     playlistId,
@@ -175,7 +176,7 @@ const PlaylistPage: React.FC = () => {
     await ApiSpotify.delete('/playlists/' + playlist.id + '/tracks', {
       data: body,
     });
-    forceUpdate();
+    setTracks((prevState) => prevState.filter((v) => v.uri !== uri) as Track[] & Episode[]);
   };
 
   const handleEditPlaylist = async () => {
@@ -247,7 +248,7 @@ const PlaylistPage: React.FC = () => {
           handleNext={() => setNextUrl(pageData.next)}
           hasMore={!!pageData.next}
           isIncludeEpisode
-          handleRemoveFromPlaylist={handleRemoveFromPlaylist}
+          handleRemoveFromPlaylist={isOwnPlaylist ? handleRemoveFromPlaylist : undefined}
         />
       </div>
 

@@ -63,9 +63,6 @@ module.exports = {
       screens: {
         'canhover': {'raw': '(hover: hover)'},
       },
-      minHeight: {
-        '72': '18rem',
-      },
     },
   },
   variants: {

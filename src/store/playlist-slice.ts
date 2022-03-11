@@ -1,6 +1,7 @@
 import {
   createAsyncThunk,
   createSlice,
+  PayloadAction,
 } from '@reduxjs/toolkit';
 
 import Playlist from '../types/Playlist';
@@ -8,10 +9,12 @@ import ApiSpotify from '../utils/api-spotify';
 
 export type PlaylistState = {
   items: Playlist[],
+  savedTrackIds: string[],
 };
 
 const initialState: PlaylistState = {
   items: [],
+  savedTrackIds: [],
 };
 
 export const getUserPlaylist = createAsyncThunk(
@@ -32,6 +35,18 @@ export const playlistSlice = createSlice({
   name: 'playlist',
   initialState,
   reducers: {
+    setSavedTrackIds: (state, action: PayloadAction<string[]>) => {
+      state.savedTrackIds = action.payload;
+    },
+    addSavedTrackIds: (state, action: PayloadAction<string[]>) => {
+      state.savedTrackIds = [
+        ...state.savedTrackIds,
+        ...action.payload,
+      ];
+    },
+    removeSavedTrackIds: (state, action: PayloadAction<string[]>) => {
+      state.savedTrackIds = state.savedTrackIds.filter((v) => action.payload.includes(v) === false);
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getUserPlaylist.fulfilled, (state, action) => {
@@ -42,3 +57,9 @@ export const playlistSlice = createSlice({
     });
   }
 });
+
+export const {
+  setSavedTrackIds,
+  addSavedTrackIds,
+  removeSavedTrackIds,
+} = playlistSlice.actions;

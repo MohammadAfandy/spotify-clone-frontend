@@ -33,7 +33,6 @@ type PlayerListTrackItemProps = {
   isPlaying?: boolean;
   showAlbum?: boolean;
   showDateAdded?: boolean;
-  onRemoveFromPlaylist?: (trackId: string, position?: number) => void;
   playlists?: Playlist[];
   userId?: string;
   handlePlayTrack?: ({ offset, uri }: { offset: number, uri: string }) => void;
@@ -53,13 +52,12 @@ const defaultProps: PlayerListTrackItemProps = {
   isPlaying: false,
   showAlbum: false,
   showDateAdded: false,
-  onRemoveFromPlaylist: undefined,
   playlists: [],
   userId: '',
   handlePlayTrack: ({ offset, uri }: { offset: number, uri: string }) => {},
   handlePauseTrack: () => {},
   handleAddToPlaylist: ({ playlistId, uris }: { playlistId: string, uris: string }) => {},
-  handleRemoveFromPlaylist: ({ playlistId, uri, position }: { playlistId: string, uri: string, position?: number }) => {},
+  handleRemoveFromPlaylist: undefined,
   handleAddToSavedTrack: ({ id, type, isSaved }: { id: string, type: 'episode' | 'track', isSaved: boolean }) => {},
   isLoading: false,
 };
@@ -73,7 +71,6 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
   isPlaying,
   showAlbum,
   showDateAdded,
-  onRemoveFromPlaylist,
   playlists,
   userId,
   handlePlayTrack,
@@ -256,7 +253,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
                   {isSavedTrack ? 'Remove from your Liked Songs' : 'Save to your Liked Songs'}
                 </ContextMenuItem>
               )}
-              {handleRemoveFromPlaylist && (
+              {userId && handleRemoveFromPlaylist && (
                 <ContextMenuItem onClick={() => handleRemoveFromPlaylist({ playlistId: '', uri: track.uri, position: offset })}>
                   Remove from this playlist
                 </ContextMenuItem>

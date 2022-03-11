@@ -19,6 +19,7 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import useWindowSize from '../../hooks/useWindowSize';
 import TextLink from '../Text/TextLink';
 import Artist from '../../types/Artist';
+import LikeButton from '../Button/LikeButton';
 
 type FullPlayerProps = {
   className?: string;
@@ -31,6 +32,7 @@ type FullPlayerProps = {
   positionMs: number;
   currentTrack: Record<string, any>;
   isPlaying: boolean;
+  isSaved: boolean;
   handlePlay: (event: React.MouseEvent) => Promise<void>;
   handlePrev: (event: React.MouseEvent) => Promise<void>;
   handleNext: (event: React.MouseEvent) => Promise<void>;
@@ -43,6 +45,7 @@ type FullPlayerProps = {
   handleOpenQueue: (event: React.MouseEvent) => void;
   handleAfterClickLink: () => void;
   handleShowDeviceSelector: (event: React.MouseEvent) => void;
+  handleSaveTrack: (event: React.MouseEvent, type: string, trackId: string) => void;
 };
 
 const FullPlayer: React.FC<FullPlayerProps> = ({
@@ -56,6 +59,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
   positionMs,
   currentTrack,
   isPlaying,
+  isSaved,
   handlePlay,
   handlePrev,
   handleNext,
@@ -68,6 +72,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
   handleOpenQueue,
   handleAfterClickLink,
   handleShowDeviceSelector,
+  handleSaveTrack,
 }) => {
 
   const trackRef = useRef<HTMLDivElement>(null);
@@ -89,7 +94,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
   }, [currentTrack.id, windowWidth, windowHeight]);
 
   return (
-    <div className="flex flex-col text-md md:text-sm h-full">
+    <div className="flex flex-col text-lg h-full">
       <div className="flex flex-col flex-1 justify-around">
         <div className="flex w-full justify-center">
           <div className="cursor-pointer" onClick={handleOpenQueue}>
@@ -103,43 +108,50 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
             className="rounded-md h-3/4 sm:h-full"
           />
         </div>
-        <div
-          ref={trackRef}
-          className="flex flex-col w-full whitespace-nowrap overflow-hidden"
-        >
-          <div className={`flex w-full text-2xl md:text-4xl relative ${isOverFlow ? 'animate-marquee' : ''}`}>
-            {currentTrack.type === 'track' && (
+        <div className="flex justify-between items-center">
+          <div
+            ref={trackRef}
+            className="flex flex-col w-90% whitespace-nowrap overflow-hidden"
+          >
+            <div className={`flex w-full lg:text-2xl relative ${isOverFlow ? 'animate-marquee' : ''}`}>
+              {currentTrack.type === 'track' && (
+                <div className="font-semibold">
+                  {currentTrack.name}
+                </div>
+              )}
+              {currentTrack.type === 'episode' && (
+                <TextLink
+                  className="font-semibold"
+                  text={currentTrack.name}
+                  url={'/episode/' + currentTrack.id}
+                  afterClick={handleAfterClickLink}
+                />
+              )}
+            </div>
+            <div className="flex w-full relative">
               <div className="font-semibold">
-                {currentTrack.name}
+                {currentTrack.artists?.map((artist: Artist, idx: number) => (
+                  <Fragment key={artist.uri}>
+                    <TextLink
+                      text={artist.name}
+                      url={
+                        (currentTrack.type === 'track'
+                          ? '/artist/'
+                          : '/show/') + artist.uri.split(':')[2]
+                      }
+                      afterClick={handleAfterClickLink}
+                    />
+                    {idx !== currentTrack.artists.length - 1 && ', '}
+                  </Fragment>
+                ))}
               </div>
-            )}
-            {currentTrack.type === 'episode' && (
-              <TextLink
-                className="font-semibold"
-                text={currentTrack.name}
-                url={'/episode/' + currentTrack.id}
-                afterClick={handleAfterClickLink}
-              />
-            )}
-          </div>
-          <div className="flex w-full relative">
-            <div className="font-semibold">
-              {currentTrack.artists?.map((artist: Artist, idx: number) => (
-                <Fragment key={artist.uri}>
-                  <TextLink
-                    text={artist.name}
-                    url={
-                      (currentTrack.type === 'track'
-                        ? '/artist/'
-                        : '/show/') + artist.uri.split(':')[2]
-                    }
-                    afterClick={handleAfterClickLink}
-                  />
-                  {idx !== currentTrack.artists.length - 1 && ', '}
-                </Fragment>
-              ))}
             </div>
           </div>
+          <LikeButton
+            className="h-8 w-8 cursor-pointer"
+            isActive={isSaved}
+            onClick={(e) => handleSaveTrack(e, currentTrack.type, currentTrack.id)}
+          />
         </div>
       </div>
       <div className="flex flex-col mt-2">

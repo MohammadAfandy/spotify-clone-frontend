@@ -1,0 +1,30 @@
+.cardItem {
+  width: 10rem;
+  min-width: 10rem;
+  height: 12rem;
+  min-height: 12rem;
+}
+
+:global(.grid-wrapper) .cardCollection {
+  width: auto;
+  height: 18rem;
+}
+
+:global(.grid-wrapper) .cardItem {
+  width: auto;
+  height: 100%;
+}
+
+@screen sm {
+  .cardItem {
+    width: 12rem;
+    min-width: 12rem;
+    height: 14rem;
+    min-height: 14rem;
+  }
+
+  :global(.grid-wrapper) .cardCollection {
+    width: auto;
+    height: 100%;
+  }
+}
