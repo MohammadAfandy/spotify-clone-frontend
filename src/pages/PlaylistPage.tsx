@@ -5,12 +5,13 @@ import Track from '../types/Track';
 import Episode from '../types/Episode';
 import ApiSpotify from '../utils/api-spotify';
 import { AuthContext } from '../context/auth-context';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../store';
 import { togglePlay } from '../store/player-slice';
 import { addTrackToPlaylist, getUserPlaylist, removeTrackFromPlaylist } from '../store/playlist-slice';
 import { getHighestImage, duration, makeRequest } from '../utils/helpers';
 import useFetchTracks from '../hooks/useFetchTracks';
 import { toast } from 'react-toastify';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
 import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
@@ -34,7 +35,7 @@ const initialPlaylistForm = {
 };
 
 const PlaylistPage: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const history = useHistory();
   const params = useParams<{ id: string }>();
   const [playlist, setPlaylist] = useState<Playlist>(Object);
@@ -62,7 +63,7 @@ const PlaylistPage: React.FC = () => {
       try {
         setIsLoading(true);
         const dataPlaylist = await makeRequest('/playlists/' + params.id, {}, isLoggedIn);
-        if (isLoggedIn) {
+        if (isLoggedIn && user.id) {
           const dataFollowed = await ApiSpotify.get('/playlists/' + params.id + '/followers/contains', {
             params: {
               ids: user.id,
@@ -170,18 +171,21 @@ const PlaylistPage: React.FC = () => {
       playlistId: playlist.id,
       trackUri,
       position,
-    }));
-    setTracks((prevState) => {
-      const newState = [...prevState];
-      const trackIdx = prevState.findIndex((v, idx) => {
-        return v.uri === trackUri && idx === position;
-      });
-      if (trackIdx !== -1) {
-        newState.splice(trackIdx, 1);
-        return newState;
-      }
-      return prevState;
-    });
+    }))
+      .then(unwrapResult)
+      .then(() => {
+        setTracks((prevState) => {
+          const newState = [...prevState];
+          const trackIdx = prevState.findIndex((v, idx) => {
+            return v.uri === trackUri && idx === position;
+          });
+          if (trackIdx !== -1) {
+            newState.splice(trackIdx, 1);
+            return newState;
+          }
+          return prevState;
+        });
+      }).catch(console.error);
   };
 
   const handleEditPlaylist = async () => {

@@ -4,7 +4,9 @@ import {
   setCookie,
   // sleep,
 } from './helpers';
-import { ACCESS_TOKEN_AGE, BACKEND_URI, SPOTIFY_URI } from './constants';
+import ApiBackend from './api-backend';
+import { ACCESS_TOKEN_AGE, SPOTIFY_URI } from './constants';
+import { toast } from 'react-toastify';
 
 const axiosInstance = axios.create({
   baseURL: SPOTIFY_URI,
@@ -61,22 +63,21 @@ axiosInstance.interceptors.response.use(
       // refresh token when expired or access cookie token is deleted
       if (isExpired || !accessToken) {
         originalRequest._retry = true;
-  
-        const response = await fetch(BACKEND_URI + '/refresh_token', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          // body: JSON.stringify({ refresh_token: refreshToken }),
-        });
-        const res = await response.json();
-        if (res.access_token) {
-          setCookie('access_token', res.access_token, { expires: ACCESS_TOKEN_AGE });
+
+        const response = await ApiBackend.post('/refresh_token', {}, {
+          withCredentials: true,
+        }).catch(console.error);
+        const accessToken = response?.data?.access_token;
+        if (accessToken) {
+          setCookie('access_token', accessToken, { expires: ACCESS_TOKEN_AGE });
           return axiosInstance(originalRequest);
         }
       }
     }
+
+    const errorMessage = error?.response?.data?.error?.message;
+    toast.error(errorMessage || `Something went wrong`);
+
     return Promise.reject(error);
   }
 );

@@ -4,6 +4,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 
+import axios from 'axios';
 import { toast } from 'react-toastify';
 
 import Playlist from '../types/Playlist';
@@ -40,6 +41,9 @@ export const getUserPlaylist = createAsyncThunk(
       });
       return response.data.items;
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      }
       return rejectWithValue(error);
     }
   },
@@ -55,12 +59,15 @@ export const addTrackToPlaylist = createAsyncThunk(
     };
 
     try {
-      await ApiSpotify.post('/playlists/' + playlistId + '/tracks', {}, {
+      const response = await ApiSpotify.post('/playlists/' + playlistId + '/tracks', {}, {
         params,
       });
       toast.info(`Added to Playlist`);
-      return data;
+      return response;
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      }
       return rejectWithValue(error);
     }
   },
@@ -80,12 +87,15 @@ export const removeTrackFromPlaylist = createAsyncThunk(
     };
 
     try {
-      await ApiSpotify.delete('/playlists/' + playlistId + '/tracks', {
+      const response = await ApiSpotify.delete('/playlists/' + playlistId + '/tracks', {
         data: body,
       });
       toast.info(`Removed from Playlist`);
-      return data;
+      return response;
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      }
       return rejectWithValue(error);
     }
   },
@@ -107,6 +117,9 @@ export const addToSavedTrack = createAsyncThunk(
       toast.info(`Added to Your Liked ${ucwords(type)}s`);
       return data;
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      }
       return rejectWithValue(error);
     }
   },
@@ -128,6 +141,9 @@ export const removeFromSavedTrack = createAsyncThunk(
       await ApiSpotify.delete(`/me/${type}s`, { params });
       return data;
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      }
       return rejectWithValue(error);
     }
   },

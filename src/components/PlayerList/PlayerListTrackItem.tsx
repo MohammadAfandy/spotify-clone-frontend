@@ -260,7 +260,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
               )}
               direction="left"
             >
-              {track.type === 'artist' && (
+              {track.type === 'track' && (
                 <ContextSubMenu label="Go to artist">
                   {track.artists && track.artists.map((artist) => (
                     <ContextMenuItem

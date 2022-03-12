@@ -98,8 +98,6 @@ const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
     </>
   );
 
-  console.log({ episode });
-
   return (
     <div
       className="group flex items-center px-2 py-4 border-t-2 border-opacity-10 hover:bg-gray-500 hover:bg-opacity-25"

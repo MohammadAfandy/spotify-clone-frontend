@@ -32,6 +32,7 @@ import {
 } from '../../store/playlist-slice';
 import { RootState } from '../../store';
 import ApiSpotify from '../../utils/api-spotify';
+import ApiBackend from '../../utils/api-backend';
 import Device from '../../types/Device';
 import RepeatMode from '../../types/RepeatMode';
 import Player from '../../types/Player';
@@ -60,7 +61,7 @@ import {
 import { FiMaximize2 } from 'react-icons/fi';
 import FullPlayer from './FullPlayer';
 import useWindowSize from '../../hooks/useWindowSize';
-import { ACCESS_TOKEN_AGE, APP_NAME, BACKEND_URI, PLAYER_NAME } from '../../utils/constants';
+import { ACCESS_TOKEN_AGE, APP_NAME, PLAYER_NAME } from '../../utils/constants';
 
 import Button from '../Button/Button';
 import TextLink from '../Text/TextLink';
@@ -162,16 +163,10 @@ const WebPlayback: React.FC = () => {
       initPlayer = new window.Spotify.Player({
         name: CURRENT_PLAYER_NAME,
         getOAuthToken: async (cb: (token: string) => {}) => {
-          const response = await fetch(BACKEND_URI + '/refresh_token', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            // body: JSON.stringify({ refresh_token: refreshToken }),
-            credentials: 'include',
-          });
-          const res = await response.json();
-          const accessToken = res.access_token;
+          const response = await ApiBackend.post('/refresh_token', {}, {
+            withCredentials: true,
+          }).catch(console.error);
+          const accessToken = response?.data?.access_token;
           if (accessToken) {
             setCookie('access_token', accessToken, { expires: ACCESS_TOKEN_AGE });
             cb(accessToken);
