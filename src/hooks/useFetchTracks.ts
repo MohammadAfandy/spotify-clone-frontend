@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import ApiSpotify from '../utils/api-spotify';
 import Track from '../types/Track';
 import Episode from '../types/Episode';
@@ -6,8 +7,11 @@ import Page from '../types/Page';
 import { AuthContext } from '../context/auth-context';
 import { ITEM_LIST_LIMIT } from '../utils/constants';
 import { makeRequest } from '../utils/helpers';
+import { addSavedTrackIds, setSavedTrackIds } from '../store/playlist-slice';
 
 const useFetchTracks = (url: string) => {
+  const dispatch = useDispatch();
+
   const [nextUrl, setNextUrl] = useState<string | null>(null);
   const [pageData, setPageData] = useState<Page>({} as Page);
   const [tracks, setTracks] = useState<Track[] & Episode[]>([]);
@@ -119,9 +123,15 @@ const useFetchTracks = (url: string) => {
         }
       }
 
+      const allSavedTracksIds = [
+        ...trackListContain.filter((track) => track.is_saved).map((track) => track.id),
+        ...episodeListContain.filter((episode) => episode.is_saved).map((episode) => episode.id),
+      ];
       if (nextUrl) {
         setTracks((prevState) => [...prevState, ...finalResult]);
+        dispatch(addSavedTrackIds(allSavedTracksIds));
       } else {
+        dispatch(setSavedTrackIds(allSavedTracksIds));
         setTracks(finalResult);
       }
 
@@ -130,7 +140,7 @@ const useFetchTracks = (url: string) => {
     } finally {
       setIsLoading(false);
     }
-  }, [nextUrl, url, isLoggedIn]);
+  }, [dispatch, nextUrl, url, isLoggedIn]);
 
   useEffect(() => {
     fetchTracks();

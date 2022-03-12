@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthContext } from '../../context/auth-context';
@@ -10,7 +10,6 @@ import {
   PlaylistTrackParams,
   removeFromSavedTrack,
   SavedTrackParams,
-  setSavedTrackIds
 } from '../../store/playlist-slice';
 import Episode from '../../types/Episode';
 
@@ -39,11 +38,6 @@ const PlayerListEpisode: React.FC<PlayerListEpisodeProps> = ({
   const dispatch = useDispatch();
 
   const { user } = useContext(AuthContext);
-
-  useEffect(() => {
-    const initialSavedEpisodes = episodes.filter((episode) => episode.is_saved).map((episode) => episode.id);
-    dispatch(setSavedTrackIds(initialSavedEpisodes));
-  }, [episodes, dispatch]);
 
   const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
   const isPlaying = useSelector((state: RootState) => state.player.isPlaying);

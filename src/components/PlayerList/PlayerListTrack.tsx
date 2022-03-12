@@ -1,4 +1,4 @@
-import { useEffect, useContext } from 'react';
+import { useContext } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { AuthContext } from '../../context/auth-context';
 import { useSelector, useDispatch } from 'react-redux';
@@ -15,10 +15,10 @@ import {
   PlaylistTrackParams,
   removeFromSavedTrack,
   SavedTrackParams,
-  setSavedTrackIds
 } from '../../store/playlist-slice';
 
 import Track from '../../types/Track';
+import Episode from '../../types/Episode';
 import { MdAccessTime } from 'react-icons/md';
 
 import PlayerListTrackItem from './PlayerListTrackItem';
@@ -59,17 +59,13 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const initialSavedTracks = tracks.filter((track) => track.is_saved).map((track) => track.id);
-    dispatch(setSavedTrackIds(initialSavedTracks));
-  }, [tracks, dispatch]);
-
   const { user } = useContext(AuthContext);
 
   const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
   const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
   const playlists = useSelector((state: RootState) => state.playlist.items);
   const savedTrackIds = useSelector((state: RootState) => state.playlist.savedTrackIds);
+  console.log({ savedTrackIds });
 
   const handlePlayTrack = ({
     offset,
@@ -153,13 +149,13 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
               return (
                 <PlayerListTrackItem
                   key={track.id + '-' + idx}
-                  track={track}
+                  track={track as Track & Episode}
                   isSavedTrack={savedTrackIds.includes(track.id)}
                   offset={idx}
                   number={number}
                   showAlbum={showAlbum}
                   showDateAdded={showDateAdded}
-                  currentTrack={currentTrack as Track}
+                  currentTrack={currentTrack}
                   isPlaying={isPlaying}
                   playlists={playlists}
                   userId={user.id}

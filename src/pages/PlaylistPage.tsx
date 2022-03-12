@@ -50,9 +50,12 @@ const PlaylistPage: React.FC = () => {
 
   const { isLoggedIn, user } = useContext(AuthContext);
 
-  const { setNextUrl, tracks, pageData, setTracks } = useFetchTracks(
-    '/playlists/' + params.id + '/tracks'
-  );
+  const {
+    setNextUrl,
+    tracks,
+    pageData,
+    setTracks
+  } = useFetchTracks('/playlists/' + params.id + '/tracks?additional_types=track,episode');
 
   useEffect(() => {
     const fetchPlaylist = async () => {
@@ -67,7 +70,7 @@ const PlaylistPage: React.FC = () => {
           });
           setIsFollowed(dataFollowed.data[0]);
         }
-  
+
         setPlaylist(dataPlaylist.data);
         setIsOwnPlaylist(dataPlaylist.data.owner.id === user.id);
       } catch (error) {

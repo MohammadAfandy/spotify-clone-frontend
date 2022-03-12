@@ -14,6 +14,7 @@ import {
 import Track from '../../types/Track';
 import { getSmallestImage, duration, fromNow, ucwords } from '../../utils/helpers';
 import Playlist from '../../types/Playlist';
+import Episode from '../../types/Episode';
 
 import LikeButton from '../Button/LikeButton';
 import ContextMenu from '../ContextMenu/ContextMenu';
@@ -26,11 +27,11 @@ import ReactTooltip from 'react-tooltip';
 import { PlaylistTrackParams, SavedTrackParams } from '../../store/playlist-slice';
 
 type PlayerListTrackItemProps = {
-  track?: Track;
+  track?: Track & Episode;
   isSavedTrack?: boolean;
   offset?: number;
   number?: number;
-  currentTrack?: Track;
+  currentTrack?: Track & Episode;
   isPlaying?: boolean;
   showAlbum?: boolean;
   showDateAdded?: boolean;
@@ -46,11 +47,11 @@ type PlayerListTrackItemProps = {
 };
 
 const defaultProps: PlayerListTrackItemProps = {
-  track: {} as Track,
+  track: {} as Track & Episode,
   isSavedTrack: false,
   offset: 0,
   number: 0,
-  currentTrack: {} as Track,
+  currentTrack: {} as Track & Episode,
   isPlaying: false,
   showAlbum: false,
   showDateAdded: false,
@@ -151,10 +152,10 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
             )}
           </div>
           <div className="flex items-center flex-grow min-w-0 col-start-2 col-end-2">
-            {showAlbum && track.album && (
+            {showAlbum && (
               <img
-                src={getSmallestImage(track.album.images)}
-                alt={track.album.name}
+                src={track.type === 'track' ? getSmallestImage(track.album.images) : getSmallestImage(track.images)}
+                alt={track.type === 'track' ? track.album.name : track.show.name}
                 className="w-10 mr-2"
                 loading="lazy"
               />
@@ -177,32 +178,46 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
               )}
               <div className="flex font-light truncate">
                 {track.explicit && <Explicit />}
-                {track.artists &&
+                {track.type === 'track' && track.artists &&
                   track.artists.map((artist, idx) => (
                     <Fragment key={artist.id}>
                       <TextLink
                         className="hidden sm:block"
                         text={artist.name}
-                        url={
-                          (track.type === 'track' ? '/artist/' : '/show/') +
-                          artist.id
-                        }
+                        url={'/artist/' + artist.id}
                       />
                       <div className="block sm:hidden">
                         {artist.name}
                       </div>
                       {idx !== track.artists.length - 1 && <span>,&nbsp;</span>}
                     </Fragment>
-                  ))}
+                  ))
+                }
+                {track.type === 'episode' && track.show && (
+                  <TextLink
+                    className="hidden sm:block"
+                    text={track.show.name}
+                    url={'/show/' + track.show.id}
+                  />
+                )}
               </div>
             </div>
           </div>
-          {showAlbum && track.album && (
+          {showAlbum && track.type === 'track' && track.album && (
             <div className="hidden lg:flex items-center min-w-0 col-start-3 col-end-3">
               <TextLink
                 className="truncate"
                 text={track.album.name}
                 url={'/album/' + track.album.id}
+              />
+            </div>
+          )}
+          {showAlbum && track.type === 'episode' && track.show && (
+            <div className="hidden lg:flex items-center min-w-0 col-start-3 col-end-3">
+              <TextLink
+                className="truncate"
+                text={track.show.name}
+                url={'/show/' + track.show.id}
               />
             </div>
           )}
@@ -245,16 +260,23 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
               )}
               direction="left"
             >
-              <ContextSubMenu label="Go to artist">
-                {track.artists && track.artists.map((artist) => (
-                  <ContextMenuItem
-                    key={artist.id}
-                    onClick={() => history.push((track.type === 'track' ? '/artist/' : '/show/') + artist.id)}
-                  >
-                    {artist.name}
-                  </ContextMenuItem>
-                ))}
-              </ContextSubMenu>
+              {track.type === 'artist' && (
+                <ContextSubMenu label="Go to artist">
+                  {track.artists && track.artists.map((artist) => (
+                    <ContextMenuItem
+                      key={artist.id}
+                      onClick={() => history.push((track.type === 'track' ? '/artist/' : '/show/') + artist.id)}
+                    >
+                      {artist.name}
+                    </ContextMenuItem>
+                  ))}
+                </ContextSubMenu>
+              )}
+              {track.type === 'episode' && track.show && (
+                <ContextMenuItem onClick={() => history.push('/show/' + track.show.id)}>
+                  Go to podcast
+                </ContextMenuItem>
+              )}
               {track.type === 'track' && (
                 <ContextMenuItem onClick={() => history.push('/album/' + track.album.id)}>
                   Go to album
