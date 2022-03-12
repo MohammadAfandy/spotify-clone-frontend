@@ -85,8 +85,6 @@ const PlayerListEpisode: React.FC<PlayerListEpisodeProps> = ({
     ))
   );
 
-  console.log({ savedTrackIds });
-
   return (
     <div className="flex flex-col">
       {episodes && (

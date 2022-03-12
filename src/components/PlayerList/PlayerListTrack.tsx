@@ -65,7 +65,6 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
   const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
   const playlists = useSelector((state: RootState) => state.playlist.items);
   const savedTrackIds = useSelector((state: RootState) => state.playlist.savedTrackIds);
-  console.log({ savedTrackIds });
 
   const handlePlayTrack = ({
     offset,
