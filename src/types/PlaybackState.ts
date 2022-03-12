@@ -1,11 +1,12 @@
 
+import Episode from './Episode';
 import Track from './Track';
 
 type PlaybackState = {
   track_window: {
-    current_track: Track;
-    next_tracks: Track[];
-    previous_tracks: Track[];
+    current_track: Track & Episode;
+    next_tracks: Track[] & Episode[];
+    previous_tracks: Track[] & Episode[];
   };
   context: {
     uri: string;

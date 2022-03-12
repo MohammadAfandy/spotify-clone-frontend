@@ -12,7 +12,7 @@ import { getUserPlaylist } from '../../store/playlist-slice';
 import { RootState } from '../../store';
 import { AuthContext } from '../../context/auth-context';
 import ApiSpotify from '../../utils/api-spotify';
-import { EPISODE_LOGO_IMAGE, LIKED_SONG_IMAGE } from '../../utils/constants';
+import { APP_NAME, EPISODE_LOGO_IMAGE, LIKED_SONG_IMAGE } from '../../utils/constants';
 import { getHighestImage } from '../../utils/helpers';
 
 import NavbarLink from './NavbarLink';
@@ -84,7 +84,7 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
   return (
     <nav className={`content-area ${styles.navbar} ${isNavOpen ? styles.open : ''}`}>
       <div className="flex items-center px-6 mb-8 text-2xl">
-        <div className="mr-auto">Spotify Clone</div>
+        <div className="mr-auto">{APP_NAME}</div>
         <MdClose
           className="block sm:hidden"
           onClick={() => handleIsNavOpen(false)}

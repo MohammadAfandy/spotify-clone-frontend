@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Artist from '../types/Artist';
 import Album from '../types/Album';
 import ApiSpotify from '../utils/api-spotify';
@@ -75,6 +76,7 @@ const ArtistPage: React.FC = () => {
 
   const handleFollow = async () => {
     let response;
+    let toastMessage = '';
     if (isFollowed) {
       response = await ApiSpotify.delete('/me/following', {
         params: {
@@ -82,6 +84,7 @@ const ArtistPage: React.FC = () => {
           ids: artist.id,
         },
       });
+      toastMessage = 'Removed from Your Library';
     } else {
       response = await ApiSpotify.put('/me/following', {}, {
         params: {
@@ -89,9 +92,11 @@ const ArtistPage: React.FC = () => {
           ids: artist.id,
         },
       });
+      toastMessage = 'Saved to Your Library';
     }
     if (response.status === 204) {
       setIsFollowed((prevState) => !prevState);
+      toast.info(toastMessage);
     }
   };
 

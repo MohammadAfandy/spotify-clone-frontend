@@ -3,8 +3,8 @@ import {
   MdAddCircle,
   MdPlayArrow,
   MdPause,
-  MdCheck,
   MdOutlineMoreVert,
+  MdCheckCircle,
 } from 'react-icons/md';
 import { useHistory } from 'react-router-dom';
 import {
@@ -12,7 +12,7 @@ import {
   MenuButton,
 } from '@szhsin/react-menu';
 import Track from '../../types/Track';
-import { getSmallestImage, duration, fromNow } from '../../utils/helpers';
+import { getSmallestImage, duration, fromNow, ucwords } from '../../utils/helpers';
 import Playlist from '../../types/Playlist';
 
 import LikeButton from '../Button/LikeButton';
@@ -23,6 +23,7 @@ import Explicit from '../Text/Explicit';
 import TextLink from '../Text/TextLink';
 import Skeleton from '../Skeleton/Skeleton';
 import ReactTooltip from 'react-tooltip';
+import { PlaylistTrackParams, SavedTrackParams } from '../../store/playlist-slice';
 
 type PlayerListTrackItemProps = {
   track?: Track;
@@ -37,9 +38,10 @@ type PlayerListTrackItemProps = {
   userId?: string;
   handlePlayTrack?: ({ offset, uri }: { offset: number, uri: string }) => void;
   handlePauseTrack?: () => void;
-  handleAddToPlaylist?: ({ playlistId, uris }: { playlistId: string, uris: string }) => void;
-  handleRemoveFromPlaylist?: ({ playlistId, uri, position }: { playlistId: string, uri: string, position?: number }) => void;
-  handleAddToSavedTrack?: ({ id, type, isSaved }: { id: string, type: 'episode' | 'track', isSaved: boolean }) => void;
+  handleAddTrackToPlaylist?: (args: PlaylistTrackParams) => void;
+  handleRemoveFromPlaylist?: ({ trackUri, position }: { trackUri: string, position?: number }) => void;
+  handleAddToSavedTrack?: (args: SavedTrackParams) => void;
+  handleRemoveFromSavedTrack?: (args: SavedTrackParams) => void;
   isLoading?: boolean;
 };
 
@@ -56,9 +58,10 @@ const defaultProps: PlayerListTrackItemProps = {
   userId: '',
   handlePlayTrack: ({ offset, uri }: { offset: number, uri: string }) => {},
   handlePauseTrack: () => {},
-  handleAddToPlaylist: ({ playlistId, uris }: { playlistId: string, uris: string }) => {},
+  handleAddTrackToPlaylist: undefined,
   handleRemoveFromPlaylist: undefined,
-  handleAddToSavedTrack: ({ id, type, isSaved }: { id: string, type: 'episode' | 'track', isSaved: boolean }) => {},
+  handleAddToSavedTrack: undefined,
+  handleRemoveFromSavedTrack: undefined,
   isLoading: false,
 };
 
@@ -75,9 +78,10 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
   userId,
   handlePlayTrack,
   handlePauseTrack,
-  handleAddToPlaylist,
+  handleAddTrackToPlaylist,
   handleRemoveFromPlaylist,
   handleAddToSavedTrack,
+  handleRemoveFromSavedTrack,
   isLoading,
 }) => {
   const history = useHistory();
@@ -87,11 +91,15 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
   }, []);
 
   const saveTrack = (track: Track) => {
-    handleAddToSavedTrack && handleAddToSavedTrack({
-      id: track.id,
+    const params = {
       type: track.type,
-      isSaved: isSavedTrack as boolean,
-    });
+      trackId: track.id,
+    };
+    if (isSavedTrack) {
+      handleRemoveFromSavedTrack && handleRemoveFromSavedTrack(params);
+    } else {
+      handleAddToSavedTrack && handleAddToSavedTrack(params);
+    }
   }
 
   const LoadingComponent = (
@@ -206,19 +214,20 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
           <div className="hidden sm:flex items-center col-start-5 col-end-5">
             {track.type === 'track' && (
               <LikeButton
+                className="w-6 h-6"
                 isActive={isSavedTrack}
                 onClick={() => saveTrack(track)}
               />
             )}
             {track.type === 'episode' &&
               (isSavedTrack ? (
-                <MdCheck
-                  className="cursor-pointer text-green-400"
+                <MdCheckCircle
+                  className="w-6 h-6 cursor-pointer text-green-400"
                   onClick={() => saveTrack(track)}
                 />
               ) : (
                 <MdAddCircle
-                  className="cursor-pointer"
+                  className="w-6 h-6 cursor-pointer"
                   onClick={() => saveTrack(track)}
                 />
               ))
@@ -246,15 +255,19 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
                   </ContextMenuItem>
                 ))}
               </ContextSubMenu>
-              <ContextMenuItem onClick={() => history.push('/album/' + track.album.id)}>Go to album</ContextMenuItem>
+              {track.type === 'track' && (
+                <ContextMenuItem onClick={() => history.push('/album/' + track.album.id)}>
+                  Go to album
+                </ContextMenuItem>
+              )}
               <MenuDivider />
               {userId && (
                 <ContextMenuItem onClick={() => saveTrack(track)}>
-                  {isSavedTrack ? 'Remove from your Liked Songs' : 'Save to your Liked Songs'}
+                  {isSavedTrack ? `Remove from your Liked ${ucwords(track.type)}s` : `Save to your Liked ${ucwords(track.type)}s`}
                 </ContextMenuItem>
               )}
               {userId && handleRemoveFromPlaylist && (
-                <ContextMenuItem onClick={() => handleRemoveFromPlaylist({ playlistId: '', uri: track.uri, position: offset })}>
+                <ContextMenuItem onClick={() => handleRemoveFromPlaylist({ trackUri: track.uri, position: offset })}>
                   Remove from this playlist
                 </ContextMenuItem>
               )}
@@ -265,7 +278,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
                     .map((playlist) => (
                       <ContextMenuItem
                         key={playlist.id}
-                        onClick={() => handleAddToPlaylist && handleAddToPlaylist({ playlistId: playlist.id, uris: track.uri })}
+                        onClick={() => handleAddTrackToPlaylist && handleAddTrackToPlaylist({ playlistId: playlist.id, trackUri: track.uri })}
                       >
                         {playlist.name}
                       </ContextMenuItem>

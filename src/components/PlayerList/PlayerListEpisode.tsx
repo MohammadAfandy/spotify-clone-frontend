@@ -1,34 +1,97 @@
+import { useContext, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useDispatch, useSelector } from 'react-redux';
+import { AuthContext } from '../../context/auth-context';
+import { RootState } from '../../store';
+import { changeIsSaved, togglePause, togglePlay, toggleResume } from '../../store/player-slice';
+import {
+  addToSavedTrack,
+  addTrackToPlaylist,
+  PlaylistTrackParams,
+  removeFromSavedTrack,
+  SavedTrackParams,
+  setSavedTrackIds
+} from '../../store/playlist-slice';
 import Episode from '../../types/Episode';
 
 import PlayerListEpisodeItem from './PlayerListEpisodeItem';
 
 type PlayerListEpisodeProps = {
   episodes: Episode[];
-  handlePlayEpisode: (offset: number, positionMs: number) => void;
+  uris: string[];
   handleNext: () => void;
   hasMore: boolean;
 };
 
 const defaultProps: PlayerListEpisodeProps = {
   episodes: [],
-  handlePlayEpisode: (offset: number, positionMs: number) => {},
+  uris: [],
   handleNext: () => {},
   hasMore: false,
 };
 
 const PlayerListEpisode: React.FC<PlayerListEpisodeProps> = ({
   episodes,
-  handlePlayEpisode,
+  uris,
   handleNext,
   hasMore,
 }) => {
+  const dispatch = useDispatch();
+
+  const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    const initialSavedEpisodes = episodes.filter((episode) => episode.is_saved).map((episode) => episode.id);
+    dispatch(setSavedTrackIds(initialSavedEpisodes));
+  }, [episodes, dispatch]);
+
+  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
+  const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
+  const playlists = useSelector((state: RootState) => state.playlist.items);
+  const savedTrackIds = useSelector((state: RootState) => state.playlist.savedTrackIds);
+
+  const handlePlayEpisode = ({
+    offset,
+    uri,
+  }: {
+    offset: number,
+    uri: string,
+  }) => {
+    if (currentTrack && uri === currentTrack.uri) {
+      dispatch(toggleResume());
+    } else {
+      dispatch(togglePlay({
+        uris,
+        offset,
+      }));
+    }
+  };
+
+  const handlePauseEpisode = () => {
+    dispatch(togglePause());
+  };
+
+  const handleAddEpisodeToPlaylist = ({ playlistId, trackUri }: PlaylistTrackParams) => {
+    dispatch(addTrackToPlaylist({ playlistId, trackUri }));
+  };
+
+  const handleAddToSavedEpisode = ({ type, trackId }: SavedTrackParams) => {
+    dispatch(addToSavedTrack({ type, trackId }));
+    currentTrack.id === trackId && dispatch(changeIsSaved(true));
+  };
+
+  const handleRemoveFromSavedEpisode = ({ type, trackId }: SavedTrackParams) => {
+    dispatch(removeFromSavedTrack({ type, trackId }));
+    currentTrack.id === trackId && dispatch(changeIsSaved(false));
+  };
 
   const EpisodeLoading = (
-    [...Array(4)].map((_, idx) => (
+    [...Array(1)].map((_, idx) => (
       <PlayerListEpisodeItem key={idx} isLoading />
     ))
   );
+
+  console.log({ savedTrackIds });
 
   return (
     <div className="flex flex-col">
@@ -44,8 +107,18 @@ const PlayerListEpisode: React.FC<PlayerListEpisodeProps> = ({
             <PlayerListEpisodeItem
               key={episode.id}
               episode={episode}
+              offset={idx}
               number={idx + 1}
+              isSavedEpisode={savedTrackIds.includes(episode.id)}
+              currentEpisode={currentTrack as Episode}
+              isPlaying={isPlaying}
+              playlists={playlists}
+              userId={user.id}
               handlePlayEpisode={handlePlayEpisode}
+              handlePauseEpisode={handlePauseEpisode}
+              handleAddToSavedEpisode={handleAddToSavedEpisode}
+              handleRemoveFromSavedEpisode={handleRemoveFromSavedEpisode}
+              handleAddEpisodeToPlaylist={handleAddEpisodeToPlaylist}
             />
           ))}
         </InfiniteScroll>

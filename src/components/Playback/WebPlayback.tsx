@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import {
   getCookie,
   setCookie,
@@ -14,6 +15,7 @@ import {
   duration as durationFn,
   randomAlphaNumeric,
   sleep,
+  getArtistNames,
 } from '../../utils/helpers';
 import {
   changeIsPlaying,
@@ -23,7 +25,11 @@ import {
   toggleResume,
   togglePause,
 } from '../../store/player-slice';
-import { addSavedTrackIds, removeSavedTrackIds } from '../../store/playlist-slice';
+import {
+  addToSavedTrack,
+  removeFromSavedTrack,
+  SavedTrackParams,
+} from '../../store/playlist-slice';
 import { RootState } from '../../store';
 import ApiSpotify from '../../utils/api-spotify';
 import Device from '../../types/Device';
@@ -48,11 +54,13 @@ import {
   MdForward10,
   MdReplay10,
   MdQueueMusic,
+  MdCheckCircle,
+  MdAddCircle,
 } from 'react-icons/md';
 import { FiMaximize2 } from 'react-icons/fi';
 import FullPlayer from './FullPlayer';
 import useWindowSize from '../../hooks/useWindowSize';
-import { ACCESS_TOKEN_AGE, BACKEND_URI, PLAYER_NAME } from '../../utils/constants';
+import { ACCESS_TOKEN_AGE, APP_NAME, BACKEND_URI, PLAYER_NAME } from '../../utils/constants';
 
 import Button from '../Button/Button';
 import TextLink from '../Text/TextLink';
@@ -387,21 +395,20 @@ const WebPlayback: React.FC = () => {
     setActiveDevice(devices.find((device: Device) => device.is_active));
   };
 
-  const handleSaveTrack = async (event: React.MouseEvent, type: string, trackId: string) => {
+  const handleSaveTrack = async (event: React.MouseEvent) => {
     event.stopPropagation();
 
-    const params = {
-      ids: trackId,
-    };
+    const params: SavedTrackParams = {
+      type: currentTrack.type,
+      trackId: currentTrack.id,
+    } 
 
     if (isSaved) {
-      await ApiSpotify.delete(`/me/${type}s`, { params });
+      dispatch(removeFromSavedTrack(params));
       dispatch(changeIsSaved(false));
-      dispatch(removeSavedTrackIds([trackId]));
     } else {
-      await ApiSpotify.put(`/me/${type}s`, {}, { params });
+      dispatch(addToSavedTrack(params));
       dispatch(changeIsSaved(true));
-      dispatch(addSavedTrackIds([trackId]));
     }
 
   };
@@ -590,6 +597,13 @@ const WebPlayback: React.FC = () => {
 
   return (
     <div className="h-full w-full border-t-2 border-light-black-1 bg-light-black text-xs">
+      <Helmet defer={false}>
+        <title>
+          {isPlaying && currentTrack?.uri
+            ? `${currentTrack.name} • ${getArtistNames(currentTrack.artists)}`
+            : APP_NAME}
+        </title>
+      </Helmet>
       {error && (
         <div className="flex flex-col items-center justify-center h-full">
           <div className="mb-2 text-red-400">{error}</div>
@@ -661,11 +675,26 @@ const WebPlayback: React.FC = () => {
                   </>
                 )}
               </div>
-              <LikeButton
-                className="hidden lg:flex h-6 w-6 sm:h-5 sm:w-5 ml-4 cursor-pointer"
-                isActive={isSaved}
-                onClick={(e) => handleSaveTrack(e, currentTrack.type, currentTrack.id)}
-              />
+              {currentTrack.type === 'track' && (
+                <LikeButton
+                  className="hidden lg:flex h-6 w-6 sm:h-5 sm:w-5 ml-4 cursor-pointer"
+                  isActive={isSaved}
+                  onClick={handleSaveTrack}
+                />
+              )}
+              {currentTrack.type === 'episode' &&
+                (isSaved ? (
+                  <MdCheckCircle
+                    className="hidden lg:flex h-6 w-6 sm:h-5 sm:w-5 ml-4 text-green-400 cursor-pointer"
+                    onClick={handleSaveTrack}
+                  />
+                ) : (
+                  <MdAddCircle
+                    className="hidden lg:flex h-6 w-6 sm:h-5 sm:w-5 ml-4 cursor-pointer"
+                    onClick={handleSaveTrack}
+                  />
+                ))
+              }
             </div>
 
             <div className="hidden lg:flex flex-col items-center justify-around col-span-4">
@@ -743,7 +772,7 @@ const WebPlayback: React.FC = () => {
                 <LikeButton
                   className="flex lg:hidden h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer"
                   isActive={isSaved}
-                  onClick={(e) => handleSaveTrack(e, currentTrack.type, currentTrack.id)}
+                  onClick={handleSaveTrack}
                 />
                 {currentTrack && currentTrack.type === 'track' && (
                   <MdMic

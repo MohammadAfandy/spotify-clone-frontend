@@ -1,16 +1,22 @@
-import { useState, useEffect } from 'react';
+import { MenuButton } from '@szhsin/react-menu';
 import {
   MdPlayCircle,
   MdAddCircle,
-  MdCheck,
+  MdCheckCircle,
+  MdPauseCircle,
+  MdOutlineMoreHoriz,
 } from 'react-icons/md';
+import { PlaylistTrackParams, SavedTrackParams } from '../../store/playlist-slice';
 import Episode from '../../types/Episode';
-import ApiSpotify from '../../utils/api-spotify';
+import Playlist from '../../types/Playlist';
 import {
   getHighestImage,
   formatDate,
   duration,
 } from '../../utils/helpers';
+import ContextMenu from '../ContextMenu/ContextMenu';
+import ContextMenuItem from '../ContextMenu/ContextMenuItem';
+import ContextSubMenu from '../ContextMenu/ContextSubMenu';
 
 import Skeleton from '../Skeleton/Skeleton';
 import Explicit from '../Text/Explicit';
@@ -18,44 +24,66 @@ import TextLink from '../Text/TextLink';
 
 type PlayerListEpisodeItemProps = {
   episode?: Episode;
+  offset?: number;
   number?: number;
-  handlePlayEpisode?: (offset: number, positionMs: number) => void;
+  isSavedEpisode?: boolean;
+  currentEpisode?: Episode;
+  isPlaying?: boolean,
+  playlists?: Playlist[];
+  userId?: string;
+  handlePlayEpisode?: ({ offset, uri }: { offset: number, uri: string }) => void;
+  handlePauseEpisode?: () => void;
+  handleAddEpisodeToPlaylist?: (args: PlaylistTrackParams) => void;
+  handleAddToSavedEpisode?: (args: SavedTrackParams) => void;
+  handleRemoveFromSavedEpisode?: (args: SavedTrackParams) => void;
   isLoading?: boolean;
 };
 
 const defaultProps: PlayerListEpisodeItemProps = {
   episode: {} as Episode,
+  offset: 0,
   number: 0,
-  handlePlayEpisode: (offset: number, positionMs: number) => {},
+  isSavedEpisode: false,
+  currentEpisode: {} as Episode,
+  isPlaying: false,
+  playlists: [],
+  userId: '',
+  handlePlayEpisode: undefined,
+  handlePauseEpisode: undefined,
+  handleAddEpisodeToPlaylist: undefined,
+  handleAddToSavedEpisode: undefined,
+  handleRemoveFromSavedEpisode: undefined,
   isLoading: false,
 };
 
 const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
   episode,
+  offset,
   number,
+  isSavedEpisode,
+  currentEpisode,
+  isPlaying,
+  userId,
+  playlists,
   handlePlayEpisode,
+  handlePauseEpisode,
+  handleAddEpisodeToPlaylist,
+  handleAddToSavedEpisode,
+  handleRemoveFromSavedEpisode,
   isLoading,
 }) => {
-  const [isSaved, setIsSaved] = useState(episode?.is_saved);
 
-  useEffect(() => {
-    setIsSaved(episode?.is_saved);
-  }, [episode?.is_saved]);
-
-  const handleAddToSavedEpisode = async (id: string) => {
+  const saveEpisode = (episode: Episode) => {
     const params = {
-      ids: id,
+      type: episode.type,
+      trackId: episode.id,
     };
-    let response;
-    if (isSaved) {
-      response = await ApiSpotify.delete('/me/episodes', { params });
+    if (isSavedEpisode) {
+      handleRemoveFromSavedEpisode && handleRemoveFromSavedEpisode(params);
     } else {
-      response = await ApiSpotify.put('/me/episodes', {}, { params });
+      handleAddToSavedEpisode && handleAddToSavedEpisode(params);
     }
-    if (response.status === 200) {
-      setIsSaved((prevState) => !prevState);
-    }
-  };
+  }
 
   const LoadingComponent = (
     <>
@@ -70,6 +98,8 @@ const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
     </>
   );
 
+  console.log({ episode });
+
   return (
     <div
       className="group flex items-center px-2 py-4 border-t-2 border-opacity-10 hover:bg-gray-500 hover:bg-opacity-25"
@@ -83,36 +113,89 @@ const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
             className="mr-4 w-24 h-24 rounded-xl"
           />
           <div className="flex flex-col w-full">
-            <TextLink
-              className="mb-2"
-              text={episode.name}
-              url={'/episode/' + episode.id}
-            />
+            <div className="flex">
+              <TextLink
+                className="mb-2 mr-auto"
+                text={episode.name}
+                url={'/episode/' + episode.id}
+              />
+              <div className="text-center mr-4 w-8 h-8">
+                <ContextMenu
+                  menuButton={(
+                    <MenuButton>
+                      <MdOutlineMoreHoriz className="relative cursor-pointer" />
+                    </MenuButton>
+                  )}
+                  direction="left"
+                >
+                  {userId && (
+                    <ContextMenuItem onClick={() => saveEpisode(episode)}>
+                      {isSavedEpisode ? 'Remove from your Liked Episodes' : 'Save to your Liked Episodes'}
+                    </ContextMenuItem>
+                  )}
+                  {userId && (
+                    <ContextSubMenu label="Add to playlist">
+                      {playlists && playlists
+                        .filter((playlist) => playlist.owner.id === userId)
+                        .map((playlist) => (
+                          <ContextMenuItem
+                            key={playlist.id}
+                            onClick={() => handleAddEpisodeToPlaylist && handleAddEpisodeToPlaylist({ playlistId: playlist.id, trackUri: episode.uri })}
+                          >
+                            {playlist.name}
+                          </ContextMenuItem>
+                        )
+                      )}
+                    </ContextSubMenu>
+                  )}
+                </ContextMenu>
+              </div>
+            </div>
+            {episode.show && (
+              <TextLink
+                className="mb-2"
+                text={episode.show.name}
+                url={'/show/' + episode.show.id}
+              />
+            )}
             <div className="mb-2 text-sm font-light line-clamp-2">
               {episode.description}
             </div>
             <div className="flex items-center text-xs">
               <div className="flex items-center mr-auto">
-                <MdPlayCircle
-                  className="mr-4 w-8 h-8 cursor-pointer"
-                  onClick={() => handlePlayEpisode && number && handlePlayEpisode(number - 1, 0)}
-                />
+                {(isPlaying && currentEpisode && episode.uri === currentEpisode.uri) ? (
+                  <MdPauseCircle
+                    className="mr-4 w-8 h-8 cursor-pointer"
+                    onClick={handlePauseEpisode}
+                    data-tip="play"
+                    data-for="play-tooltip"
+                    data-event="click"
+                  />
+                ) : (
+                  <MdPlayCircle
+                    className="mr-4 w-8 h-8 cursor-pointer"
+                    onClick={() => handlePlayEpisode && number && handlePlayEpisode({ offset: offset || 0, uri: episode.uri })}
+                    data-tip="play"
+                    data-for="play-tooltip"
+                    data-event="click"
+                  />
+                )}
                 {episode.explicit && <Explicit />}
                 <div className="mr-2">
                   {formatDate(episode.release_date, 'MMM DD')}
                 </div>
                 <div>{duration(episode.duration_ms, true)}</div>
               </div>
-              <div className="flex canhover:hidden canhover:group-hover:flex items-center">
-                {isSaved ? (
-                  <MdCheck
+              <div className="flex items-center">
+                {isSavedEpisode ? (
+                  <MdCheckCircle
                     className="mr-4 w-8 h-8 cursor-pointer text-green-400"
-                    onClick={() => handleAddToSavedEpisode(episode.id)}
+                    onClick={() => saveEpisode(episode)}
                   />
                 ) : (
                   <MdAddCircle
                     className="mr-4 w-8 h-8 cursor-pointer"
-                    onClick={() => handleAddToSavedEpisode(episode.id)}
+                    onClick={() => saveEpisode(episode)}
                   />
                 )}
               </div>

@@ -10,8 +10,11 @@ import {
   changeIsSaved
 } from '../../store/player-slice';
 import {
-  addSavedTrackIds,
-  removeSavedTrackIds,
+  addToSavedTrack,
+  addTrackToPlaylist,
+  PlaylistTrackParams,
+  removeFromSavedTrack,
+  SavedTrackParams,
   setSavedTrackIds
 } from '../../store/playlist-slice';
 
@@ -19,7 +22,6 @@ import Track from '../../types/Track';
 import { MdAccessTime } from 'react-icons/md';
 
 import PlayerListTrackItem from './PlayerListTrackItem';
-import ApiSpotify from '../../utils/api-spotify';
 
 import styles from './PlayerListTrack.module.css';
 
@@ -31,7 +33,7 @@ type PlayerListTrackProps = {
   handleNext: () => void;
   hasMore: boolean;
   isIncludeEpisode?: boolean;
-  handleRemoveFromPlaylist?: ({ playlistId, uri, position }: { playlistId: string, uri: string, position?: number }) => void;
+  handleRemoveFromPlaylist?: ({ trackUri, position }: { trackUri: string, position?: number }) => void;
 };
 
 const defaultProps: PlayerListTrackProps = {
@@ -90,48 +92,18 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
     dispatch(togglePause());
   };
 
-  const handleAddToPlaylist = async ({
-    playlistId,
-    uris,
-  }: {
-    playlistId: string,
-    uris: string,
-  }) => {
-    const params = {
-      uris,
-    };
-    await ApiSpotify.post('/playlists/' + playlistId + '/tracks', {}, {
-      params,
-    });
+  const handleAddTrackToPlaylist = ({ playlistId, trackUri }: PlaylistTrackParams) => {
+    dispatch(addTrackToPlaylist({ playlistId, trackUri }));
   };
 
-  const handleAddToSavedTrack = async ({
-    id,
-    type,
-    isSaved,
-  }: {
-    id: string,
-    type: 'track' | 'episode',
-    isSaved: boolean,
-  }) => {
-    const params = {
-      ids: id,
-    };
-    if (isSaved) {
-      await ApiSpotify.delete(`/me/${type}s`, { params });
-      dispatch(removeSavedTrackIds([id]));
+  const handleAddToSavedTrack = ({ type, trackId }: SavedTrackParams) => {
+    dispatch(addToSavedTrack({ type, trackId }));
+    currentTrack.id === trackId && dispatch(changeIsSaved(true));
+  };
 
-      if (currentTrack.id === id) {
-        dispatch(changeIsSaved(false));
-      }
-    } else {
-      await ApiSpotify.put(`/me/${type}s`, {}, { params });
-      dispatch(addSavedTrackIds([id]));
-
-      if (currentTrack.id === id) {
-        dispatch(changeIsSaved(true));
-      }
-    }
+  const handleRemoveFromSavedTrack = ({ type, trackId }: SavedTrackParams) => {
+    dispatch(removeFromSavedTrack({ type, trackId }));
+    currentTrack.id === trackId && dispatch(changeIsSaved(false));
   };
 
   let number = 0;
@@ -187,15 +159,16 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
                   number={number}
                   showAlbum={showAlbum}
                   showDateAdded={showDateAdded}
-                  currentTrack={currentTrack}
+                  currentTrack={currentTrack as Track}
                   isPlaying={isPlaying}
                   playlists={playlists}
                   userId={user.id}
                   handlePlayTrack={handlePlayTrack}
                   handlePauseTrack={handlePauseTrack}
-                  handleAddToPlaylist={handleAddToPlaylist}
+                  handleAddTrackToPlaylist={handleAddTrackToPlaylist}
                   handleRemoveFromPlaylist={handleRemoveFromPlaylist}
                   handleAddToSavedTrack={handleAddToSavedTrack}
+                  handleRemoveFromSavedTrack={handleRemoveFromSavedTrack}
                 />
               );
             }

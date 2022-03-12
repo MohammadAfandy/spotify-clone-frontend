@@ -1,10 +1,9 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Show from '../types/Show';
 import ApiSpotify from '../utils/api-spotify';
 import { AuthContext } from '../context/auth-context';
-import { useDispatch } from 'react-redux';
-import { togglePlay } from '../store/player-slice';
 import useFetchTracks from '../hooks/useFetchTracks';
 
 import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
@@ -12,7 +11,6 @@ import PlayerListEpisode from '../components/PlayerList/PlayerListEpisode';
 import FolllowButton from '../components/Button/FollowButton';
 
 const ShowPage: React.FC = () => {
-  const dispatch = useDispatch();
   const params = useParams<{ id: string }>();
   const [show, setShow] = useState<Show>(Object);
   const [isFollowed, setIsFollowed] = useState(false);
@@ -50,34 +48,26 @@ const ShowPage: React.FC = () => {
 
   const handleFollow = async () => {
     let response;
+    let toastMessage = '';
     if (isFollowed) {
       response = await ApiSpotify.delete('/me/shows', {
         params: {
           ids: show.id,
         },
       });
+      toastMessage = 'Removed from Your Library';
     } else {
       response = await ApiSpotify.put('/me/shows', {}, {
         params: {
           ids: show.id,
         },
       });
+      toastMessage = 'Saved to Your Library';
     }
     if (response.status === 200) {
       setIsFollowed((prevState) => !prevState);
+      toast.info(toastMessage);
     }
-  };
-
-  const handlePlayEpisode = (
-    selectedOffset: number,
-    selectedPositionMs: number
-  ) => {
-    const episodeUris = episodes.map((v) => v.uri);
-    dispatch(togglePlay({
-      uris: episodeUris,
-      offset: selectedOffset,
-      positionMs: selectedPositionMs
-    }));
   };
 
   return (
@@ -101,7 +91,7 @@ const ShowPage: React.FC = () => {
           <div className="text-lg font-bold mb-4">All Episode</div>
           <PlayerListEpisode
             episodes={episodes}
-            handlePlayEpisode={handlePlayEpisode}
+            uris={episodes.map((v) => v.uri)}
             handleNext={() => setNextUrl(pageData.next)}
             hasMore={!!pageData.next}
           />

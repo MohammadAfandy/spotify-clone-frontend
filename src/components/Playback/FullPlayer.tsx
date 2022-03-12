@@ -45,7 +45,7 @@ type FullPlayerProps = {
   handleOpenQueue: (event: React.MouseEvent) => void;
   handleAfterClickLink: () => void;
   handleShowDeviceSelector: (event: React.MouseEvent) => void;
-  handleSaveTrack: (event: React.MouseEvent, type: string, trackId: string) => void;
+  handleSaveTrack: (event: React.MouseEvent) => void;
 };
 
 const FullPlayer: React.FC<FullPlayerProps> = ({
@@ -150,7 +150,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
           <LikeButton
             className="h-8 w-8 cursor-pointer"
             isActive={isSaved}
-            onClick={(e) => handleSaveTrack(e, currentTrack.type, currentTrack.id)}
+            onClick={handleSaveTrack}
           />
         </div>
       </div>

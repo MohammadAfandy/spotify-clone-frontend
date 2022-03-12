@@ -22,18 +22,6 @@ const CollectionEpisodePage: React.FC = () => {
     }));
   };
 
-  const handlePlayEpisode = (
-    selectedOffset: number,
-    selectedPositionMs: number
-  ) => {
-    const episodeUris = episodes.map((v) => v.uri);
-    dispatch(togglePlay({
-      uris: episodeUris,
-      offset: selectedOffset,
-      positionMs: selectedPositionMs,
-    }));
-  };
-
   return (
     <div className="px-4 py-4">
       <PlayerListHeader
@@ -51,7 +39,7 @@ const CollectionEpisodePage: React.FC = () => {
       </div>
       <PlayerListEpisode
         episodes={episodes}
-        handlePlayEpisode={handlePlayEpisode}
+        uris={episodes.map((v) => v.uri)}
         handleNext={() => setNextUrl(pageData.next)}
         hasMore={!!pageData.next}
       />

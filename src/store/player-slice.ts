@@ -3,6 +3,7 @@ import {
   createSlice,
   PayloadAction
 } from '@reduxjs/toolkit';
+import Episode from '../types/Episode';
 
 import Track from '../types/Track';
 import ApiSpotify from '../utils/api-spotify';
@@ -12,7 +13,7 @@ export type PlayerState = {
   positionMs: number;
   tracks: Track[];
   uris: string[];
-  currentTrack: Track;
+  currentTrack: Track & Episode;
   isPlaying: boolean;
   isSaved: boolean;
 };
@@ -22,12 +23,13 @@ export type TogglePlayParams = {
   offset?: number;
   positionMs?: number;
 };
+
 const initialState: PlayerState = {
   offset: 0,
   positionMs: 0,
   tracks: [],
   uris: [],
-  currentTrack: {} as Track,
+  currentTrack: {} as Track & Episode,
   isPlaying: false,
   isSaved: false,
 };
@@ -129,7 +131,7 @@ export const playerSlice = createSlice({
     changeUris: (state, action: PayloadAction<string[]>) => {
       state.uris = action.payload;
     },
-    changeCurrentTrack: (state, action: PayloadAction<Track>) => {
+    changeCurrentTrack: (state, action: PayloadAction<Track & Episode>) => {
       state.currentTrack = action.payload;
     },
     changeIsPlaying: (state, action: PayloadAction<boolean>) => {

@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { togglePlay } from '../store/player-slice';
 import { AuthContext } from '../context/auth-context';
@@ -53,21 +54,25 @@ const AlbumPage: React.FC = () => {
 
   const handleFollow = async () => {
     let response;
+    let toastMessage = '';
     if (isFollowed) {
       response = await ApiSpotify.delete('/me/albums', {
         params: {
           ids: album.id,
         },
       });
+      toastMessage = 'Removed from Your Library';
     } else {
       response = await ApiSpotify.put('/me/albums', {}, {
         params: {
           ids: album.id,
         },
       });
+      toastMessage = 'Saved to Your Library';
     }
     if (response.status === 200) {
       setIsFollowed((prevState) => !prevState);
+      toast.info(toastMessage);
     }
   };
 

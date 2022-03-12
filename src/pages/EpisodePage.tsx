@@ -2,12 +2,12 @@ import { useState, useEffect, useContext } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import Episode from '../types/Episode';
 import ApiSpotify from '../utils/api-spotify';
-import { useDispatch } from 'react-redux';
-import { togglePlay } from '../store/player-slice';
+import { useDispatch, useSelector } from 'react-redux';
+import { changeIsSaved, togglePlay } from '../store/player-slice';
 import { AuthContext } from '../context/auth-context';
 import {
   MdAddCircle,
-  MdCheck,
+  MdCheckCircle,
 } from 'react-icons/md';
 
 import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
@@ -15,16 +15,21 @@ import PlayButton from '../components/Button/PlayButton';
 import Button from '../components/Button/Button';
 import TextLink from '../components/Text/TextLink';
 import { duration, formatDate } from '../utils/helpers';
+import { addToSavedTrack, removeFromSavedTrack, setSavedTrackIds } from '../store/playlist-slice';
+import { RootState } from '../store';
 
 const EpisodePage: React.FC = () => {
   const dispatch = useDispatch();
   const params = useParams<{ id: string }>();
   const history = useHistory();
   const [episode, setEpisode] = useState<Episode>(Object);
-  const [isSaved, setIsSaved] = useState(false);
+  // const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { user } = useContext(AuthContext);
+
+  const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
+  const savedTrackIds = useSelector((state: RootState) => state.playlist.savedTrackIds);
 
   useEffect(() => {
     const fetchEpisode = async () => {
@@ -38,9 +43,10 @@ const EpisodePage: React.FC = () => {
             },
           }),
         ]);
-  
+
         setEpisode(dataEpisode.data);
-        setIsSaved(dataSaved.data[0]);
+        // setIsSaved(dataSaved.data[0]);
+        if (dataSaved.data[0]) setSavedTrackIds(dataEpisode.data.id);
       } catch (error) {
         console.error(error);
       } finally {
@@ -50,24 +56,14 @@ const EpisodePage: React.FC = () => {
     fetchEpisode();
   }, [params.id, user.id]);
 
-  const handleSave = async () => {
-    let response;
-    if (isSaved) {
-      response = await ApiSpotify.delete('/me/episodes', {
-        params: {
-          ids: episode.id,
-        },
-      });
-    } else {
-      response = await ApiSpotify.put('/me/episodes', {}, {
-        params: {
-          ids: episode.id,
-        },
-      });
-    }
-    if (response.status === 200) {
-      setIsSaved((prevState) => !prevState);
-    }
+  const handleSave = () => {
+    dispatch(addToSavedTrack({ type: 'episode', trackId: episode.id }));
+    currentTrack.id === episode.id && dispatch(changeIsSaved(true));
+  };
+
+  const handleRemove = () => {
+    dispatch(removeFromSavedTrack({ type: 'episode', trackId: episode.id }));
+    currentTrack.id === episode.id && dispatch(changeIsSaved(false));
   };
 
   const handlePlayEpisode = () => {
@@ -91,7 +87,7 @@ const EpisodePage: React.FC = () => {
         isLoading={isLoading}
       />
       <div className="mb-4">
-        <div className="text-sm">
+        <div className="text-sm text-center sm:text-left">
           {formatDate(episode.release_date, 'MMM YY')} · {duration(episode.duration_ms, true, true)}
         </div>
       </div>
@@ -100,10 +96,10 @@ const EpisodePage: React.FC = () => {
           className="w-16 h-16 mr-6"
           onClick={handlePlayEpisode}
         />
-        {isSaved ? (
-          <MdCheck
+        {savedTrackIds.includes(episode.id) ? (
+          <MdCheckCircle
             className="mr-4 w-10 h-10 cursor-pointer text-green-400"
-            onClick={handleSave}
+            onClick={handleRemove}
           />
         ) : (
           <MdAddCircle
@@ -113,10 +109,10 @@ const EpisodePage: React.FC = () => {
         )}
       </div>
 
-      <div className="">
-        <div className="w-8/12">
-          <div className="text-lg font-bold mb-4">Episode Description</div>
-          <div className="font-light mb-4">{episode.description}</div>
+      <div className="w-full sm:w-8/12">
+        <div className="text-lg font-bold mb-4">Episode Description</div>
+        <div className="font-light mb-4">{episode.description}</div>
+        <div className="text-center sm:text-left">
           <Button
             text="SEE ALL EPISODES"
             onClick={() => history.push('/show/' + episode.show.id)}

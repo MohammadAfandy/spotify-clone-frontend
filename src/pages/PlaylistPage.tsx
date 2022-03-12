@@ -7,9 +7,10 @@ import ApiSpotify from '../utils/api-spotify';
 import { AuthContext } from '../context/auth-context';
 import { useDispatch } from 'react-redux';
 import { togglePlay } from '../store/player-slice';
-import { getUserPlaylist } from '../store/playlist-slice';
+import { addTrackToPlaylist, getUserPlaylist, removeTrackFromPlaylist } from '../store/playlist-slice';
 import { getHighestImage, duration, makeRequest } from '../utils/helpers';
 import useFetchTracks from '../hooks/useFetchTracks';
+import { toast } from 'react-toastify';
 
 import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
 import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
@@ -114,16 +115,20 @@ const PlaylistPage: React.FC = () => {
 
   const handleFollow = async () => {
     let response;
+    let toastMessage = '';
     if (isFollowed) {
       response = await ApiSpotify.delete(
         '/playlists/' + params.id + '/followers'
       );
+      toastMessage = 'Removed from Your Library';
     } else {
       response = await ApiSpotify.put('/playlists/' + params.id + '/followers');
+      toastMessage = 'Saved to Your Library';
     }
     if (response.status === 200) {
       setIsFollowed((prevState) => !prevState);
       dispatch(getUserPlaylist());
+      toast.info(toastMessage);
     }
   };
 
@@ -140,12 +145,7 @@ const PlaylistPage: React.FC = () => {
   };
 
   const handleAddTrackToPlaylist = async (trackUri: string) => {
-    const params = {
-      uris: trackUri,
-    };
-    await ApiSpotify.post('/playlists/' + playlist.id + '/tracks', {}, {
-      params,
-    });
+    dispatch(addTrackToPlaylist({ playlistId: playlist.id, trackUri }));
 
     const [, , trackId] = trackUri.split(':');
     const responseTrack = await ApiSpotify.get('/tracks/' + trackId);
@@ -157,26 +157,28 @@ const PlaylistPage: React.FC = () => {
   }, 0);
 
   const handleRemoveFromPlaylist = async ({
-    playlistId,
-    uri,
+    trackUri,
     position,
   }: {
-    playlistId: string,
-    uri: string,
+    trackUri: string,
     position?: number,
   }) => {
-    const body = {
-      tracks: [
-        {
-          uri,
-          positions: position !== undefined ? [position] : undefined,
-        },
-      ],
-    };
-    await ApiSpotify.delete('/playlists/' + playlist.id + '/tracks', {
-      data: body,
+    dispatch(removeTrackFromPlaylist({
+      playlistId: playlist.id,
+      trackUri,
+      position,
+    }));
+    setTracks((prevState) => {
+      const newState = [...prevState];
+      const trackIdx = prevState.findIndex((v, idx) => {
+        return v.uri === trackUri && idx === position;
+      });
+      if (trackIdx !== -1) {
+        newState.splice(trackIdx, 1);
+        return newState;
+      }
+      return prevState;
     });
-    setTracks((prevState) => prevState.filter((v) => v.uri !== uri) as Track[] & Episode[]);
   };
 
   const handleEditPlaylist = async () => {

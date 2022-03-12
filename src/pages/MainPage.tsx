@@ -6,6 +6,7 @@ import ToolBar from '../components/Toolbar/ToolBar';
 import MainContent from '../components/MainContent/MainContent';
 import ToolTip from '../components/ToolTip/ToolTip';
 import Footer from '../components/Footer/Footer';
+import Toast from '../components/Toast/Toast';
 
 const MainPage: React.FC = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -39,6 +40,7 @@ const MainPage: React.FC = () => {
         isCapture={isPremium}
         backgroundColor="#2e77d0"
       />
+      <Toast />
     </>
   );
 };
