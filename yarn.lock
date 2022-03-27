@@ -11279,6 +11279,11 @@
     "string-width" "^4.2.0"
     "strip-ansi" "^6.0.0"
 
+"tailwind-override@^0.6.1":
+  "integrity" "sha512-FOxLFcXTe9eqC85SNCREyWw/CG8hyNSBJNrp+rjMDV7m63UoJzpkNJtXNrA0y3tE9m0d3ccNj8HBVQG/hfmNxA=="
+  "resolved" "https://registry.npmjs.org/tailwind-override/-/tailwind-override-0.6.1.tgz"
+  "version" "0.6.1"
+
 "tailwindcss-named-groups@^0.0.5":
   "integrity" "sha512-MQ2mY78drcScXBeNEpS5NuLbZvfRIWZNumPXgJlhDfutYQdBP8kvoT/E37gD/OqwY+VvpUb5iLOa2XC/FF2AZQ=="
   "resolved" "https://registry.npmjs.org/tailwindcss-named-groups/-/tailwindcss-named-groups-0.0.5.tgz"

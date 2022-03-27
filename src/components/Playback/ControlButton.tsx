@@ -1,3 +1,4 @@
+import { overrideTailwindClasses } from 'tailwind-override'
 import { IconType, IconBaseProps } from 'react-icons';
 import { LikeButtonProps } from '../Button/LikeButton';
 
@@ -24,7 +25,7 @@ const ControlButton: React.FC<ControlButtonProps & IconBaseProps & LikeButtonPro
 
   return (
     <Icon
-      className={`${classSize} cursor-pointer ${className}`}
+      className={overrideTailwindClasses(`${classSize} cursor-pointer ${className}`)}
       onClick={onClick}
       {...props}
     />

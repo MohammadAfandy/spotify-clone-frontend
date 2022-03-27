@@ -24,6 +24,7 @@ import TextLink from '../Text/TextLink';
 import Artist from '../../types/Artist';
 import LikeButton from '../Button/LikeButton';
 import ControlButton from './ControlButton';
+import RangeInput from '../Input/RangeInput';
 
 type FullPlayerProps = {
   className?: string;
@@ -43,8 +44,8 @@ type FullPlayerProps = {
   handlePrev: (event: React.MouseEvent) => Promise<void>;
   handleNext: (event: React.MouseEvent) => Promise<void>;
   setPositionMs: (position_ms: number) => void;
-  handleSeek: (event: React.MouseEvent, position_ms: number) => Promise<void>;
-  handleVolume: (event: React.MouseEvent  | React.TouchEvent, volume_percent: number) => Promise<void>;
+  handleSeek: (event: React.MouseEvent | React.TouchEvent, position_ms: number) => Promise<void>;
+  handleVolume: (event: React.MouseEvent | React.TouchEvent, volume_percent: number) => Promise<void>;
   handleShuffle: (event: React.MouseEvent) => Promise<void>;
   handleRepeatMode: (event: React.MouseEvent) => Promise<void>;
   handleOpenLyric: (event: React.MouseEvent) => void;
@@ -113,29 +114,30 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
           />
         </div>
         <div className="flex justify-end items-center">
-          <ControlButton
-            Icon={volume <= 50 ? (volume > 0 ? MdVolumeDown : MdVolumeOff) : MdVolumeUp}
-            className="mr-2"
-            onClick={(e) => handleVolume(e, volume > 0 ? 0 : 100)}
-          />
-          <input
-            type="range"
-            className="w-40"
-            max="100"
-            value={volume}
-            onChange={(e) => saveVolume(Number(e.target.value))}
-            onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
-              handleVolume(e, Number(e.currentTarget.value))
-            }
-            onTouchEnd={(e: React.TouchEvent<HTMLInputElement>) =>
-              handleVolume(e, Number(e.currentTarget.value))
-            }
-          />
+          <div className="flex items-center mt-2">
+            <ControlButton
+              Icon={volume <= 50 ? (volume > 0 ? MdVolumeDown : MdVolumeOff) : MdVolumeUp}
+              className="w-4 mr-2"
+              onClick={(e) => handleVolume(e, volume > 0 ? 0 : 100)}
+            />
+            <RangeInput
+              className="w-40"
+              max="100"
+              value={volume}
+              onChange={(e) => saveVolume(Number(e.target.value))}
+              onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
+                handleVolume(e, Number(e.currentTarget.value))
+              }
+              onTouchEnd={(e: React.TouchEvent<HTMLInputElement>) =>
+                handleVolume(e, Number(e.currentTarget.value))
+              }
+            />
+          </div>
         </div>
         <div className="flex justify-between items-center">
           <div
             ref={trackRef}
-            className="flex flex-col w-80% whitespace-nowrap overflow-hidden"
+            className="flex flex-col w-80% whitespace-nowrap overflow-hidden mt-2"
           >
             <div className={`flex w-full lg:text-2xl relative ${isOverFlow ? 'animate-marquee' : ''}`}>
               {currentTrack.type === 'track' && (
@@ -180,20 +182,21 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
           />
         </div>
       </div>
-      <div className="flex flex-col mt-2">
+      <div className="flex flex-col mt-4">
         <div className="flex flex-col justify-center items-center">
-          <input
-            type="range"
-            id="progressbar"
-            className="h-2 w-full mb-1"
+          <RangeInput
+            className="mb-1"
             max={duration}
             value={positionMs}
             onChange={(e) => setPositionMs(Number(e.target.value))}
-            onPointerUp={(e: React.MouseEvent<HTMLInputElement>) =>
+            onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
+              handleSeek(e, Number(e.currentTarget.value))
+            }
+            onTouchEnd={(e: React.TouchEvent<HTMLInputElement>) =>
               handleSeek(e, Number(e.currentTarget.value))
             }
           />
-          <div className="w-full flex justify-between text-xs font-light">
+          <div className="w-full flex justify-between text-xs font-light mt-2">
             <div className="mr-2">{durationFn(positionMs)}</div>
             <div className="group">
               <div className="group-hover:block hidden">

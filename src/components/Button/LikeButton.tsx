@@ -31,9 +31,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({
     Prop = isActive ? MdCheckCircle : MdAddCircle;
   }
   const color = isActive ? 'text-green-400' : '';
-  console.log({
-    isActive,
-  })
   return (
     <Prop
       className={`h-4 w-4 cursor-pointer transition duration-300 ease-in-out transform hover:scale-110 ${color} ${className}`}

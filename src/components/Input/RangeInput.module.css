@@ -1,0 +1,33 @@
+.wrapper {
+  --rangeValue: 0%;
+  --leftColor: #b3b3b3;
+  --rightColor: #535353;
+  @apply flex items-center w-full h-2;
+}
+
+.wrapper:hover, .wrapper:active {
+  --leftColor: rgba(52, 211, 153, 1);
+}
+
+.rangeInput {
+  background: linear-gradient(to right, var(--leftColor) 0%, var(--leftColor) var(--rangeValue), var(--rightColor) var(--rangeValue), var(--rightColor) 100%);
+  border-radius: 4px;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.rangeInput::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 0;
+  height: 0;
+}
+
+.rangeInput::-moz-range-thumb {
+  width: 0;
+  height: 0;
+}

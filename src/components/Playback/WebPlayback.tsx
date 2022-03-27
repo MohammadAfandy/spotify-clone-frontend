@@ -67,6 +67,7 @@ import FullScreen from '../FullScreen/FullScreen';
 import DeviceSelector from './DeviceSelector';
 import LikeButton from '../Button/LikeButton';
 import ControlButton from './ControlButton';
+import RangeInput from '../Input/RangeInput';
 
 declare global {
   interface Window {
@@ -316,7 +317,7 @@ const WebPlayback: React.FC = () => {
     }
   };
 
-  const handleSeek = async (event: React.MouseEvent, position_ms: number): Promise<void> => {
+  const handleSeek = async (event: React.MouseEvent | React.TouchEvent, position_ms: number): Promise<void> => {
     event.stopPropagation();
     if (position_ms < 0) position_ms = 0;
     if (isPlayerActive) {
@@ -500,7 +501,7 @@ const WebPlayback: React.FC = () => {
 
   useEffect(() => {
     if (isPlaying) {
-      const intervalSecond = 500; // 0.5s
+      const intervalSecond = 1000; // 1s
       const interval = setInterval(() => {
         const newPositionMs = positionMs + intervalSecond;
         if (newPositionMs >= duration) {
@@ -716,19 +717,21 @@ const WebPlayback: React.FC = () => {
                 />
               </div>
               <div className="flex justify-center items-center w-full mt-1">
-                <div className="mr-2">{durationFn(positionMs)}</div>
-                <input
-                  type="range"
-                  className="h-2 w-full mr-2"
+                <div className="w-6 mr-2">{durationFn(positionMs)}</div>
+                <RangeInput
+                  className="w-full mr-2"
                   max={duration}
                   value={positionMs}
                   onChange={(e) => setPositionMs(Number(e.target.value))}
-                  onPointerUp={(e: React.MouseEvent<HTMLInputElement>) =>
+                  onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
+                    handleSeek(e, Number(e.currentTarget.value))
+                  }
+                  onTouchEnd={(e: React.TouchEvent<HTMLInputElement>) =>
                     handleSeek(e, Number(e.currentTarget.value))
                   }
                 />
                 <div
-                  className="font-light cursor-pointer"
+                  className="w-6 cursor-pointer"
                   onClick={() => setIsEnableReverseDuration((prevState) => !prevState)}
                 >
                   {isEnableReverseDuration ? `-${durationFn(duration - positionMs)}` : durationFn(duration)}
@@ -768,9 +771,8 @@ const WebPlayback: React.FC = () => {
                     className="mr-4"
                     onClick={(e) => handleVolume(e, volume > 0 ? 0 : 100)}
                   />
-                  <input
-                    type="range"
-                    className="w-40 h-2 text-green-200"
+                  <RangeInput
+                    className="w-full"
                     max="100"
                     value={volume}
                     onChange={(e) => saveVolume(Number(e.target.value))}
