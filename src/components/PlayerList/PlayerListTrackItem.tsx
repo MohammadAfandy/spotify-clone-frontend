@@ -1,10 +1,8 @@
 import { useEffect, Fragment } from 'react';
 import {
-  MdAddCircle,
   MdPlayArrow,
   MdPause,
   MdOutlineMoreVert,
-  MdCheckCircle,
 } from 'react-icons/md';
 import { useHistory } from 'react-router-dom';
 import {
@@ -227,26 +225,12 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
             </div>
           )}
           <div className="hidden sm:flex items-center col-start-5 col-end-5">
-            {track.type === 'track' && (
-              <LikeButton
-                className="w-6 h-6"
-                isActive={isSavedTrack}
-                onClick={() => saveTrack(track)}
-              />
-            )}
-            {track.type === 'episode' &&
-              (isSavedTrack ? (
-                <MdCheckCircle
-                  className="w-6 h-6 cursor-pointer text-green-400"
-                  onClick={() => saveTrack(track)}
-                />
-              ) : (
-                <MdAddCircle
-                  className="w-6 h-6 cursor-pointer"
-                  onClick={() => saveTrack(track)}
-                />
-              ))
-            }
+            <LikeButton
+              className="w-6 h-6"
+              isActive={isSavedTrack}
+              type={track.type}
+              onClick={() => saveTrack(track)}
+            />
           </div>
           <div className="hidden sm:flex items-center col-start-6 col-end-6">
             {duration(track.duration_ms)}

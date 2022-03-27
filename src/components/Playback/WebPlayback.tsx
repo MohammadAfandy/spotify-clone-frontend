@@ -55,8 +55,6 @@ import {
   MdForward10,
   MdReplay10,
   MdQueueMusic,
-  MdCheckCircle,
-  MdAddCircle,
 } from 'react-icons/md';
 import { FiMaximize2 } from 'react-icons/fi';
 import FullPlayer from './FullPlayer';
@@ -68,6 +66,7 @@ import TextLink from '../Text/TextLink';
 import FullScreen from '../FullScreen/FullScreen';
 import DeviceSelector from './DeviceSelector';
 import LikeButton from '../Button/LikeButton';
+import ControlButton from './ControlButton';
 
 declare global {
   interface Window {
@@ -85,6 +84,8 @@ const mapRepeatMode: RepeatMode = [
   { state: 'context', mode: 1, text: '•' },
   { state: 'track', mode: 2, text: '1' },
 ];
+
+const skipStep = 10;
 
 const getVolumeFromStorage = () => {
   const volume = Number(localStorage.getItem('volume'));
@@ -128,7 +129,7 @@ const WebPlayback: React.FC = () => {
 
   useEffect(() => {
     const getSavedTrack = async () => {
-      const response = await ApiSpotify.get('/me/tracks/contains', {
+      const response = await ApiSpotify.get(`/me/${currentTrack.type}s/contains`, {
         params: {
           ids: currentTrack.id,
         },
@@ -138,7 +139,7 @@ const WebPlayback: React.FC = () => {
     };
 
     if (currentTrack.id) getSavedTrack();
-  }, [dispatch, currentTrack.id]);
+  }, [dispatch, currentTrack.id, currentTrack.type]);
 
   useEffect(() => {
     setIsOverflow(trackRef.current ? trackRef.current.clientWidth < trackRef.current.scrollWidth : false);
@@ -332,6 +333,7 @@ const WebPlayback: React.FC = () => {
 
   const handleVolume = async (event: React.MouseEvent | React.TouchEvent, volume_percent: number): Promise<void> => {
     event.stopPropagation();
+    saveVolume(volume_percent);
     if (isPlayerActive) {
       player && player.setVolume(volume_percent / 100);
     } else {
@@ -486,10 +488,6 @@ const WebPlayback: React.FC = () => {
 
     return () => clearInterval(interval);
   }, [isPlayerActive, deviceId, getPlaybackState]);
-
-  const getButtonColor = (isActive: boolean): string => {
-    return isActive ? 'rgb(52, 211, 153)' : 'white';
-  };
 
   useEffect(() => {
       getUserDevices();
@@ -670,81 +668,57 @@ const WebPlayback: React.FC = () => {
                   </>
                 )}
               </div>
-              {currentTrack.type === 'track' && (
-                <LikeButton
-                  className="hidden lg:flex h-6 w-6 sm:h-5 sm:w-5 ml-4 cursor-pointer"
-                  isActive={isSaved}
-                  onClick={handleSaveTrack}
-                />
-              )}
-              {currentTrack.type === 'episode' &&
-                (isSaved ? (
-                  <MdCheckCircle
-                    className="hidden lg:flex h-6 w-6 sm:h-5 sm:w-5 ml-4 text-green-400 cursor-pointer"
-                    onClick={handleSaveTrack}
-                  />
-                ) : (
-                  <MdAddCircle
-                    className="hidden lg:flex h-6 w-6 sm:h-5 sm:w-5 ml-4 cursor-pointer"
-                    onClick={handleSaveTrack}
-                  />
-                ))
-              }
+              <ControlButton
+                Icon={LikeButton}
+                isActive={isSaved}
+                type={currentTrack.type}
+                className="hidden lg:flex ml-2"
+                onClick={handleSaveTrack}
+              />
             </div>
 
             <div className="hidden lg:flex flex-col items-center justify-around col-span-4">
               <div className="flex justify-center items-center">
-                <MdShuffle
-                  className="h-6 w-6 sm:h-5 sm:w-5 mx-3 cursor-pointer"
-                  color={getButtonColor(shuffle)}
+                <ControlButton
+                  Icon={MdShuffle}
+                  className={`mx-3 ${shuffle ? 'text-green-400' : ''}`}
                   onClick={handleShuffle}
                 />
-                <MdSkipPrevious
-                  className="h-6 w-6 sm:h-5 sm:w-5 mx-3 cursor-pointer"
+                <ControlButton
+                  Icon={MdSkipPrevious}
+                  className="mx-3"
                   onClick={handlePrev}
                 />
-                <MdReplay10
-                  className="h-6 w-6 sm:h-5 sm:w-5 mx-3 cursor-pointer"
-                  onClick={(e) => handleSeek(e, positionMs - (10 * 1000))}
+                <ControlButton
+                  Icon={MdReplay10}
+                  className="mx-3"
+                  onClick={(e) => handleSeek(e, positionMs - (skipStep * 1000))}
                 />
-                {isPlaying ? (
-                  <MdPauseCircle
-                    className="h-10 w-10 mx-3 cursor-pointer"
-                    onClick={handlePlay}
-                  />
-                ) : (
-                  <MdPlayCircle
-                    className="h-10 w-10 mx-3 cursor-pointer"
-                    onClick={handlePlay}
-                  />
-                )}
-                <MdForward10
-                  className="h-6 w-6 sm:h-5 sm:w-5 mx-3 cursor-pointer"
-                  onClick={(e) => handleSeek(e, positionMs + (10 * 1000))}
+                <ControlButton
+                  Icon={isPlaying ? MdPauseCircle : MdPlayCircle}
+                  className="mx-3 h-10 w-10 sm:h-10 sm:w-10"
+                  onClick={handlePlay}
                 />
-                <MdSkipNext
-                  className="h-6 w-6 sm:h-5 sm:w-5 mx-3 cursor-pointer"
+                <ControlButton
+                  Icon={MdForward10}
+                  className="mx-3"
+                  onClick={(e) => handleSeek(e, positionMs + (skipStep * 1000))}
+                />
+                <ControlButton
+                  Icon={MdSkipNext}
+                  className="mx-3"
                   onClick={handleNext}
                 />
-                {repeatMode === 2 ? (
-                  <MdRepeatOne
-                    className="h-6 w-6 sm:h-5 sm:w-5 mx-3 cursor-pointer"
-                    color={getButtonColor(true)}
-                    onClick={handleRepeatMode}
-                  />
-                ) : (
-                  <MdRepeat
-                    className="h-6 w-6 sm:h-5 sm:w-5 mx-3 cursor-pointer"
-                    color={getButtonColor(repeatMode !== 0)}
-                    onClick={handleRepeatMode}
-                  />
-                )}
+                <ControlButton
+                  Icon={repeatMode === 2 ? MdRepeatOne : MdRepeat}
+                  className={`mx-3 ${repeatMode !== 0 ? 'text-green-400' : ''}`}
+                  onClick={handleRepeatMode}
+                />
               </div>
               <div className="flex justify-center items-center w-full mt-1">
                 <div className="mr-2">{durationFn(positionMs)}</div>
                 <input
                   type="range"
-                  id="progressbar"
                   className="h-2 w-full mr-2"
                   max={duration}
                   value={positionMs}
@@ -764,32 +738,38 @@ const WebPlayback: React.FC = () => {
 
             <div className="flex flex-col items-end justify-center pr-2 lg:pr-4 h-full col-span-3 lg:col-span-4">
               <div className="flex mb-2">
-                <LikeButton
-                  className="flex lg:hidden h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer"
+                <ControlButton
+                  Icon={LikeButton}
                   isActive={isSaved}
+                  type={currentTrack.type}
+                  className="mr-4 flex lg:hidden"
                   onClick={handleSaveTrack}
                 />
                 {currentTrack && currentTrack.type === 'track' && (
-                  <MdMic
-                    className="hidden lg:flex h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer"
+                  <ControlButton
+                    Icon={MdMic}
+                    className="mr-4 hidden lg:flex"
                     onClick={handleOpenLyric}
                   />
                 )}
-                <MdQueueMusic
-                  className="hidden lg:flex h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer"
+                <ControlButton
+                  Icon={MdQueueMusic}
+                  className="mr-4 hidden lg:flex"
                   onClick={handleOpenQueue}
                 />
-                <MdDevices
-                  className={`h-6 w-6 sm:h-5 sm:w-5 mr-4 cursor-pointer ${activeDevice && activeDevice.id !== deviceId && 'text-green-400'}`}
+                <ControlButton
+                  Icon={MdDevices}
+                  className={`mr-4 ${activeDevice && activeDevice.id !== deviceId && 'text-green-400'}`}
                   onClick={handleShowDeviceSelector}
                 />
                 <div className="hidden lg:flex items-center mr-4">
-                  {volume > 50 && <MdVolumeUp className="h-8 w-8 sm:h-4 sm:w-4 cursor-pointer mr-2" />}
-                  {volume > 0 && volume <= 50 && <MdVolumeDown className="h-8 w-8 sm:h-4 sm:w-4 cursor-pointer mr-2" />}
-                  {volume <= 0 && <MdVolumeOff className="h-8 w-8 sm:h-4 sm:w-4 cursor-pointer mr-2" />}
+                  <ControlButton
+                    Icon={volume <= 50 ? (volume > 0 ? MdVolumeDown : MdVolumeOff) : MdVolumeUp}
+                    className="mr-4"
+                    onClick={(e) => handleVolume(e, volume > 0 ? 0 : 100)}
+                  />
                   <input
                     type="range"
-                    id="volumeebar"
                     className="w-40 h-2 text-green-200"
                     max="100"
                     value={volume}
@@ -803,21 +783,14 @@ const WebPlayback: React.FC = () => {
                   />
                 </div>
                 <div className="block lg:hidden">
-                  {isPlaying ? (
-                    <MdPause
-                      className="h-6 w-6 sm:h-5 sm:w-5 cursor-pointer"
-                      onClick={handlePlay}
-                    />
-                  ) : (
-                    <MdPlayArrow
-                      className="h-6 w-6 sm:h-5 sm:w-5 cursor-pointer"
-                      onClick={handlePlay}
-                    />
-                  )}
+                  <ControlButton
+                    Icon={isPlaying ? MdPause : MdPlayArrow}
+                    onClick={handlePlay}
+                  />
                 </div>
                 <div className="hidden lg:block">
-                  <FiMaximize2
-                    className="h-6 w-6 sm:h-5 sm:w-5 cursor-pointer"
+                  <ControlButton
+                    Icon={FiMaximize2}
                     onClick={handleshowFullPlayer}
                   />
                 </div>
@@ -855,12 +828,14 @@ const WebPlayback: React.FC = () => {
           deviceId={deviceId}
           shuffle={shuffle}
           repeatMode={repeatMode}
+          skipStep={skipStep}
           duration={duration}
           volume={volume}
           positionMs={positionMs}
           currentTrack={currentTrack}
           isPlaying={isPlaying}
           isSaved={isSaved}
+          saveVolume={saveVolume}
           handlePlay={handlePlay}
           handlePrev={handlePrev}
           handleNext={handleNext}

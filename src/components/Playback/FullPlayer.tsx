@@ -10,6 +10,9 @@ import {
   MdDevices,
   MdForward10,
   MdReplay10,
+  MdVolumeDown,
+  MdVolumeOff,
+  MdVolumeUp,
 } from 'react-icons/md';
 import Device from '../../types/Device';
 import { duration as durationFn } from '../../utils/helpers';
@@ -20,6 +23,7 @@ import useWindowSize from '../../hooks/useWindowSize';
 import TextLink from '../Text/TextLink';
 import Artist from '../../types/Artist';
 import LikeButton from '../Button/LikeButton';
+import ControlButton from './ControlButton';
 
 type FullPlayerProps = {
   className?: string;
@@ -27,18 +31,20 @@ type FullPlayerProps = {
   deviceId: string;
   shuffle: boolean;
   repeatMode: number;
+  skipStep: number;
   duration: number;
   volume: number;
   positionMs: number;
   currentTrack: Record<string, any>;
   isPlaying: boolean;
   isSaved: boolean;
+  saveVolume: (volumePercent: number) => void;
   handlePlay: (event: React.MouseEvent) => Promise<void>;
   handlePrev: (event: React.MouseEvent) => Promise<void>;
   handleNext: (event: React.MouseEvent) => Promise<void>;
   setPositionMs: (position_ms: number) => void;
   handleSeek: (event: React.MouseEvent, position_ms: number) => Promise<void>;
-  handleVolume: (event: React.MouseEvent, volume_percent: number) => Promise<void>;
+  handleVolume: (event: React.MouseEvent  | React.TouchEvent, volume_percent: number) => Promise<void>;
   handleShuffle: (event: React.MouseEvent) => Promise<void>;
   handleRepeatMode: (event: React.MouseEvent) => Promise<void>;
   handleOpenLyric: (event: React.MouseEvent) => void;
@@ -54,12 +60,14 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
   deviceId,
   shuffle,
   repeatMode,
+  skipStep,
   duration,
   volume,
   positionMs,
   currentTrack,
   isPlaying,
   isSaved,
+  saveVolume,
   handlePlay,
   handlePrev,
   handleNext,
@@ -79,10 +87,6 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
   const [isOverFlow, setIsOverflow] = useState(false);
   const { width: windowWidth, height: windowHeight } = useWindowSize();
 
-  const getButtonColor = (isActive: boolean): string => {
-    return isActive ? 'rgb(52, 211, 153)' : 'white';
-  };
-
   useEffect(() => {
     if (trackRef.current) {
       if (trackRef.current.clientWidth < trackRef.current.scrollWidth) {
@@ -101,11 +105,31 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
             {currentTrack.album?.name}
           </div>
         </div>
-        <div className="flex h-3/4 justify-center items-center">
+        <div className="flex h-full justify-center items-center">
           <img
             src={getHighestImage(currentTrack.album?.images)}
             alt={currentTrack.album?.name}
-            className="rounded-md h-3/4 sm:h-full"
+            className="rounded-md h-85% sm:h-full"
+          />
+        </div>
+        <div className="flex justify-end items-center">
+          <ControlButton
+            Icon={volume <= 50 ? (volume > 0 ? MdVolumeDown : MdVolumeOff) : MdVolumeUp}
+            className="mr-2"
+            onClick={(e) => handleVolume(e, volume > 0 ? 0 : 100)}
+          />
+          <input
+            type="range"
+            className="w-40"
+            max="100"
+            value={volume}
+            onChange={(e) => saveVolume(Number(e.target.value))}
+            onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
+              handleVolume(e, Number(e.currentTarget.value))
+            }
+            onTouchEnd={(e: React.TouchEvent<HTMLInputElement>) =>
+              handleVolume(e, Number(e.currentTarget.value))
+            }
           />
         </div>
         <div className="flex justify-between items-center">
@@ -147,10 +171,12 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
               </div>
             </div>
           </div>
-          <LikeButton
-            className="h-8 w-8 cursor-pointer"
+          <ControlButton
+            Icon={LikeButton}
             isActive={isSaved}
+            type={currentTrack.type}
             onClick={handleSaveTrack}
+            sizeType="full"
           />
         </div>
       </div>
@@ -180,81 +206,60 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
           </div>
         </div>
         <div className="flex justify-around items-center">
-          <MdShuffle
-            className="h-8 w-8 cursor-pointer"
-            color={getButtonColor(shuffle)}
+          <ControlButton
+            Icon={MdShuffle}
+            className={`${shuffle ? 'text-green-400' : ''}`}
             onClick={handleShuffle}
+            sizeType="full"
           />
-          <div className="flex justify-around items-center w-1/2">
-            <MdSkipPrevious
-              className="h-8 w-8 cursor-pointer"
+          <div className="flex justify-around items-center w-3/4 sm:w-1/2">
+            <ControlButton
+              Icon={MdSkipPrevious}
               onClick={handlePrev}
+              sizeType="full"
             />
-            {currentTrack.type === 'episode' && (
-              <div className="hidden sm:block relative">
-                <MdReplay10
-                  className="h-8 w-8 cursor-pointer"
-                  onClick={(e) => handleSeek(e, positionMs - (10 * 1000))}
-                />
-                <div className="absolute w-2 left-0 right-0 mx-auto top-8 bottom-0 font-light text-xs">
-                  15
-                </div>
-              </div>
-            )}
-            {isPlaying ? (
-              <MdPauseCircle
-                className="h-20 w-20 cursor-pointer"
-                onClick={handlePlay}
+            <div className="">
+              <ControlButton
+                Icon={MdReplay10}
+                onClick={(e) => handleSeek(e, positionMs - (skipStep * 1000))}
+                sizeType="full"
               />
-            ) : (
-              <MdPlayCircle
-                className="h-20 w-20 cursor-pointer"
-                onClick={handlePlay}
+            </div>
+            <ControlButton
+              Icon={isPlaying ? MdPauseCircle : MdPlayCircle}
+              className="h-16 w-16"
+              onClick={handlePlay}
+              sizeType="full"
+            />
+            <div className="">
+              <ControlButton
+                Icon={MdForward10}
+                onClick={(e) => handleSeek(e, positionMs + (skipStep * 1000))}
+                sizeType="full"
               />
-            )}
-            {currentTrack.type === 'episode' && (
-              <div className="hidden sm:block relative">
-                <MdForward10
-                  className="h-8 w-8 cursor-pointer"
-                  onClick={(e) => handleSeek(e, positionMs + (15 * 1000))}
-                />
-                <div className="absolute w-2 left-0 right-0 mx-auto top-8 bottom-0 font-light text-xs">
-                  15
-                </div>
-              </div>
-            )}
-            <MdSkipNext
-              className="h-8 w-8 cursor-pointer"
+            </div>
+            <ControlButton
+              Icon={MdSkipNext}
               onClick={handleNext}
+              sizeType="full"
             />
           </div>
-          <div className="relative">
-            {repeatMode === 2 ? (
-              <MdRepeatOne
-                className="h-8 w-8 cursor-pointer"
-                color={getButtonColor(true)}
-                onClick={handleRepeatMode}
-              />
-            ) : (
-              <MdRepeat
-                className="h-8 w-8 cursor-pointer"
-                color={getButtonColor(repeatMode !== 0)}
-                onClick={handleRepeatMode}
-              />
-            )}
-          </div>
+          <ControlButton
+            Icon={repeatMode === 2 ? MdRepeatOne : MdRepeat}
+            className={`${repeatMode !== 0 ? 'text-green-400' : ''}`}
+            onClick={handleRepeatMode}
+            sizeType="full"
+          />
         </div>
       </div>
       <div className="flex flex-col mt-4">
         <div className="flex w-full justify-between items-center">
-          <div className="w-8">
-            {currentTrack.type === 'track' && (
-              <MdMic
-                className="h-8 w-8 cursor-pointer"
-                onClick={handleOpenLyric}
-              />
-            )}
-          </div>
+          <ControlButton
+            Icon={MdMic}
+            className={`${currentTrack.type === 'episode' ? 'invisible' : 'visible'}`}
+            onClick={handleOpenLyric}
+            sizeType="full"
+          />
           <div
             className={`flex justify-center items-center cursor-pointer ${activeDevice && activeDevice.id !== deviceId && 'text-green-400'}`}
             onClick={handleShowDeviceSelector}
@@ -264,7 +269,10 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
                 {activeDevice.name}
               </div>
             )}
-            <MdDevices className="h-8 w-8" />
+            <ControlButton
+              Icon={MdDevices}
+              sizeType="full"
+            />
           </div>
         </div>
       </div>
