@@ -23,7 +23,7 @@ import useWindowSize from '../../hooks/useWindowSize';
 import TextLink from '../Text/TextLink';
 import Artist from '../../types/Artist';
 import LikeButton from '../Button/LikeButton';
-import ControlButton from './ControlButton';
+import ControlButton from '../Button/ControlButton';
 import RangeInput from '../Input/RangeInput';
 
 type FullPlayerProps = {
@@ -173,8 +173,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
               </div>
             </div>
           </div>
-          <ControlButton
-            Icon={LikeButton}
+          <LikeButton
             isActive={isSaved}
             type={currentTrack.type}
             onClick={handleSaveTrack}
@@ -211,7 +210,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
         <div className="flex justify-around items-center">
           <ControlButton
             Icon={MdShuffle}
-            className={`${shuffle ? 'text-green-400' : ''}`}
+            isActive={shuffle}
             onClick={handleShuffle}
             sizeType="full"
           />
@@ -249,7 +248,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
           </div>
           <ControlButton
             Icon={repeatMode === 2 ? MdRepeatOne : MdRepeat}
-            className={`${repeatMode !== 0 ? 'text-green-400' : ''}`}
+            isActive={repeatMode !== 0}
             onClick={handleRepeatMode}
             sizeType="full"
           />

@@ -242,9 +242,10 @@ const PlaylistPage: React.FC = () => {
           />
         ) : (
           <LikeButton
-            className="w-8 h-8 ml-6"
-            onClick={handleFollow}
+            className="ml-6"
             isActive={isFollowed}
+            onClick={handleFollow}
+            sizeType="full"
           />
         )}
       </div>

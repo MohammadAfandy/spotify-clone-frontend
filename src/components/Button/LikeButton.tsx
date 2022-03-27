@@ -4,40 +4,35 @@ import {
   MdFavorite,
   MdFavoriteBorder,
 } from 'react-icons/md';
+import { IconType } from 'react-icons/lib';
+import ControlButton, { ControlButtonProps } from './ControlButton';
 
-export type LikeButtonProps = {
-  className?: string;
-  isActive?: boolean;
+type LikeButtonProps = Omit<ControlButtonProps, 'Icon'> & {
   type?: string;
-  onClick?: (event: React.MouseEvent<SVGElement>) => void;
+  Icon?: IconType;
 };
 
 const defaultProps: LikeButtonProps = {
-  isActive: false,
   type: 'track',
-  className: '',
+  Icon: MdFavorite,
 };
 
 const LikeButton: React.FC<LikeButtonProps> = ({
-  className,
-  onClick,
   type,
   isActive,
+  ...props
 }) => {
-  let Prop;
+  let Icon;
   if (type === 'track') {
-    Prop = isActive ? MdFavorite : MdFavoriteBorder;
+    Icon = isActive ? MdFavorite : MdFavoriteBorder;
   } else {
-    Prop = isActive ? MdCheckCircle : MdAddCircle;
+    Icon = isActive ? MdCheckCircle : MdAddCircle;
   }
-  const color = isActive ? 'text-green-400' : '';
   return (
-    <Prop
-      className={`h-4 w-4 cursor-pointer transition duration-300 ease-in-out transform hover:scale-110 ${color} ${className}`}
-      onClick={onClick}
-      data-tip="like"
-      data-for="login-tooltip"
-      data-event="click"
+    <ControlButton
+      {...props}
+      isActive={isActive}
+      Icon={Icon}
     />
   );
 };

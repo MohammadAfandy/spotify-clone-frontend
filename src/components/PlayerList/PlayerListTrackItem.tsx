@@ -226,7 +226,6 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
           )}
           <div className="hidden sm:flex items-center col-start-5 col-end-5">
             <LikeButton
-              className="w-6 h-6"
               isActive={isSavedTrack}
               type={track.type}
               onClick={() => saveTrack(track)}

@@ -66,7 +66,7 @@ import TextLink from '../Text/TextLink';
 import FullScreen from '../FullScreen/FullScreen';
 import DeviceSelector from './DeviceSelector';
 import LikeButton from '../Button/LikeButton';
-import ControlButton from './ControlButton';
+import ControlButton from '../Button/ControlButton';
 import RangeInput from '../Input/RangeInput';
 
 declare global {
@@ -669,8 +669,7 @@ const WebPlayback: React.FC = () => {
                   </>
                 )}
               </div>
-              <ControlButton
-                Icon={LikeButton}
+              <LikeButton
                 isActive={isSaved}
                 type={currentTrack.type}
                 className="hidden lg:flex ml-2"
@@ -682,7 +681,8 @@ const WebPlayback: React.FC = () => {
               <div className="flex justify-center items-center">
                 <ControlButton
                   Icon={MdShuffle}
-                  className={`mx-3 ${shuffle ? 'text-green-400' : ''}`}
+                  className="mx-3"
+                  isActive={shuffle}
                   onClick={handleShuffle}
                 />
                 <ControlButton
@@ -697,7 +697,7 @@ const WebPlayback: React.FC = () => {
                 />
                 <ControlButton
                   Icon={isPlaying ? MdPauseCircle : MdPlayCircle}
-                  className="mx-3 h-10 w-10 sm:h-10 sm:w-10"
+                  className="mx-3 h-10 w-10 sm:h-10 sm:w-10 canhover:opacity-100"
                   onClick={handlePlay}
                 />
                 <ControlButton
@@ -712,7 +712,8 @@ const WebPlayback: React.FC = () => {
                 />
                 <ControlButton
                   Icon={repeatMode === 2 ? MdRepeatOne : MdRepeat}
-                  className={`mx-3 ${repeatMode !== 0 ? 'text-green-400' : ''}`}
+                  className="mx-3"
+                  isActive={repeatMode !== 0}
                   onClick={handleRepeatMode}
                 />
               </div>
@@ -741,8 +742,7 @@ const WebPlayback: React.FC = () => {
 
             <div className="flex flex-col items-end justify-center pr-2 lg:pr-4 h-full col-span-3 lg:col-span-4">
               <div className="flex mb-2">
-                <ControlButton
-                  Icon={LikeButton}
+                <LikeButton
                   isActive={isSaved}
                   type={currentTrack.type}
                   className="mr-4 flex lg:hidden"
@@ -751,6 +751,7 @@ const WebPlayback: React.FC = () => {
                 {currentTrack && currentTrack.type === 'track' && (
                   <ControlButton
                     Icon={MdMic}
+                    isActive={location.pathname === '/lyric'}
                     className="mr-4 hidden lg:flex"
                     onClick={handleOpenLyric}
                   />
@@ -761,8 +762,9 @@ const WebPlayback: React.FC = () => {
                   onClick={handleOpenQueue}
                 />
                 <ControlButton
+                  className="mr-4"
                   Icon={MdDevices}
-                  className={`mr-4 ${activeDevice && activeDevice.id !== deviceId && 'text-green-400'}`}
+                  isActive={!!(activeDevice && activeDevice.id !== deviceId)}
                   onClick={handleShowDeviceSelector}
                 />
                 <div className="hidden lg:flex items-center mr-4">

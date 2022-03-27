@@ -50,9 +50,15 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
   } = useContext(AuthContext);
 
   useEffect(() => {
+    let interval:NodeJS.Timer;
     if (isLoggedIn) {
       dispatch(getUserPlaylist());
+      interval = setInterval(() => {
+        dispatch(getUserPlaylist());
+      }, 30 * 1000);
     }
+
+    return () => clearInterval(interval);
   }, [isLoggedIn, dispatch]);
 
   const handleEditPlaylist = async (
