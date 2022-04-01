@@ -75,11 +75,11 @@ const HomePage: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col px-4 py-4">
+    <div className="flex flex-col sm:p-4 p-2">
       <div className="mb-8">
-        <div className="mb-4 flex justify-between items-center font-bold w-full">
-          {isLoading && <Skeleton width={200} height={30} />}
-          {!isLoading && <div className="text-lg md:text-2xl truncate">{message}</div>}
+        <div className="mb-2 flex justify-between items-center font-bold w-full text-sm md:text-lg">
+          {isLoading && <Skeleton width={200} height={20} />}
+          {!isLoading && <div className="truncate">{message}</div>}
           <TextLink className="ml-6 whitespace-pre" text="See All" url="/genre/featured-playlists" />
         </div>
         <Slider>
@@ -98,8 +98,8 @@ const HomePage: React.FC = () => {
       </div>
 
       <div className="mb-8">
-        <div className="mb-4 flex justify-between items-center font-bold w-full">
-          <div className="text-lg md:text-2xl truncate">New Releases</div>
+        <div className="mb-2 flex justify-between items-center font-bold w-full text-sm md:text-lg">
+          <div className="truncate">New Releases</div>
           <TextLink className="ml-6 whitespace-pre" text="See All" url="genre/new-releases" />
         </div>
         <Slider>
@@ -119,9 +119,9 @@ const HomePage: React.FC = () => {
 
       {isLoggedIn && recentlyPlayed.length > 0 && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-center font-bold w-full">
-            {isLoading && <Skeleton width={200} height={30} />}
-            {!isLoading && <div className="text-lg md:text-2xl truncate">Recently Played</div>}
+          <div className="mb-2 flex justify-between items-center font-bold w-full text-sm md:text-lg">
+            {isLoading && <Skeleton width={200} height={20} />}
+            {!isLoading && <div className="truncate">Recently Played</div>}
             <TextLink className="ml-6 whitespace-pre" text="See All" url="/genre/recently-played" />
           </div>
           <Slider>
@@ -142,8 +142,8 @@ const HomePage: React.FC = () => {
 
       {isLoggedIn && topTracks.length > 0 && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-center font-bold w-full">
-            <div className="text-lg md:text-2xl truncate">Your Top Tracks</div>
+          <div className="mb-2 flex justify-between items-center font-bold w-full text-sm md:text-lg">
+            <div className="truncate">Your Top Tracks</div>
             <TextLink className="ml-6 whitespace-pre" text="See All" url="genre/top-tracks" />
           </div>
           <Slider>
@@ -164,8 +164,8 @@ const HomePage: React.FC = () => {
 
       {isLoggedIn && topTracks.length > 0 && (
         <div className="mb-8">
-          <div className="mb-4 flex justify-between items-center font-bold w-full">
-            <div className="text-lg md:text-2xl truncate">Your Top Artists</div>
+          <div className="mb-2 flex justify-between items-center font-bold w-full text-sm md:text-lg">
+            <div className="truncate">Your Top Artists</div>
             <TextLink className="ml-6 whitespace-pre" text="See All" url="genre/top-artists" />
           </div>
           <Slider>

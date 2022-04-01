@@ -73,7 +73,7 @@ const EpisodePage: React.FC = () => {
   };
 
   return (
-    <div className="px-4 py-4">
+    <div className="sm:p-4 p-2">
       <PlayerListHeader
         image={episode.images && episode.images[0]?.url}
         name={episode.name}

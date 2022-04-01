@@ -54,11 +54,13 @@ const CardItem: React.FC<CardItemProps> = ({
       uris: [uri],
     }));
   };
-  
+
   const LoadingComponent = (
-    <div className={`${styles.cardItem} p-4 bg-light-black hover:bg-light-black-2 rounded-md`}>
-      <Skeleton className="w-full h-75% rounded-md" />
-      <div className="text-sm font-bold mt-2">
+    <div className={`${styles.cardItem} sm:bg-light-black sm:rounded-md py-4`}>
+      <div className={styles.cardImage}>
+        <Skeleton height="100%" />
+      </div>
+      <div className="px-2 sm:px-4 text-center sm:text-left mt-1 sm:mt-2">
         <Skeleton />
         <Skeleton />
       </div>
@@ -70,28 +72,28 @@ const CardItem: React.FC<CardItemProps> = ({
       {isLoading && LoadingComponent}
       {!isLoading && (
         <div
-          className={`${styles.cardItem} group cursor-pointer transition duration-300 ease-in-out transform p-4 bg-light-black hover:bg-light-black-2 rounded-md ${className}`}
+          className={`${styles.cardItem} group cursor-pointer transition duration-300 ease-in-out transform sm:bg-light-black sm:hover:bg-light-black-2 sm:rounded-md py-4 ${className}`}
           onClick={handleClick}
         >
-          <div className="relative h-75%">
+          <div className={styles.cardImage}>
             {image ? (
               <img
                 src={image}
                 alt={name}
-                className="w-full h-full rounded-md min-h-full" />
+                className="w-full h-full sm:rounded-md min-h-full" />
             ) : (
               <div className="w-full h-full">
                 <FiMusic className="w-full h-full p-8" />
               </div>
             )}
-            <div className="hidden md:block opacity-0 canhover:group-hover:opacity-100 transition duration-500 ease-in-out">
+            <div className="hidden md:block opacity-0 absolute bottom-4 right-5 canhover:group-hover:opacity-100 transition duration-500 ease-in-out">
               <PlayButton
-                className="absolute bottom-4 right-5 h-12 w-12"
+                className="h-12 w-12"
                 onClick={onClickPlay ? onClickPlay : handleClickPlay}
               />
             </div>
           </div>
-          <div className="text-xs font-bold mt-2">
+          <div className="px-2 sm:px-4 text-xxs sm:text-xs text-center sm:text-left font-bold mt-1 sm:mt-2">
             <div className="truncate">{name}</div>
             <div className="font-semibold text-gray-300 line-clamp-1 sm:line-clamp-2">
               {description ? ucwords(description) : <span>&nbsp;</span>}

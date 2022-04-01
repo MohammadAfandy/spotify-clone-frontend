@@ -33,6 +33,9 @@ const LikeButton: React.FC<LikeButtonProps> = ({
       {...props}
       isActive={isActive}
       Icon={Icon}
+      data-tip="like"
+      data-for="login-tooltip"
+      data-event="click"
     />
   );
 };

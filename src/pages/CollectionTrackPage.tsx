@@ -27,7 +27,7 @@ const CollectionTrackPage: React.FC = () => {
   }, 0);
 
   return (
-    <div className="px-4 py-4">
+    <div className="sm:p-4 p-2">
       <PlayerListHeader
         image={LIKED_SONG_IMAGE}
         name="Liked Songs"

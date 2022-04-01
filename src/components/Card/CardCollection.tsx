@@ -71,7 +71,7 @@ const CardCollection: React.FC<CardCollectionProps> = ({
       onClick={handleClick}
     >
       <div className="text-justify mb-4 text-sm line-clamp-3">
-        {isLoading && <Skeleton type="light" />}
+        {isLoading && <Skeleton />}
         {!isLoading && (
           <Fragment>
             {type === 'track' &&
@@ -109,7 +109,7 @@ const CardCollection: React.FC<CardCollectionProps> = ({
         )}
       </div>
       <div className="text-3xl font-bold">
-        {isLoading && <Skeleton type="light" />}
+        {isLoading && <Skeleton />}
         {!isLoading && (
           <Fragment>
             {type === 'track' && 'Liked Songs'}
@@ -118,7 +118,7 @@ const CardCollection: React.FC<CardCollectionProps> = ({
         )}
       </div>
       <div className="">
-        {isLoading && <Skeleton type="light" />}
+        {isLoading && <Skeleton />}
         {!isLoading && (
           <Fragment>
             {type === 'track' && total + ' songs'}

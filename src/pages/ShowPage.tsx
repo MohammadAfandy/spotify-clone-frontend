@@ -71,7 +71,7 @@ const ShowPage: React.FC = () => {
   };
 
   return (
-    <div className="px-4 py-4">
+    <div className="sm:p-4 p-2">
       <PlayerListHeader
         image={show.images && show.images[0].url}
         name={show.name}

@@ -36,11 +36,10 @@ const PlayerListTrackMini: React.FC<PlayerListTrackMiniProps> = ({
 
   const LoadingComponent = (
     <div className="grid grid-cols-12 gap-6 w-full p-2 rounded-md items-center">
-      <div className="col-span-2 md:col-span-1 w-12 h-12">
-        <Skeleton className="h-full" />
+      <div className="col-span-2 md:col-span-1">
+        <Skeleton />
       </div>
       <div className="col-span-8 md:col-span-10">
-        <Skeleton />
         <Skeleton />
       </div>
       <div className="col-span-2 md:col-span-1">

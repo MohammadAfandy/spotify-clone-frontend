@@ -46,9 +46,9 @@ const CategoryDetailPage: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col px-4 py-4">
+    <div className="flex flex-col sm:p-4 p-2">
       <div className="w-full text-4xl font-bold mb-5">
-        {isLoading && <Skeleton width={200} height={30} />}
+        {isLoading && <Skeleton width={200} height={20} />}
         {!isLoading && category.name}
       </div>
       <GridWrapper>

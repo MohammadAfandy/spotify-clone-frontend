@@ -64,10 +64,10 @@ const SearchResultPage: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col px-4 py-4">
+    <div className="flex flex-col sm:p-4 p-2">
       <div className="mb-8">
-        <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-lg md:text-2xl truncate">Songs</div>
+        <div className="mb-2 flex justify-between items-end font-bold w-full text-sm md:text-lg">
+          <div className="truncate">Songs</div>
           {tracks.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/track'} />}
         </div>
         <PlayerListTrack
@@ -80,8 +80,8 @@ const SearchResultPage: React.FC = () => {
       </div>
 
       <div className="mb-8">
-        <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-lg md:text-2xl truncate">Artists</div>
+        <div className="mb-2 flex justify-between items-end font-bold w-full text-sm md:text-lg">
+          <div className="truncate">Artists</div>
           {artists.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/artist'} />}
         </div>
         <Slider>
@@ -102,8 +102,8 @@ const SearchResultPage: React.FC = () => {
       </div>
 
       <div className="mb-8">
-        <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-lg md:text-2xl truncate">Albums</div>
+        <div className="mb-2 flex justify-between items-end font-bold w-full text-sm md:text-lg">
+          <div className="truncate">Albums</div>
           {albums.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/album'} />}
         </div>
         <Slider>
@@ -122,8 +122,8 @@ const SearchResultPage: React.FC = () => {
       </div>
 
       <div className="mb-8">
-        <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-lg md:text-2xl truncate">Playlists</div>
+        <div className="mb-2 flex justify-between items-end font-bold w-full text-sm md:text-lg">
+          <div className="truncate">Playlists</div>
           {playlists.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/playlist'} />}
         </div>
         <Slider>
@@ -146,8 +146,8 @@ const SearchResultPage: React.FC = () => {
       </div>
 
       <div className="mb-8">
-        <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-lg md:text-2xl truncate">Podcasts</div>
+        <div className="mb-2 flex justify-between items-end font-bold w-full text-sm md:text-lg">
+          <div className="truncate">Podcasts</div>
           {shows.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/show'} />}
         </div>
         <Slider>
@@ -166,8 +166,8 @@ const SearchResultPage: React.FC = () => {
       </div>
 
       <div className="mb-8">
-        <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-lg md:text-2xl truncate">Episodes</div>
+        <div className="mb-2 flex justify-between items-end font-bold w-full text-sm md:text-lg">
+          <div className="truncate">Episodes</div>
           {episodes.length > 0 && <TextLink className="ml-6 whitespace-pre" text="See All" url={location.pathname + '/episode'} />}
         </div>
         <Slider>

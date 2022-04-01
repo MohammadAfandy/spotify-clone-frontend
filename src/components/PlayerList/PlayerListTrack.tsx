@@ -103,14 +103,14 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
 
   let number = 0;
   const TrackLoading = (
-    [...Array(1)].map((_, idx) => (
+    [...Array(3)].map((_, idx) => (
       <PlayerListTrackItem key={idx} isLoading />
     ))
   );
 
   return (
     <div className={styles.playerGrid + " flex flex-col w-full"}>
-      <div className="border-b-2 border-opacity-10 px-2" data-wrapper>
+      <div className="border-b-2 border-opacity-10 px-2 opacity-60" data-wrapper>
         <div className="text-center col-start-1 col-end-1">
           #
         </div>

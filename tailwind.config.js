@@ -1,4 +1,6 @@
 // tailwind.config.js
+const plugin = require('tailwindcss/plugin');
+
 module.exports = {
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   theme: {
@@ -36,7 +38,7 @@ module.exports = {
         'light-black-2': '#3E3E3E',
       },
       backgroundImage: theme => ({
-        'background-gradient': 'linear-gradient(rgba(0, 0, 0, .85) 0 , #262626 100%)',
+        'background-gradient': 'linear-gradient(rgba(0,0,0,.8) 0, #121212 100%);',
         'banner-gradient': 'linear-gradient(90deg, #af2896, #509bf5)',
       }),
       inset: {
@@ -74,5 +76,20 @@ module.exports = {
   plugins: [
     require('@tailwindcss/line-clamp'),
     require('tailwindcss-named-groups'),
+    plugin(function ({ addVariant, e, postcss }) {
+      addVariant('firefox', ({ container, separator }) => {
+        const isFirefoxRule = postcss.atRule({
+          name: '-moz-document',
+          params: 'url-prefix()',
+        });
+        isFirefoxRule.append(container.nodes);
+        container.append(isFirefoxRule);
+        isFirefoxRule.walkRules((rule) => {
+          rule.selector = `.${e(
+            `firefox${separator}${rule.selector.slice(1)}`
+          )}`;
+        });
+      });
+    }),
   ],
 };

@@ -86,27 +86,34 @@ const PlaylistPage: React.FC = () => {
   useEffect(() => {
     const fetchSearch = async () => {
       if (searchText.trim() !== '') {
-        const response = await ApiSpotify.get('/search', {
-          params: {
-            q: searchText,
-            type: 'track,episode',
-            limit: 20,
-          },
-        });
-
-        // sometimes the api return null in the items array
-        const suggestedTracks = response.data.tracks.items.filter(
-          (v: Track) => v != null
-        );
-        const suggestedEpisodes = response.data.episodes.items.filter(
-          (v: Track) => v != null
-        );
-        const allSuggested = suggestedTracks.concat(suggestedEpisodes);
-        setSuggested(
-          allSuggested.filter((v: Track) => {
-            return tracks.map((pl) => pl.uri).includes(v.uri) === false;
-          })
-        );
+        try {
+          setIsLoading(true);
+          const response = await ApiSpotify.get('/search', {
+            params: {
+              q: searchText,
+              type: 'track,episode',
+              limit: 20,
+            },
+          });
+  
+          // sometimes the api return null in the items array
+          const suggestedTracks = response.data.tracks.items.filter(
+            (v: Track) => v != null
+          );
+          const suggestedEpisodes = response.data.episodes.items.filter(
+            (v: Track) => v != null
+          );
+          const allSuggested = suggestedTracks.concat(suggestedEpisodes);
+          setSuggested(
+            allSuggested.filter((v: Track) => {
+              return tracks.map((pl) => pl.uri).includes(v.uri) === false;
+            })
+          );
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setIsLoading(false);
+        }
       } else {
         setSuggested([]);
       }
@@ -211,7 +218,7 @@ const PlaylistPage: React.FC = () => {
   };
 
   return (
-    <div className="px-4 py-4">
+    <div className="sm:p-4 p-2">
       <div className="mb-4">
         <PlayerListHeader
           image={getHighestImage(playlist.images)}
@@ -288,7 +295,11 @@ const PlaylistPage: React.FC = () => {
               onClearValue={(e) => setSearchText('')}
             />
           </div>
-          {suggested.length > 0 && (
+          {isLoading && [...Array(3)].map((_, idx) => (
+              <PlayerListTrackMini key={idx} isLoading />
+            )
+          )}
+          {!isLoading && suggested.length > 0 && (
             <>
               {suggested.map((suggest) => (
                 <PlayerListTrackMini

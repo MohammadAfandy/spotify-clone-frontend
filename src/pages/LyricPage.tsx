@@ -104,7 +104,7 @@ const LyricPage: React.FC = () => {
   );
 
   return (
-    <div className={`relative px-4 py-4 ${isShowRunningLyric ? 'h-full' : ''}`}>
+    <div className={`relative sm:p-4 p-2 ${isShowRunningLyric ? 'h-full' : ''}`}>
       {lyric.length > 0 && plainLyric && (
         <div
           className="absolute top-2 left-2 cursor-pointer mb-4 bg-light-black-2 py-2 px-6 rounded-md text-gray-300"

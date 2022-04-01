@@ -34,13 +34,13 @@ const PlayerListHeader: React.FC<PlayerListHeaderProps> = ({
   const LoadingComponent = (
     <>
       <div className="h-52 w-52 sm:mr-6 rounded-md">
-        <Skeleton className="h-full" />
+        <Skeleton height="100%" />
       </div>
-      <div className="w-52 text-center sm:text-left mt-4 sm:mt-0">
-        <Skeleton />
-        <Skeleton />
-        <Skeleton />
-        <Skeleton />
+      <div className="flex flex-col w-full items-center sm:items-start gap-3 mt-4 sm:mt-0">
+        <Skeleton width="30%" />
+        <Skeleton height={30} width="70%" />
+        <Skeleton width="60%" />
+        <Skeleton width="80%" />
       </div>
     </>
   );

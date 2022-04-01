@@ -80,7 +80,7 @@ const PlayerListEpisode: React.FC<PlayerListEpisodeProps> = ({
   };
 
   const EpisodeLoading = (
-    [...Array(1)].map((_, idx) => (
+    [...Array(3)].map((_, idx) => (
       <PlayerListEpisodeItem key={idx} isLoading />
     ))
   );

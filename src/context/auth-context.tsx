@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import ApiSpotify from '../utils/api-spotify';
+import ApiBackend from '../utils/api-backend';
 import {
   getCookie,
   removeCookie,
@@ -31,14 +32,24 @@ const AuthProvider: React.FC = ({ children }) => {
   const [isPremium, setIsPremium] = useState<boolean>(false);
   const [user, setUser] = useState<User>({} as User);
 
-  const logout = (): void => {
-    setIsLoggedIn(false);
-    setIsPremium(false);
-    setUser({} as User);
-    // removeCookie('refresh_token');
-    removeCookie('access_token');
-    removeCookie('country');
-    removeCookie('is_logged_in');
+  const logout = async (): Promise<void> => {
+    try {
+      // to remove server side cookie refresh token
+      await ApiBackend.post('/logout', {}, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoggedIn(false);
+      setIsPremium(false);
+      setUser({} as User);
+      removeCookie('access_token');
+      removeCookie('country');
+      removeCookie('is_logged_in');
+
+      window.location.href = '/';
+    }
   };
 
   useEffect(() => {

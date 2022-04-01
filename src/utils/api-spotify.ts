@@ -54,6 +54,7 @@ axiosInstance.interceptors.response.use(
       !error.config._retry
       // refreshToken
     ) {
+      const isLoggedIn = getCookie('is_logged_in');
       const isExpired = (
         error.response.status === 401 &&
         error.response.data.error.message === 'The access token expired'
@@ -61,7 +62,7 @@ axiosInstance.interceptors.response.use(
       const accessToken = getCookie('access_token');
 
       // refresh token when expired or access cookie token is deleted
-      if (isExpired || !accessToken) {
+      if (isLoggedIn && (isExpired || !accessToken)) {
         originalRequest._retry = true;
 
         const response = await ApiBackend.post('/refresh_token', {}, {

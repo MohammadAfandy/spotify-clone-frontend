@@ -58,7 +58,7 @@ const CollectionPodcastPage: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col px-4 py-4">
+    <div className="flex flex-col sm:p-4 p-2">
       <div className="text-2xl mb-4 font-bold">PODCASTS</div>
       <GridWrapper>
         <div className="col-span-2">

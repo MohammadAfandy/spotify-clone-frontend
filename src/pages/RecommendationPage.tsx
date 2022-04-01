@@ -229,7 +229,7 @@ const RecommendationPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col px-4 py-4">
+    <div className="flex flex-col sm:p-4 p-2">
       <div className="mb-4">
         Find recommended tracks based on your criteria. <span className="italic text-xs">(Max 5 selections)</span>
       </div>

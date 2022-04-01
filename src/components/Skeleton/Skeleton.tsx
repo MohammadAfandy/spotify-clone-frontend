@@ -1,26 +1,25 @@
-import ReactSkeleton, { SkeletonProps } from 'react-loading-skeleton';
+import styles from './Skeleton.module.css';
 
-const Skeleton: React.FC<SkeletonProps & {
-  type?: 'dark' | 'light';
-}> = ({
-  className,
-  type = 'dark',
-  ...props
+type SkeletonProps = {
+  height?: string | number;
+  width?: string | number;
+};
+
+const defaultProps: SkeletonProps = {
+  height: '1rem',
+  width: '100%',
+};
+
+const Skeleton: React.FC<SkeletonProps> = ({
+  height,
+  width,
 }) => {
 
   return (
-    <ReactSkeleton
-      className={`${className}`}
-      style={type === 'dark' ? ({
-        backgroundColor: '#202020',
-        backgroundImage: 'linear-gradient(90deg, #202020, #444, #202020)',
-      }) : ({
-        backgroundColor: 'rgba(255,255,255, .3)',
-        backgroundImage: 'linear-gradient(90deg, rgba(255,255,255,.3), #eee, rgba(255,255,255,.3))',
-      })}
-      {...props}
-    />
+    <div className={styles.skeleton} style={{ height, width }}/>
   )
 };
+
+Skeleton.defaultProps = defaultProps;
 
 export default Skeleton;

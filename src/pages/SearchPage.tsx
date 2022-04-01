@@ -40,7 +40,7 @@ const SearchPage: React.FC = () => {
   );
 
   return (
-    <div className="px-4 py-4">
+    <div className="sm:p-4 p-2">
       <GridWrapper>
         {isLoading && CardLoading}
         {!isLoading && categories.map((category) => (

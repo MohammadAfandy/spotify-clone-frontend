@@ -29,7 +29,7 @@ const MainContent: React.FC = () => {
   return (
     <div
       id="main-container"
-      className="relative main-content overflow-auto flex flex-col w-full sm:ml-56 mt-16"
+      className="relative main-content overflow-auto flex flex-col w-full sm:ml-56 mt-14 pt-2"
     >
       <ScrollToTop />
       <Switch>

@@ -88,12 +88,12 @@ const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
   const LoadingComponent = (
     <>
       <div className="mr-4 w-24 h-24 rounded-xl">
-        <Skeleton className="h-full" />
+        <Skeleton height="100%" />
       </div>
-      <div className="flex flex-col w-full">
-        <Skeleton className="h-full" />
-        <Skeleton className="h-full" />
-        <Skeleton className="h-full" />
+      <div className="flex flex-col gap-3 w-full">
+        <Skeleton />
+        <Skeleton />
+        <Skeleton />
       </div>
     </>
   );

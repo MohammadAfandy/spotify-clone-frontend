@@ -88,7 +88,7 @@ const AlbumPage: React.FC = () => {
 
   const artists = album.artists || [];
   return (
-    <div className="px-4 py-4">
+    <div className="sm:p-4 p-2">
       <div className="mb-4">
         <PlayerListHeader
           image={album.images && album.images[0]?.url}

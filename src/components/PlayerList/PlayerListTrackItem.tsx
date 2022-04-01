@@ -103,13 +103,13 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
 
   const LoadingComponent = (
     <div className="rounded-md px-2" data-wrapper>
-      <Skeleton className="h-full" />
-      <Skeleton className="h-full" />
-      <Skeleton className="h-full" />
-      <Skeleton className="h-full" />
-      <Skeleton className="h-full" />
-      <Skeleton className="h-full" />
-      <Skeleton className="h-full" />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
     </div>
   );
 
@@ -117,8 +117,8 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
     <>
       {isLoading && LoadingComponent}
       {!isLoading && track && (
-        <div className="hover:bg-gray-100 hover:bg-opacity-25 rounded-md px-2" data-wrapper>
-          <div className="group flex justify-center items-center col-start-1 col-end-1">
+        <div className="group hover:bg-gray-100 hover:bg-opacity-25 rounded-md px-2" data-wrapper>
+          <div className="flex justify-center items-center col-start-1 col-end-1">
             {currentTrack && track.uri === currentTrack.uri ? (
               <img
                 src={

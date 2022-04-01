@@ -80,7 +80,6 @@ const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
 
   const handleLogout = () => {
     logout();
-    window.location.href = '/';
   };
 
   const handleLogin = () => {
@@ -88,7 +87,7 @@ const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
   };
 
   return (
-    <div className="fixed flex w-auto items-center justify-between bg-black bg-opacity-50 left-0 sm:left-52 right-0 top-0 px-4 py-2 h-16 z-10">
+    <div className="fixed flex w-auto items-center justify-between bg-opacity-50 firefox:bg-opacity-50 backdrop-filter backdrop-blur left-0 sm:left-56 right-0 top-0 px-4 py-2 h-16 z-10">
       <div className="flex sm:hidden items-center">
         <FiMenu
           className="h-6 w-6 cursor-pointer"

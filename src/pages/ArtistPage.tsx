@@ -113,7 +113,7 @@ const ArtistPage: React.FC = () => {
   );
 
   return (
-    <div className="px-4 py-4">
+    <div className="sm:p-4 p-2">
       <div className="mb-4">
         <PlayerListHeader
           image={artist.images && artist.images[0]?.url}
@@ -133,8 +133,8 @@ const ArtistPage: React.FC = () => {
         </div>
       </div>
       <div className="mb-4">
-        <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-lg md:text-2xl truncate">Popular</div>
+        <div className="mb-2 flex justify-between items-end font-bold w-full text-sm md:text-lg">
+          <div className="truncate">Popular</div>
         </div>
         <PlayerListTrack
           tracks={!isShowMore ? tracks.slice(0, 5) : tracks}
@@ -151,8 +151,8 @@ const ArtistPage: React.FC = () => {
         </span>
       </div>
       <div className="mb-4">
-        <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-lg md:text-2xl truncate">Albums</div>
+        <div className="mb-2 flex justify-between items-end font-bold w-full text-sm md:text-lg">
+          <div className="truncate">Albums</div>
           <TextLink
             className="ml-6 whitespace-pre"
             text="See All"
@@ -175,8 +175,8 @@ const ArtistPage: React.FC = () => {
       </div>
 
       <div className="mb-4">
-        <div className="mb-4 flex justify-between items-end font-bold w-full">
-          <div className="text-lg md:text-2xl truncate">Fans Also Like</div>
+        <div className="mb-2 flex justify-between items-end font-bold w-full text-sm md:text-lg">
+          <div className="truncate">Fans Also Like</div>
           <TextLink
             className="ml-6 whitespace-pre"
             text="See All"

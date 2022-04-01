@@ -1,0 +1,24 @@
+.skeleton {
+  display: inline-block;
+  width: 100%;
+  background-image: linear-gradient(
+      to right,
+      rgba(255,255,255, .2) 0%,
+      rgba(255,255,255, .4) 20%,
+      rgba(255,255,255, .2) 40%,
+      rgba(255,255,255, .2) 100%
+  );
+  background-size: 200% 100%;
+  animation: bgPos 1s linear infinite;
+  border-radius: 10px;
+}
+
+@keyframes bgPos {
+  0% {
+      background-position: 50% 0;
+  }
+
+  100% {
+      background-position: -150% 0;
+  }
+}
