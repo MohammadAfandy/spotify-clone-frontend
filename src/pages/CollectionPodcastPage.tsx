@@ -8,6 +8,7 @@ import CardItem from '../components/Card/CardItem';
 import CardCollection from '../components/Card/CardCollection';
 import GridWrapper from '../components/Grid/GridWrapper';
 import { CARD_COUNT } from '../utils/constants';
+import CardItemSkeleton from '../components/Card/CardItemSkeleton';
 
 const CollectionPodcastPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -53,7 +54,7 @@ const CollectionPodcastPage: React.FC = () => {
 
   const CardLoading = (
     [...Array(CARD_COUNT)].map((_, idx) => (
-      <CardItem key={idx} isLoading />
+      <CardItemSkeleton key={idx} />
     ))
   );
 

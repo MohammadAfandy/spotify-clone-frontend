@@ -7,6 +7,7 @@ export type ControlButtonProps = {
   onClick?: (event: React.MouseEvent<SVGElement>) => void;
   sizeType?: 'mini' | 'full';
   isActive?: boolean;
+  disabled?: boolean;
 };
 
 const ControlButton: React.FC<ControlButtonProps & IconBaseProps> = ({
@@ -15,6 +16,7 @@ const ControlButton: React.FC<ControlButtonProps & IconBaseProps> = ({
   onClick,
   sizeType,
   isActive,
+  disabled,
   ...props
 }) => {
   let classSize = '';
@@ -31,7 +33,7 @@ const ControlButton: React.FC<ControlButtonProps & IconBaseProps> = ({
       className={
         overrideTailwindClasses(`${classSize} ${classOpacity} transition duration-300 ease-in-out transform canhover:hover:opacity-100 canhover:hover:scale-110 cursor-pointer ${className}`)
       }
-      onClick={onClick}
+      onClick={!disabled ? onClick : undefined}
       {...props}
     />
   )

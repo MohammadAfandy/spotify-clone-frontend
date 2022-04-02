@@ -22,6 +22,7 @@ import Episode from '../../types/Episode';
 import { MdAccessTime } from 'react-icons/md';
 
 import PlayerListTrackItem from './PlayerListTrackItem';
+import PlayerListTrackItemSkeleton from './PlayerListTrackItemSkeleton';
 
 import styles from './PlayerListTrack.module.css';
 
@@ -101,10 +102,9 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
     currentTrack.id === trackId && dispatch(changeIsSaved(false));
   };
 
-  let number = 0;
   const TrackLoading = (
     [...Array(3)].map((_, idx) => (
-      <PlayerListTrackItem key={idx} isLoading />
+      <PlayerListTrackItemSkeleton key={idx} />
     ))
   );
 
@@ -144,14 +144,12 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
           {/* sometimes, the track object is null */}
           {tracks.map((track, idx) => {
             if (track.id != null) {
-              number++;
               return (
                 <PlayerListTrackItem
                   key={track.id + '-' + idx}
                   track={track as Track & Episode}
                   isSavedTrack={savedTrackIds.includes(track.id)}
                   offset={idx}
-                  number={number}
                   showAlbum={showAlbum}
                   showDateAdded={showDateAdded}
                   currentTrack={currentTrack}

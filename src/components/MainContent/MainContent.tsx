@@ -24,6 +24,7 @@ import LyricPage from '../../pages/LyricPage';
 import NotFoundPage from '../../pages/NotFoundPage';
 import ScrollToTop from '../Scroll/ScrollToTop';
 import RecommendationPage from '../../pages/RecommendationPage';
+import GetAppPage from '../../pages/GetAppPage';
 
 const MainContent: React.FC = () => {
   return (
@@ -157,6 +158,11 @@ const MainContent: React.FC = () => {
           path="/recommendations"
           exact
           render={(props) => <RecommendationPage />}
+        />
+        <Route
+          path="/get-app"
+          exact
+          render={(props) => <GetAppPage />}
         />
 
         {/* Private Route (Need Login) */}

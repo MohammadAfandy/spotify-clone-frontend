@@ -12,6 +12,7 @@ import CardItem from '../components/Card/CardItem';
 import GridWrapper from '../components/Grid/GridWrapper';
 import Skeleton from '../components/Skeleton/Skeleton';
 import RecentlyPlayed from '../types/RecentlyPlayed';
+import CardItemSkeleton from '../components/Card/CardItemSkeleton';
 
 const GenrePage: React.FC = () => {
   const { type } = useParams<{ query: string; type: string }>();
@@ -81,7 +82,7 @@ const GenrePage: React.FC = () => {
 
   const CardLoading = (
     [...Array(20)].map((_, idx) => (
-      <CardItem key={idx} isLoading />
+      <CardItemSkeleton key={idx} />
     ))
   );
 

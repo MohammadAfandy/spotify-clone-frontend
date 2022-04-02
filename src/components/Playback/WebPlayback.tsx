@@ -68,6 +68,7 @@ import DeviceSelector from './DeviceSelector';
 import LikeButton from '../Button/LikeButton';
 import ControlButton from '../Button/ControlButton';
 import RangeInput from '../Input/RangeInput';
+import Skeleton from '../Skeleton/Skeleton';
 
 declare global {
   interface Window {
@@ -99,6 +100,7 @@ const getVolumeFromStorage = () => {
 
 const WebPlayback: React.FC = () => {
   const dispatch = useDispatch();
+  const trackWrapperRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const history = useHistory();
   const location = useLocation();
@@ -123,7 +125,6 @@ const WebPlayback: React.FC = () => {
   const { width: windowWidth, height: windowHeight } = useWindowSize();
   const [isMobilePlayer, setIsMobilePlayer] = useState(false);
   const [showFullPlayer, setShowFullPlayer] = useState(false);
-  const [isOverFlow, setIsOverflow] = useState(false);
   const [isEnableReverseDuration, setIsEnableReverseDuration] = useState(false);
   const [showFullScreen, setShowFullScreen] = useState(false);
   const [showDeviceSelector, setShowDeviceSelector] = useState(false);
@@ -143,8 +144,42 @@ const WebPlayback: React.FC = () => {
   }, [dispatch, currentTrack.id, currentTrack.type]);
 
   useEffect(() => {
-    setIsOverflow(trackRef.current ? trackRef.current.clientWidth < trackRef.current.scrollWidth : false);
+    let interval: ReturnType<typeof setInterval>;
+    if (trackWrapperRef.current) {
+      const trackOverflow = trackWrapperRef.current.scrollWidth - trackWrapperRef.current.clientWidth;
+      if (trackOverflow <= 0) {
+        if (trackRef.current) trackRef.current.style.transform = '';
+        return;
+      }
+
+      let trackTransX = 0;
+      let isIncreasing = true;
+      let isPaused = false;
+      interval = setInterval(async () => {
+        if (!isPaused) {
+          if (trackTransX < trackOverflow && isIncreasing) {
+            trackTransX += 1;
+          } else if (trackTransX <= 0) {
+            isIncreasing = true;
+            isPaused = true;
+          } else {
+            isIncreasing = false;
+            trackTransX -= 1;
+          }
+
+          if (trackTransX >= trackOverflow) {
+            isPaused = true;
+          }
+        } else {
+          await sleep(5000);
+          isPaused = false;
+        }
+        if (trackRef.current) trackRef.current.style.transform = `translateX(-${trackTransX}px)`;
+      }, 50);
+    }
     setIsMobilePlayer(!!(windowWidth && windowWidth < 1024));
+
+    return () => interval && clearInterval(interval);
   }, [currentTrack.id, windowWidth, windowHeight]);
 
   const transferPlayback = useCallback(async (device_id: string): Promise<void> => {
@@ -609,44 +644,40 @@ const WebPlayback: React.FC = () => {
           />
         </div>
       )}
-      {!error && !deviceId && (
-        <div className="flex flex-col items-center justify-center h-full">
-          Loading ...
-        </div>
-      )}
-      {!error && deviceId && !showFullPlayer && (
+      {!error && !showFullPlayer && (
         <div className="flex flex-col w-full h-full justify-center items-between">
           <div
             className="grid grid-cols-12 gap-4 items-center"
-            onClick={isMobilePlayer ? handleshowFullPlayer : undefined}
+            onClick={isMobilePlayer && deviceId ? handleshowFullPlayer : undefined}
           >
-            <div className="flex items-center col-span-9 lg:col-span-4">
-              <div ref={trackRef} className="flex items-center whitespace-nowrap overflow-x-hidden">
-                {currentTrack && currentTrack.uri && (
-                  <>
+            <div className="flex items-center col-span-9 lg:col-span-4 h-full">
+              {deviceId ? (
+                <>
+                  <div ref={trackWrapperRef} className="flex items-center whitespace-nowrap overflow-x-hidden">
                     <img
                       src={getSmallestImage(currentTrack.album?.images)}
                       alt={currentTrack.album?.name}
                       className="w-16 lg:w-24 pl-2 lg:pl-4 pr-2 lg:pr-4 z-10 bg-light-black"
                     />
-                    <div className={`flex flex-col mr-2 relative ${isOverFlow ? 'animate-marquee' : ''}`}>
-                      {currentTrack.type === 'track' && (
-                        <div className="font-semibold text-sm">
-                          {currentTrack.name}
-                        </div>
-                      )}
-                      {(currentTrack.type === 'episode' && isMobilePlayer) && (
-                        <div className="font-semibold text-sm">
-                          {currentTrack.name}
-                        </div>
-                      )}
-                      {(currentTrack.type === 'episode' && !isMobilePlayer) && (
-                        <TextLink
-                          className="font-semibold text-sm"
-                          text={currentTrack.name}
-                          url={'/episode/' + currentTrack.id}
-                        />
-                      )}
+                    <div className={`flex flex-col mr-2 relative`}>
+                      <div
+                        ref={trackRef}
+                        className="font-semibold text-sm"
+                      >
+                        {currentTrack.type === 'track'
+                          ? currentTrack.name
+                          : (isMobilePlayer
+                            ? currentTrack.name
+                            : (
+                              <TextLink
+                                className="opacity-100"
+                                text={currentTrack.name}
+                                url={'/episode/' + currentTrack.id}
+                              />
+                            )
+                          )
+                        }
+                      </div>
                       <div className="font-light">
                         {isMobilePlayer && (
                           <div>{currentTrack.artists?.map((artist) => artist.name).join(', ')}</div>
@@ -666,15 +697,22 @@ const WebPlayback: React.FC = () => {
                         ))}
                       </div>
                     </div>
-                  </>
-                )}
-              </div>
-              <LikeButton
-                isActive={isSaved}
-                type={currentTrack.type}
-                className="hidden lg:flex ml-2"
-                onClick={handleSaveTrack}
-              />
+                  </div>
+                  <LikeButton
+                    isActive={isSaved}
+                    type={currentTrack.type}
+                    className="hidden lg:flex ml-2"
+                    onClick={handleSaveTrack}
+                  />
+                </>
+              ) : (
+                <div className="flex items-center pl-2 lg:pl-4 h-full w-full">
+                  <div className="pr-2 lg:pr-4 h-80% w-20%">
+                    <Skeleton height="100%" />
+                  </div>
+                  <Skeleton width="60%" />
+                </div>
+              )}
             </div>
 
             <div className="hidden lg:flex flex-col items-center justify-around col-span-4">
@@ -684,44 +722,51 @@ const WebPlayback: React.FC = () => {
                   className="mx-3"
                   isActive={shuffle}
                   onClick={handleShuffle}
+                  disabled={!deviceId}
                 />
                 <ControlButton
                   Icon={MdSkipPrevious}
                   className="mx-3"
                   onClick={handlePrev}
+                  disabled={!deviceId}
                 />
                 <ControlButton
                   Icon={MdReplay10}
                   className="mx-3"
                   onClick={(e) => handleSeek(e, positionMs - (skipStep * 1000))}
+                  disabled={!deviceId}
                 />
                 <ControlButton
                   Icon={isPlaying ? MdPauseCircle : MdPlayCircle}
-                  className="mx-3 h-10 w-10 sm:h-10 sm:w-10 canhover:opacity-100"
+                  className={`mx-3 h-10 w-10 sm:h-10 sm:w-10 ${deviceId ? 'canhover:opacity-100' : 'canhover:opacity-70'}`}
                   onClick={handlePlay}
+                  disabled={!deviceId}
                 />
                 <ControlButton
                   Icon={MdForward10}
                   className="mx-3"
                   onClick={(e) => handleSeek(e, positionMs + (skipStep * 1000))}
+                  disabled={!deviceId}
                 />
                 <ControlButton
                   Icon={MdSkipNext}
                   className="mx-3"
                   onClick={handleNext}
+                  disabled={!deviceId}
                 />
                 <ControlButton
                   Icon={repeatMode === 2 ? MdRepeatOne : MdRepeat}
                   className="mx-3"
                   isActive={repeatMode !== 0}
                   onClick={handleRepeatMode}
+                  disabled={!deviceId}
                 />
               </div>
               <div className="flex justify-center items-center w-full mt-1">
                 <div className="w-6 mr-2">{durationFn(positionMs)}</div>
                 <RangeInput
                   className="w-full mr-2"
-                  max={duration}
+                  max={duration || 100}
                   value={positionMs}
                   onChange={(e) => setPositionMs(Number(e.target.value))}
                   onMouseUp={(e: React.MouseEvent<HTMLInputElement>) =>
@@ -730,6 +775,7 @@ const WebPlayback: React.FC = () => {
                   onTouchEnd={(e: React.TouchEvent<HTMLInputElement>) =>
                     handleSeek(e, Number(e.currentTarget.value))
                   }
+                  disabled={!deviceId}
                 />
                 <div
                   className="w-6 cursor-pointer"
@@ -754,6 +800,7 @@ const WebPlayback: React.FC = () => {
                     isActive={location.pathname === '/lyric'}
                     className="mr-4 hidden lg:flex"
                     onClick={handleOpenLyric}
+                    disabled={!deviceId}
                   />
                 )}
                 <ControlButton
@@ -762,16 +809,18 @@ const WebPlayback: React.FC = () => {
                   onClick={handleOpenQueue}
                 />
                 <ControlButton
-                  className="mr-4"
+                  className="mr-4 hidden lg:flex"
                   Icon={MdDevices}
                   isActive={!!(activeDevice && activeDevice.id !== deviceId)}
                   onClick={handleShowDeviceSelector}
+                  disabled={!deviceId}
                 />
                 <div className="hidden lg:flex items-center mr-4">
                   <ControlButton
                     Icon={volume <= 50 ? (volume > 0 ? MdVolumeDown : MdVolumeOff) : MdVolumeUp}
                     className="mr-4"
                     onClick={(e) => handleVolume(e, volume > 0 ? 0 : 100)}
+                    disabled={!deviceId}
                   />
                   <RangeInput
                     className="w-full"
@@ -784,18 +833,21 @@ const WebPlayback: React.FC = () => {
                     onTouchEnd={(e: React.TouchEvent<HTMLInputElement>) =>
                       handleVolume(e, Number(e.currentTarget.value))
                     }
+                    disabled={!deviceId}
                   />
                 </div>
                 <div className="block lg:hidden">
                   <ControlButton
                     Icon={isPlaying ? MdPause : MdPlayArrow}
                     onClick={handlePlay}
+                    disabled={!deviceId}
                   />
                 </div>
                 <div className="hidden lg:block">
                   <ControlButton
                     Icon={FiMaximize2}
                     onClick={handleshowFullPlayer}
+                    disabled={!deviceId}
                   />
                 </div>
               </div>

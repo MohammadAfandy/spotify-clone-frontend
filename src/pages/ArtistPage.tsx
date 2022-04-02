@@ -18,6 +18,7 @@ import TextLink from '../components/Text/TextLink';
 import FolllowButton from '../components/Button/FollowButton';
 import Slider from '../components/Slider/Slider';
 import { CARD_COUNT } from '../utils/constants';
+import CardItemSkeleton from '../components/Card/CardItemSkeleton';
 
 const ArtistPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -108,7 +109,7 @@ const ArtistPage: React.FC = () => {
 
   const CardLoading = (
     [...Array(CARD_COUNT)].map((_, idx) => (
-      <CardItem key={idx} isLoading />
+      <CardItemSkeleton key={idx} />
     ))
   );
 
@@ -133,7 +134,7 @@ const ArtistPage: React.FC = () => {
         </div>
       </div>
       <div className="mb-4">
-        <div className="mb-2 flex justify-between items-end font-bold w-full text-sm md:text-lg">
+        <div className="mb-2 flex justify-between items-end font-bold w-full md:text-lg">
           <div className="truncate">Popular</div>
         </div>
         <PlayerListTrack
@@ -151,7 +152,7 @@ const ArtistPage: React.FC = () => {
         </span>
       </div>
       <div className="mb-4">
-        <div className="mb-2 flex justify-between items-end font-bold w-full text-sm md:text-lg">
+        <div className="mb-2 flex justify-between items-end font-bold w-full md:text-lg">
           <div className="truncate">Albums</div>
           <TextLink
             className="ml-6 whitespace-pre"
@@ -175,7 +176,7 @@ const ArtistPage: React.FC = () => {
       </div>
 
       <div className="mb-4">
-        <div className="mb-2 flex justify-between items-end font-bold w-full text-sm md:text-lg">
+        <div className="mb-2 flex justify-between items-end font-bold w-full md:text-lg">
           <div className="truncate">Fans Also Like</div>
           <TextLink
             className="ml-6 whitespace-pre"

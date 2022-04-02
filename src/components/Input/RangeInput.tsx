@@ -7,6 +7,7 @@ const RangeInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = ({
   max = 100,
   value,
   onChange,
+  disabled,
   ...props
 }) => {
 
@@ -18,8 +19,8 @@ const RangeInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = ({
   }, [max, min]);
 
   useEffect(() => {
-    changeRangeStyle(Number(value));
-  }, [changeRangeStyle, value]);
+    if (!disabled) changeRangeStyle(Number(value));
+  }, [changeRangeStyle, value, disabled]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     changeRangeStyle(Number(event.target.value));
@@ -37,6 +38,7 @@ const RangeInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = ({
         min={min}
         max={max}
         onChange={handleChange}
+        disabled={disabled}
         {...props}
       />
     </div>

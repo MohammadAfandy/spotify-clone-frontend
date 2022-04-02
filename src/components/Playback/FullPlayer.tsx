@@ -15,10 +15,10 @@ import {
   MdVolumeUp,
 } from 'react-icons/md';
 import Device from '../../types/Device';
-import { duration as durationFn } from '../../utils/helpers';
+import { duration as durationFn, sleep } from '../../utils/helpers';
 
 import { getHighestImage } from '../../utils/helpers';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 import useWindowSize from '../../hooks/useWindowSize';
 import TextLink from '../Text/TextLink';
 import Artist from '../../types/Artist';
@@ -84,18 +84,46 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
   handleSaveTrack,
 }) => {
 
+  const trackWrapperRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [isOverFlow, setIsOverflow] = useState(false);
   const { width: windowWidth, height: windowHeight } = useWindowSize();
 
   useEffect(() => {
-    if (trackRef.current) {
-      if (trackRef.current.clientWidth < trackRef.current.scrollWidth) {
-        setIsOverflow(true);
+    let interval: ReturnType<typeof setInterval>;
+    if (trackWrapperRef.current) {
+      const trackOverflow = trackWrapperRef.current.scrollWidth - trackWrapperRef.current.clientWidth;
+      if (trackOverflow <= 0) {
+        if (trackRef.current) trackRef.current.style.transform = '';
         return;
       }
+
+      let trackTransX = 0;
+      let isIncreasing = true;
+      let isPaused = false;
+      interval = setInterval(async () => {
+        if (!isPaused) {
+          if (trackTransX < trackOverflow && isIncreasing) {
+            trackTransX += 1;
+          } else if (trackTransX <= 0) {
+            isIncreasing = true;
+            isPaused = true;
+          } else {
+            isIncreasing = false;
+            trackTransX -= 1;
+          }
+
+          if (trackTransX >= trackOverflow) {
+            isPaused = true;
+          }
+        } else {
+          await sleep(5000);
+          isPaused = false;
+        }
+        if (trackRef.current) trackRef.current.style.transform = `translateX(-${trackTransX}px)`;
+      }, 50);
     }
-    setIsOverflow(false);
+
+    return () => interval && clearInterval(interval);
   }, [currentTrack.id, windowWidth, windowHeight]);
 
   return (
@@ -136,23 +164,26 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
         </div>
         <div className="flex justify-between items-center">
           <div
-            ref={trackRef}
+            ref={trackWrapperRef}
             className="flex flex-col w-80% whitespace-nowrap overflow-hidden mt-2"
           >
-            <div className={`flex w-full lg:text-2xl relative ${isOverFlow ? 'animate-marquee' : ''}`}>
-              {currentTrack.type === 'track' && (
-                <div className="font-semibold">
-                  {currentTrack.name}
-                </div>
-              )}
-              {currentTrack.type === 'episode' && (
-                <TextLink
-                  className="font-semibold"
-                  text={currentTrack.name}
-                  url={'/episode/' + currentTrack.id}
-                  afterClick={handleAfterClickLink}
-                />
-              )}
+            <div className={`flex w-full lg:text-2xl relative`}>
+              <div
+                ref={trackRef}
+                className="font-semibold"
+              >
+                {currentTrack.type === 'track'
+                  ? currentTrack.name
+                  : (
+                    <TextLink
+                      className="opacity-100"
+                      text={currentTrack.name}
+                      url={'/episode/' + currentTrack.id}
+                      afterClick={handleAfterClickLink}
+                    />
+                  )
+                }
+              </div>
             </div>
             <div className="flex w-full relative">
               <div className="font-semibold text-sm">
@@ -229,7 +260,7 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
             </div>
             <ControlButton
               Icon={isPlaying ? MdPauseCircle : MdPlayCircle}
-              className="h-16 w-16"
+              className="h-16 w-16 canhover:opacity-100"
               onClick={handlePlay}
               sizeType="full"
             />

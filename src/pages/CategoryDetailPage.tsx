@@ -8,6 +8,7 @@ import { makeRequest } from '../utils/helpers';
 import CardItem from '../components/Card/CardItem';
 import GridWrapper from '../components/Grid/GridWrapper';
 import Skeleton from '../components/Skeleton/Skeleton';
+import CardItemSkeleton from '../components/Card/CardItemSkeleton';
 
 const CategoryDetailPage: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -41,7 +42,7 @@ const CategoryDetailPage: React.FC = () => {
 
   const CardLoading = (
     [...Array(20)].map((_, idx) => (
-      <CardItem key={idx} isLoading />
+      <CardItemSkeleton key={idx} />
     ))
   );
 

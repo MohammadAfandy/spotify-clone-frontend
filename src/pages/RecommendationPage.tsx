@@ -233,7 +233,7 @@ const RecommendationPage: React.FC = () => {
       <div className="mb-4">
         Find recommended tracks based on your criteria. <span className="italic text-xs">(Max 5 selections)</span>
       </div>
-      <div className="mb-8">
+      <div className="mb-4">
         <div className="flex items-end md:items-center">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 w-11/12 mr-4">
             <MultiSelect

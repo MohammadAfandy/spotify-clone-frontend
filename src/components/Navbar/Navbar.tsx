@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from 'react';
 import {
   MdHomeFilled,
   MdSearch,
-  MdOutlineQueueMusic,
+  MdLibraryMusic,
   MdAddBox,
   MdClose,
   MdOutlineRecommend,
@@ -19,7 +19,6 @@ import NavbarLink from './NavbarLink';
 import NavbarItem from './NavbarItem';
 import Modal from '../Modal/Modal';
 import PlayListForm from '../Form/PlayListForm';
-// import Button from '../Button/Button';
 
 import styles from './Navbar.module.css';
 
@@ -89,7 +88,7 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
 
   return (
     <nav className={`content-area ${styles.navbar} ${isNavOpen ? styles.open : ''}`}>
-      <div className="flex items-center px-6 mb-8 text-2xl">
+      <div className="flex items-center px-6 mb-4 text-2xl">
         <div className="mr-auto">{APP_NAME}</div>
         <MdClose
           className="block sm:hidden"
@@ -119,13 +118,13 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
             {isLoggedIn ? (
               <NavbarLink
                 to="/collection/playlists"
-                Icon={<MdOutlineQueueMusic className="w-6 h-6" />}
+                Icon={<MdLibraryMusic className="w-6 h-6" />}
                 text="Your Library"
                 onClick={() => handleIsNavOpen(false)}
               />
             ) : (
               <NavbarItem
-                Icon={<MdOutlineQueueMusic className="w-6 h-6" />}
+                Icon={<MdLibraryMusic className="w-6 h-6" />}
                 text="Your Library"
                 onClick={() => handleIsNavOpen(false)}
               />

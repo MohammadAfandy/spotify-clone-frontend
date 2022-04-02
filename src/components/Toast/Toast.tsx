@@ -9,7 +9,7 @@ const Toast: React.FC<ToastContainerProps> = () => {
 
   return (
     <ToastContainer
-      toastClassName="bottom-16"
+      toastClassName="bottom-32 sm:bottom-16"
       bodyClassName="font-bold text-center"
       position="bottom-center"
       autoClose={3000}

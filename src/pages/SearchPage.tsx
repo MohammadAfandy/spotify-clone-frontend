@@ -5,9 +5,9 @@ import { AuthContext } from '../context/auth-context';
 import { makeRequest } from '../utils/helpers';
 
 import GridWrapper from '../components/Grid/GridWrapper';
-import CardItem from '../components/Card/CardItem';
 
 import cardStyles from '../components/Card/Card.module.css';
+import CardItemSkeleton from '../components/Card/CardItemSkeleton';
 
 const SearchPage: React.FC = () => {
   const history = useHistory();
@@ -35,7 +35,7 @@ const SearchPage: React.FC = () => {
 
   const CardLoading = (
     [...Array(20)].map((_, idx) => (
-      <CardItem key={idx} isLoading />
+      <CardItemSkeleton key={idx} />
     ))
   );
 

@@ -3,6 +3,7 @@ import { AuthContext } from '../../context/auth-context';
 import BannerWrapper from '../Banner/BannerWrapper';
 
 import Button from '../Button/Button';
+import NavbarMobile from '../Navbar/NavbarMobile';
 import WebPlayback from '../Playback/WebPlayback';
 
 const Footer: React.FC = ({ children }) => {
@@ -10,7 +11,7 @@ const Footer: React.FC = ({ children }) => {
   const { isLoggedIn } = useContext(AuthContext);
 
   return (
-    <div className="fixed bottom-0 w-full h-16 lg:h-20 z-30">
+    <div className="fixed bottom-16 sm:bottom-0 w-full h-16 lg:h-20 z-30">
       {isLoggedIn ? (
           <WebPlayback />
       ) : (
@@ -42,6 +43,9 @@ const Footer: React.FC = ({ children }) => {
           </div>
         </BannerWrapper>
       )}
+      <div className="border-t-2 border-opacity-10 block sm:hidden fixed bottom-0 w-full h-16 z-30">
+        <NavbarMobile />
+      </div>
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { getHighestImage } from '../utils/helpers';
 import CardItem from '../components/Card/CardItem';
 import GridWrapper from '../components/Grid/GridWrapper';
 import { CARD_COUNT } from '../utils/constants';
+import CardItemSkeleton from '../components/Card/CardItemSkeleton';
 
 const CollectionArtistPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -32,7 +33,7 @@ const CollectionArtistPage: React.FC = () => {
 
   const CardLoading = (
     [...Array(CARD_COUNT)].map((_, idx) => (
-      <CardItem key={idx} isLoading />
+      <CardItemSkeleton key={idx} />
     ))
   );
 

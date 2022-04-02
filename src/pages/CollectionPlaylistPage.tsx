@@ -12,6 +12,7 @@ import { EPISODE_LOGO_IMAGE, CARD_COUNT } from '../utils/constants';
 import CardItem from '../components/Card/CardItem';
 import CardCollection from '../components/Card/CardCollection';
 import GridWrapper from '../components/Grid/GridWrapper';
+import CardItemSkeleton from '../components/Card/CardItemSkeleton';
 
 const CollectionPlaylistPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -74,7 +75,7 @@ const CollectionPlaylistPage: React.FC = () => {
 
   const CardLoading = (
     [...Array(CARD_COUNT)].map((_, idx) => (
-      <CardItem key={idx} isLoading />
+      <CardItemSkeleton key={idx} />
     ))
   );
 
@@ -92,15 +93,16 @@ const CollectionPlaylistPage: React.FC = () => {
             isLoading={isLoading}
           />
         </div>
-        <CardItem
-          name="Your Episodes"
-          description={playlistTotalEpisode + ' episodes'}
-          image={EPISODE_LOGO_IMAGE}
-          // uri="spotify:user:afandy9895:collection:your-episodes"
-          href={'/collection/episodes'}
-          onClickPlay={handlePlayEpisode}
-          isLoading={isLoading}
-        />
+        {!isLoading && (
+          <CardItem
+            name="Your Episodes"
+            description={playlistTotalEpisode + ' episodes'}
+            image={EPISODE_LOGO_IMAGE}
+            // uri="spotify:user:afandy9895:collection:your-episodes"
+            href={'/collection/episodes'}
+            onClickPlay={handlePlayEpisode}
+          />
+        )}
         {isLoading && CardLoading}
         {!isLoading && playlists.map((playlist) => (
           <CardItem

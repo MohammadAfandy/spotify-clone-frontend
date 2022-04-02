@@ -78,7 +78,7 @@ const ToolTip: React.FC<ToolTipProps> = ({
           }
         }
         return (
-          <div className="w-80">
+          <div className="">
             <div className="mb-4">
               <div className="text-xl font-bold mb-2">{title}</div>
               <div className="text-sm">{tip}</div>

@@ -6,6 +6,7 @@ import Album from '../types/Album';
 
 import CardItem from '../components/Card/CardItem';
 import GridWrapper from '../components/Grid/GridWrapper';
+import CardItemSkeleton from '../components/Card/CardItemSkeleton';
 
 const AritstAllPage: React.FC = () => {
   const history = useHistory();
@@ -52,7 +53,7 @@ const AritstAllPage: React.FC = () => {
 
   const CardLoading = (
     [...Array(20)].map((_, idx) => (
-      <CardItem key={idx} isLoading />
+      <CardItemSkeleton key={idx} />
     ))
   );
 

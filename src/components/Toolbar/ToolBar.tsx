@@ -5,7 +5,7 @@ import {
   MdChevronRight,
   MdPerson,
 } from 'react-icons/md';
-import { FiExternalLink, FiMenu } from 'react-icons/fi';
+import { FiExternalLink } from 'react-icons/fi';
 import { BACKEND_URI } from '../../utils/constants';
 import { AuthContext } from '../../context/auth-context';
 import useComponentVisible from '../../hooks/useComponentVisible';
@@ -87,22 +87,22 @@ const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
   };
 
   return (
-    <div className="fixed flex w-auto items-center justify-between bg-opacity-50 firefox:bg-opacity-50 backdrop-filter backdrop-blur left-0 sm:left-56 right-0 top-0 px-4 py-2 h-16 z-10">
-      <div className="flex sm:hidden items-center">
+    <div className="fixed flex w-auto items-center justify-between bg-opacity-50 firefox:bg-opacity-50 backdrop-filter backdrop-blur left-0 sm:left-56 right-0 top-0 px-4 py-2 h-16 z-20">
+      {/* <div className="flex sm:hidden items-center">
         <FiMenu
           className="h-6 w-6 cursor-pointer"
           onClick={() => handleIsNavOpen(true)}
         />
-      </div>
+      </div> */}
       <div className="flex items-center w-full">
         <div
-          className={`bg-black bg-opacity-70 rounded-full p-1 cursor-pointer ml-4`}
+          className={`bg-black bg-opacity-70 rounded-full p-1 cursor-pointer`}
           onClick={handleGoBack}
         >
           <MdChevronLeft className="w-6 h-6" />
         </div>
         <div
-          className={`bg-black bg-opacity-70 rounded-full p-1 cursor-pointer ml-4 ${isSearchActive || isToolbarLinkActive ? 'hidden sm:block' : ''}`}
+          className={`bg-black bg-opacity-70 rounded-full p-1 cursor-pointer ml-4`}
           onClick={handleGoForward}
         >
           <MdChevronRight className="w-6 h-6" />

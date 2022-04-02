@@ -79,7 +79,7 @@ const ShowPage: React.FC = () => {
         footer={[show.publisher, `${show.total_episodes} episodes`]}
         isLoading={isLoading}
       />
-      <div className="flex items-center mb-8 justify-center sm:justify-start">
+      <div className="flex items-center mb-4 justify-center sm:justify-start">
         <FolllowButton
           isFollowed={isFollowed}
           onClick={handleFollow}

@@ -10,6 +10,7 @@ import { makeRequest, removeNull } from '../utils/helpers';
 
 import CardItem from '../components/Card/CardItem';
 import GridWrapper from '../components/Grid/GridWrapper';
+import CardItemSkeleton from '../components/Card/CardItemSkeleton';
 
 const SearchResultAllPage: React.FC = () => {
   const history = useHistory();
@@ -67,7 +68,7 @@ const SearchResultAllPage: React.FC = () => {
 
   const CardLoading = (
     [...Array(20)].map((_, idx) => (
-      <CardItem key={idx} isLoading />
+      <CardItemSkeleton key={idx} />
     ))
   );
 

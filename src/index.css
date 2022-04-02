@@ -47,7 +47,13 @@
   }
 
   .content-area {
-    height: calc(100vh - theme('spacing.16'));
+    height: calc(100vh - theme('spacing.32'));
+  }
+
+  @screen sm {
+    .content-area {
+      height: calc(100vh - theme('spacing.16'));
+    }
   }
 
   @screen lg {
