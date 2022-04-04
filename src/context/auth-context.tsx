@@ -10,6 +10,7 @@ import {
 
 import User from '../types/User';
 import { ACCESS_TOKEN_AGE, REFRESH_TOKEN_AGE } from '../utils/constants';
+import { toast } from '../utils/toast';
 
 type AuthContextObj = {
   isLoggedIn: boolean;
@@ -54,16 +55,20 @@ const AuthProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     // const { access_token, refresh_token, country } = getHashValue();
-    const { access_token, country, product } = getHashValue();
-    if (access_token) {
-      setCookie('access_token', access_token, { expires: ACCESS_TOKEN_AGE });
-      // setCookie('refresh_token', refresh_token, { expires: REFRESH_TOKEN_AGE });
-      setCookie('country', country, { expires: REFRESH_TOKEN_AGE });
-      setCookie('is_logged_in', 'true', { expires: REFRESH_TOKEN_AGE });
-      setIsLoggedIn(true);
-      setIsPremium(product === 'premium');
-      window.location.hash = '';
+    const { error, access_token, country, product } = getHashValue();
+    if (error) {
+      toast.error(error);
+    } else {
+      if (access_token) {
+        setCookie('access_token', access_token, { expires: ACCESS_TOKEN_AGE });
+        // setCookie('refresh_token', refresh_token, { expires: REFRESH_TOKEN_AGE });
+        setCookie('country', country, { expires: REFRESH_TOKEN_AGE });
+        setCookie('is_logged_in', 'true', { expires: REFRESH_TOKEN_AGE });
+        setIsLoggedIn(true);
+        setIsPremium(product === 'premium');
+      }
     }
+    window.location.hash = '';
   }, []);
 
   useEffect(() => {

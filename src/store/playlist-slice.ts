@@ -5,15 +5,15 @@ import {
 } from '@reduxjs/toolkit';
 
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { toast } from '../utils/toast';
 
 import Playlist from '../types/Playlist';
 import ApiSpotify from '../utils/api-spotify';
 import { ucwords } from '../utils/helpers';
 
 export type PlaylistState = {
-  items: Playlist[],
-  savedTrackIds: string[],
+  items: Playlist[];
+  savedTrackIds: string[];
 };
 
 export type SavedTrackParams = {

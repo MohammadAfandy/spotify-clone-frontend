@@ -118,9 +118,12 @@ const FullPlayer: React.FC<FullPlayerProps> = ({
         } else {
           await sleep(5000);
           isPaused = false;
+          return;
         }
-        if (trackRef.current) trackRef.current.style.transform = `translateX(-${trackTransX}px)`;
-      }, 50);
+        if (trackRef.current) {
+          trackRef.current.style.transform = `translateX(-${trackTransX}px)`;
+        }
+      }, 100);
     }
 
     return () => interval && clearInterval(interval);

@@ -10,7 +10,7 @@ import { MdSearch } from 'react-icons/md';
 import Loader from '../components/Loader/Loader';
 import Button from '../components/Button/Button';
 import Modal from '../components/Modal/Modal';
-import PlayListForm from '../components/Form/PlayListForm';
+import PlayListForm, { initialPlaylistForm } from '../components/Form/PlayListForm';
 
 interface Option {
   value: any;
@@ -46,16 +46,6 @@ const mapDropDown = (item: Artist | Track) => {
   }
 
   return returnData;
-};
-
-const initialPlaylistForm = {
-  id: '',
-  name: 'My Recommended Tracks',
-  description: '',
-  image: '',
-  isPublic: false,
-  isOwn: false,
-  previewImage: '',
 };
 
 const RecommendationPage: React.FC = () => {

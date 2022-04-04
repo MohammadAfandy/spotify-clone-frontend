@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { AuthContext } from '../context/auth-context';
 
 import Navbar from '../components/Navbar/Navbar';
@@ -9,12 +9,7 @@ import Footer from '../components/Footer/Footer';
 import Toast from '../components/Toast/Toast';
 
 const MainPage: React.FC = () => {
-  const [isNavOpen, setIsNavOpen] = useState(false);
   const { isLoggedIn, isPremium } = useContext(AuthContext);
-
-  const handleIsNavOpen = (state: boolean) => {
-    setIsNavOpen(state);
-  };
 
   return (
     <>
@@ -22,8 +17,8 @@ const MainPage: React.FC = () => {
         <div
           className="flex w-full content-area"
         >
-          <Navbar isNavOpen={isNavOpen} handleIsNavOpen={handleIsNavOpen} />
-          <ToolBar isNavOpen={isNavOpen} handleIsNavOpen={handleIsNavOpen} />
+          <Navbar />
+          <ToolBar />
           <MainContent />
           <Footer />
         </div>

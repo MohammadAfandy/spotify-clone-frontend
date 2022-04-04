@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from '../utils/toast';
 import { useDispatch } from 'react-redux';
 import { togglePlay } from '../store/player-slice';
 import { AuthContext } from '../context/auth-context';

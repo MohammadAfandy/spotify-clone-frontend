@@ -173,9 +173,12 @@ const WebPlayback: React.FC = () => {
         } else {
           await sleep(5000);
           isPaused = false;
+          return;
         }
-        if (trackRef.current) trackRef.current.style.transform = `translateX(-${trackTransX}px)`;
-      }, 50);
+        if (trackRef.current) {
+          trackRef.current.style.transform = `translateX(-${trackTransX}px)`;
+        }
+      }, 100);
     }
     setIsMobilePlayer(!!(windowWidth && windowWidth < 1024));
 
@@ -622,7 +625,13 @@ const WebPlayback: React.FC = () => {
   const handleAfterClickLink = () => {
     setShowFullScreen(false);
     setShowFullPlayer(false);
-  }
+  };
+
+  const handleReinitPlayer = async () => {
+    setError('');
+    await player?.disconnect();
+    player?.connect();
+  };
 
   return (
     <div className="h-full w-full border-t-2 border-light-black-1 bg-light-black text-xs">
@@ -638,8 +647,8 @@ const WebPlayback: React.FC = () => {
           <div className="mb-2 text-red-400">{error}</div>
           <Button
             className=""
-            text="Reload Page"
-            onClick={() => window.location.reload()}
+            text="Try Again"
+            onClick={handleReinitPlayer}
             color="green"
           />
         </div>

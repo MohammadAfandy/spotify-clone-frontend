@@ -33,7 +33,7 @@ const NavbarMobileItem: React.FC<NavbarMobileItemProps> = ({
       {to !== undefined ? (
         <NavLink
           to={to}
-          className="flex flex-col h-full justify-around items-center"
+          className="flex flex-col h-full justify-around items-center px-4"
           {...newTabProps}
         >
           {Icon
@@ -43,7 +43,7 @@ const NavbarMobileItem: React.FC<NavbarMobileItemProps> = ({
           <span className="text-xs">{text}</span>
         </NavLink>
       ) : (
-        <div className="flex flex-col h-full justify-around items-center">
+        <div className="flex flex-col h-full justify-around items-center px-4">
           {Icon && <Icon className="w-7 h-7" />}
           <span className="text-xs">{text}</span>
         </div>

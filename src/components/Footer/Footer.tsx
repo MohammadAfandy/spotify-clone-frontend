@@ -16,7 +16,7 @@ const Footer: React.FC = ({ children }) => {
           <WebPlayback />
       ) : (
         <BannerWrapper>
-          <div className="flex-grow text-justify text-xs md:text-sm">
+          <div className="hidden sm:block flex-grow text-justify text-xs md:text-sm">
             This web player is intended for educational purpose only. All data
             including image, song, logo, etc belong to their respective
             copyright owners. Currently you need premium account for better
@@ -32,7 +32,7 @@ const Footer: React.FC = ({ children }) => {
             </a>
             .
           </div>
-          <div className="sm:block hidden flex-none ml-8">
+          <div className="sm:flex-none sm:ml-8">
             <Button
               className="w-full h-10 font-bold text-lg"
               onClick={() =>

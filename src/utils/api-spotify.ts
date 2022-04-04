@@ -6,7 +6,7 @@ import {
 } from './helpers';
 import ApiBackend from './api-backend';
 import { ACCESS_TOKEN_AGE, SPOTIFY_URI } from './constants';
-import { toast } from 'react-toastify';
+import { toast } from './toast';
 
 const axiosInstance = axios.create({
   baseURL: SPOTIFY_URI,

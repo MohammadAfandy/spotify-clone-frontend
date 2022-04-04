@@ -16,12 +16,7 @@ import ToolBarItem from './ToolBarItem';
 import MenuList from '../Menu/MenuList';
 import { ucwords } from '../../utils/helpers';
 
-type ToolbarProps = {
-  isNavOpen: boolean;
-  handleIsNavOpen: (state: boolean) => void;
-};
-
-const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
+const ToolBar: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
   const { isLoggedIn, user, logout } = useContext(AuthContext);
@@ -88,12 +83,6 @@ const ToolBar: React.FC<ToolbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
 
   return (
     <div className="fixed flex w-auto items-center justify-between bg-opacity-50 firefox:bg-opacity-50 backdrop-filter backdrop-blur left-0 sm:left-56 right-0 top-0 px-4 py-2 h-16 z-20">
-      {/* <div className="flex sm:hidden items-center">
-        <FiMenu
-          className="h-6 w-6 cursor-pointer"
-          onClick={() => handleIsNavOpen(true)}
-        />
-      </div> */}
       <div className="flex items-center w-full">
         <div
           className={`bg-black bg-opacity-70 rounded-full p-1 cursor-pointer`}

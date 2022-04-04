@@ -4,7 +4,6 @@ import {
   MdSearch,
   MdLibraryMusic,
   MdAddBox,
-  MdClose,
   MdOutlineRecommend,
 } from 'react-icons/md';
 import { useSelector, useDispatch } from 'react-redux';
@@ -18,26 +17,11 @@ import { getHighestImage } from '../../utils/helpers';
 import NavbarLink from './NavbarLink';
 import NavbarItem from './NavbarItem';
 import Modal from '../Modal/Modal';
-import PlayListForm from '../Form/PlayListForm';
+import PlayListForm, { initialPlaylistForm } from '../Form/PlayListForm';
 
 import styles from './Navbar.module.css';
 
-type NavbarProps = {
-  isNavOpen: boolean;
-  handleIsNavOpen: (state: boolean) => void;
-};
-
-const initialPlaylistForm = {
-  id: '',
-  name: '',
-  description: '',
-  image: '',
-  isPublic: false,
-  isOwn: false,
-  previewImage: '',
-};
-
-const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
+const Navbar: React.FC = () => {
   const dispatch = useDispatch();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [playlistForm, setPlaylistForm] = useState(initialPlaylistForm);
@@ -87,13 +71,9 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
   };
 
   return (
-    <nav className={`content-area ${styles.navbar} ${isNavOpen ? styles.open : ''}`}>
+    <nav className={`content-area ${styles.navbar}`}>
       <div className="flex items-center px-6 mb-4 text-2xl">
         <div className="mr-auto">{APP_NAME}</div>
-        <MdClose
-          className="block sm:hidden"
-          onClick={() => handleIsNavOpen(false)}
-        />
       </div>
       <div className="mb-4">
         <ul>
@@ -101,13 +81,11 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
             to="/"
             Icon={<MdHomeFilled className="w-6 h-6" />}
             text="Home"
-            onClick={() => handleIsNavOpen(false)}
           />
           <NavbarLink
             to="/search"
             Icon={<MdSearch className="w-6 h-6" />}
             text="Search"
-            onClick={() => handleIsNavOpen(false)}
           />
           <div
             data-tip="library"
@@ -120,13 +98,11 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
                 to="/collection/playlists"
                 Icon={<MdLibraryMusic className="w-6 h-6" />}
                 text="Your Library"
-                onClick={() => handleIsNavOpen(false)}
               />
             ) : (
               <NavbarItem
                 Icon={<MdLibraryMusic className="w-6 h-6" />}
                 text="Your Library"
-                onClick={() => handleIsNavOpen(false)}
               />
             )}
           </div>
@@ -134,7 +110,6 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
             to="/recommendations"
             Icon={<MdOutlineRecommend className="w-6 h-6" />}
             text="Recommendations"
-            onClick={() => handleIsNavOpen(false)}
           />
         </ul>
       </div>
@@ -151,7 +126,6 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
               text="Create Playlist"
               onClick={() => {
                 setIsOpenModal(true);
-                handleIsNavOpen(false);
               }}
             />
           </div>
@@ -166,13 +140,11 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
                 to="/collection/tracks"
                 image={LIKED_SONG_IMAGE}
                 text="Liked Song"
-                onClick={() => handleIsNavOpen(false)}
               />
             ) : (
               <NavbarItem
                 image={LIKED_SONG_IMAGE}
                 text="Liked Song"
-                onClick={() => handleIsNavOpen(false)}
               />
             )}
           </div>
@@ -187,13 +159,11 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
                 to="/collection/episodes"
                 image={EPISODE_LOGO_IMAGE}
                 text="Your Episode"
-                onClick={() => handleIsNavOpen(false)}
               />
             ) : (
               <NavbarItem
                 image={EPISODE_LOGO_IMAGE}
                 text="Your Episode"
-                onClick={() => handleIsNavOpen(false)}
               />
             )}
           </div>
@@ -209,7 +179,6 @@ const Navbar: React.FC<NavbarProps> = ({ isNavOpen, handleIsNavOpen }) => {
               text={playlist.name}
               onClickEdit={(e) => handleEditPlaylist(e, playlist.id)}
               editable={playlist.owner.id === user.id}
-              onClick={() => handleIsNavOpen(false)}
             />
           ))}
         </ul>

@@ -10,7 +10,7 @@ import { togglePlay } from '../store/player-slice';
 import { addTrackToPlaylist, getUserPlaylist, removeTrackFromPlaylist } from '../store/playlist-slice';
 import { getHighestImage, duration, makeRequest } from '../utils/helpers';
 import useFetchTracks from '../hooks/useFetchTracks';
-import { toast } from 'react-toastify';
+import { toast } from '../utils/toast';
 import { unwrapResult } from '@reduxjs/toolkit';
 
 import PlayerListHeader from '../components/PlayerList/PlayerListHeader';
@@ -21,18 +21,8 @@ import LikeButton from '../components/Button/LikeButton';
 import SearchInput from '../components/Input/SearchInput';
 import Button from '../components/Button/Button';
 import Modal from '../components/Modal/Modal';
-import PlayListForm from '../components/Form/PlayListForm';
+import PlayListForm, { initialPlaylistForm } from '../components/Form/PlayListForm';
 import { MdClose } from 'react-icons/md';
-
-const initialPlaylistForm = {
-  id: '',
-  name: '',
-  description: '',
-  image: '',
-  isPublic: false,
-  isOwn: false,
-  previewImage: '',
-};
 
 const PlaylistPage: React.FC = () => {
   const dispatch = useAppDispatch();

@@ -10,22 +10,17 @@ import Button from '../Button/Button';
 import Track from '../../types/Track';
 import { useHistory } from 'react-router-dom';
 
-type PlayListFormProps = {
-  className?: string;
-  id?: string;
-  name?: string;
-  description?: string;
-  image?: string;
-  isPublic?: boolean;
-  isOwn?: boolean;
-  previewImage?: string;
-  onSave?: () => void;
-  onDelete?: () => void;
-  tracks?: Track[],
+export type PlaylistForm = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  isPublic: boolean;
+  isOwn: boolean;
+  previewImage: string;
 };
 
-const defaultProps: PlayListFormProps = {
-  className: '',
+export const initialPlaylistForm: PlaylistForm = {
   id: '',
   name: '',
   description: '',
@@ -33,6 +28,19 @@ const defaultProps: PlayListFormProps = {
   isPublic: false,
   isOwn: false,
   previewImage: '',
+};
+
+type PlayListFormProps = {
+  className?: string;
+  previewImage: string;
+  onSave: () => void;
+  onDelete?: () => void;
+  tracks?: Track[],
+} & PlaylistForm;
+
+const defaultProps: PlayListFormProps = {
+  ...initialPlaylistForm,
+  className: '',
   onSave: () => {},
   onDelete: () => {},
   tracks: [],
@@ -93,7 +101,7 @@ const PlayListForm: React.FC<PlayListFormProps> = ({
         mode = 'create';
         savedPlaylistId = response.data.id;
       }
-  
+
       // add image
       if (playlistPreviewImage) {
         await ApiSpotify.put(

@@ -1,4 +1,4 @@
-import { toast } from 'react-toastify';
+import { toast } from '../utils/toast';
 import { useAddToHomescreenPrompt } from '../hooks/useAddToHomeScreenPrompt';
 import { SPOTIFY_LOGO, SPOTIFY_LOGO_WHITE } from '../utils/constants';
 

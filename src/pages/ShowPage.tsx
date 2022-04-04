@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from '../utils/toast';
 import Show from '../types/Show';
 import ApiSpotify from '../utils/api-spotify';
 import { AuthContext } from '../context/auth-context';
