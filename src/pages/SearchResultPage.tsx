@@ -77,6 +77,8 @@ const SearchResultPage: React.FC = () => {
           uris={tracks.map((v) => v.uri)}
           handleNext={() => {}}
           hasMore={false}
+          isLoading={isLoading}
+          loadingCountItems={5}
         />
       </div>
 

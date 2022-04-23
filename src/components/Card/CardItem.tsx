@@ -1,10 +1,10 @@
 import { useHistory } from 'react-router-dom';
 import { FiMusic } from 'react-icons/fi';
 import { useDispatch } from 'react-redux';
+import { decode } from 'html-entities';
 import { togglePlay } from '../../store/player-slice';
 
 import PlayButton from '../Button/PlayButton';
-import { ucwords } from '../../utils/helpers';
 
 import styles from './Card.module.css';
 
@@ -76,7 +76,7 @@ const CardItem: React.FC<CardItemProps> = ({
       <div className="px-2 sm:px-4 text-xxs sm:text-xs text-center sm:text-left font-bold mt-1 sm:mt-2">
         <div className="truncate">{name}</div>
         <div className="font-semibold text-gray-300 line-clamp-1 sm:line-clamp-2">
-          {description ? ucwords(description) : <span>&nbsp;</span>}
+          {decode(description) || <span>&nbsp;</span>}
         </div>
       </div>
     </div>

@@ -34,6 +34,8 @@ type PlayerListTrackProps = {
   handleNext: () => void;
   hasMore: boolean;
   isIncludeEpisode?: boolean;
+  isLoading?: boolean;
+  loadingCountItems?: number;
   handleRemoveFromPlaylist?: ({ trackUri, position }: { trackUri: string, position?: number }) => void;
 };
 
@@ -45,6 +47,8 @@ const defaultProps: PlayerListTrackProps = {
   handleNext: () => {},
   hasMore: false,
   isIncludeEpisode: false,
+  isLoading: false,
+  loadingCountItems: 3,
   handleRemoveFromPlaylist: undefined,
 };
 
@@ -56,6 +60,8 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
   handleNext,
   hasMore,
   isIncludeEpisode,
+  isLoading,
+  loadingCountItems,
   handleRemoveFromPlaylist,
 }) => {
   const dispatch = useDispatch();
@@ -103,7 +109,7 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
   };
 
   const TrackLoading = (
-    [...Array(3)].map((_, idx) => (
+    [...Array(loadingCountItems)].map((_, idx) => (
       <PlayerListTrackItemSkeleton key={idx} />
     ))
   );
@@ -132,7 +138,8 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
         </div>
         <div className="col-start-7 col-end-7"></div>
       </div>
-      {tracks && (
+      {isLoading && TrackLoading}
+      {!isLoading && tracks && (
         <InfiniteScroll
           dataLength={tracks.length}
           next={handleNext}
