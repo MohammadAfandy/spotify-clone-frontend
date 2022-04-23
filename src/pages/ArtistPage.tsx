@@ -140,9 +140,11 @@ const ArtistPage: React.FC = () => {
         <PlayerListTrack
           tracks={!isShowMore ? tracks.slice(0, 5) : tracks}
           showAlbum
-          uris={[artist.uri]}
+          uris={tracks.map((track) => track.uri)}
           handleNext={() => setNextUrl(pageData.next)}
           hasMore={!!pageData.next}
+          isLoading={isLoading}
+          loadingCountItems={5}
         />
         <span
           className="cursor-pointer hover:underline"

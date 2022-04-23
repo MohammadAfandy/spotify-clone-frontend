@@ -107,6 +107,7 @@ const WebPlayback: React.FC = () => {
   const currentTrack = useSelector((state: RootState) => state.player.currentTrack);
   const isPlaying = useSelector((state: RootState) => state.player.isPlaying);
   const isSaved = useSelector((state: RootState) => state.player.isSaved);
+  const forceUpdate = useSelector((state: RootState) => state.player.forceUpdate);
 
   const [player, setPlayer] = useState<Player>(undefined);
   const [error, setError] = useState('');
@@ -464,11 +465,11 @@ const WebPlayback: React.FC = () => {
         repeat_state,
         is_playing,
         context,
-        timestamp,
+        // timestamp,
       } = responseData;
 
       // probably device just get transferred and don't hold reliable data
-      if (timestamp === 0) return;
+      // if (timestamp === 0) return;
 
       const {
         duration_ms,
@@ -526,7 +527,7 @@ const WebPlayback: React.FC = () => {
     }, 10 * 1000);
 
     return () => clearInterval(interval);
-  }, [isPlayerActive, deviceId, getPlaybackState]);
+  }, [isPlayerActive, deviceId, getPlaybackState, forceUpdate]);
 
   useEffect(() => {
       getUserDevices();

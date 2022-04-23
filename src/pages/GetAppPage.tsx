@@ -1,6 +1,6 @@
 import { toast } from '../utils/toast';
 import { useAddToHomescreenPrompt } from '../hooks/useAddToHomeScreenPrompt';
-import { SPOTIFY_LOGO, SPOTIFY_LOGO_WHITE } from '../utils/constants';
+import { SPOTIFY_ICON, SPOTIFY_ICON_WHITE } from '../utils/constants';
 
 const GetAppPage: React.FC = () => {
   const [prompt, promptToInstall] = useAddToHomescreenPrompt();
@@ -16,7 +16,7 @@ const GetAppPage: React.FC = () => {
   return (
     <div className="flex flex-col justify-around bg-banner-gradient sm:p-4 p-2 h-full font-semibold">
       <div className="flex flex-col justify-center items-center rounded-md bg-indigo-200 bg-opacity-40 py-4 px-10">
-        <img src={SPOTIFY_LOGO} alt="Spotify" className="w-10 h-10 mb-2" />
+        <img src={SPOTIFY_ICON} alt="Spotify" className="w-10 h-10 mb-2" />
         <span className="text-center mb-2">
           Spotify Official App
         </span>
@@ -34,7 +34,7 @@ const GetAppPage: React.FC = () => {
         </a>
       </div>
       <div className="flex flex-col justify-center items-center rounded-md bg-indigo-200 bg-opacity-40 py-4 px-10">
-        <img src={SPOTIFY_LOGO_WHITE} alt="Spotify" className="w-10 h-10 mb-2" />
+        <img src={SPOTIFY_ICON_WHITE} alt="Spotify" className="w-10 h-10 mb-2" />
         <span className="text-center mb-2">
           Spotify Clone on Home Screen
         </span>

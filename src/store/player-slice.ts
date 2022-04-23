@@ -16,6 +16,7 @@ export type PlayerState = {
   currentTrack: Track & Episode;
   isPlaying: boolean;
   isSaved: boolean;
+  forceUpdate: number;
 };
 
 export type TogglePlayParams = {
@@ -32,6 +33,7 @@ const initialState: PlayerState = {
   currentTrack: {} as Track & Episode,
   isPlaying: false,
   isSaved: false,
+  forceUpdate: 0,
 };
 
 export const togglePlay = createAsyncThunk(
@@ -148,6 +150,7 @@ export const playerSlice = createSlice({
       state.positionMs = positionMs;
       state.offset = offset;
       state.isPlaying = true;
+      state.forceUpdate += 1;
     });
     builder.addCase(togglePlay.rejected, (state, action) => {
       state.isPlaying = false;

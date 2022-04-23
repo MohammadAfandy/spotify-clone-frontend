@@ -11,7 +11,7 @@ import { getUserPlaylist } from '../../store/playlist-slice';
 import { RootState } from '../../store';
 import { AuthContext } from '../../context/auth-context';
 import ApiSpotify from '../../utils/api-spotify';
-import { APP_NAME, EPISODE_LOGO_IMAGE, LIKED_SONG_IMAGE } from '../../utils/constants';
+import { SPOTIFY_LOGO_WHITE, EPISODE_LOGO_IMAGE, LIKED_SONG_IMAGE } from '../../utils/constants';
 import { getHighestImage } from '../../utils/helpers';
 
 import NavbarLink from './NavbarLink';
@@ -72,8 +72,12 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className={`content-area ${styles.navbar}`}>
-      <div className="flex items-center px-6 mb-4 text-2xl">
-        <div className="mr-auto">{APP_NAME}</div>
+      <div className="flex justify-center items-center mb-4">
+        <img
+          src={SPOTIFY_LOGO_WHITE}
+          alt="Spotify Logo White"
+          className="w-70%"
+        />
       </div>
       <div className="mb-4">
         <ul>

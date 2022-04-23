@@ -132,6 +132,34 @@ const LyricPage: React.FC = () => {
           </>
         )}
       </div>
+      {(lyric.length || plainLyric) && (
+        <div className={isShowRunningLyric ? 'absolute bottom-2 right-2' : 'mt-2 text-right'}>
+          <span className="text-xs">
+            Lyric provided by
+            {' '}
+            {isShowRunningLyric && (
+              <a
+                className="underline"
+                href="https://api.textyl.co/api/lyrics"
+                target="_blank"
+                rel="noreferrer"
+              >
+                https://api.textyl.co/api/lyrics
+              </a>
+            )}
+            {!isShowRunningLyric && (
+              <a
+                className="underline"
+                href="https://www.npmjs.com/package/lyrics-finder"
+                target="_blank"
+                rel="noreferrer"
+              >
+                lyrics-finder
+              </a>
+            )}
+          </span>
+        </div>
+      )}
     </div>
   );
 };

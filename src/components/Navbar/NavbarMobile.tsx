@@ -5,7 +5,7 @@ import {
   MdLibraryMusic,
 } from 'react-icons/md';
 import { AuthContext } from '../../context/auth-context';
-import { SPOTIFY_LOGO_WHITE } from '../../utils/constants';
+import { SPOTIFY_ICON_WHITE } from '../../utils/constants';
 import NavbarMobileItem from './NavbarMobileItem';
 
 type NavbarMobileProps = {
@@ -46,7 +46,7 @@ const NavbarMobile: React.FC<NavbarMobileProps> = ({
       </div>
       <NavbarMobileItem
         to="/get-app"
-        image={SPOTIFY_LOGO_WHITE}
+        image={SPOTIFY_ICON_WHITE}
         text="Get App"
       />
     </nav>
