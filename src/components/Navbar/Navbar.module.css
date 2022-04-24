@@ -18,3 +18,7 @@
 .activeLink li {
   @apply bg-gray-500 bg-opacity-50 text-white font-bold;
 }
+
+.activeLinkMobile {
+  @apply opacity-100;
+}

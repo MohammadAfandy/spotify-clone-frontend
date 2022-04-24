@@ -1,6 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import { IconType } from 'react-icons/lib';
 
+import styles from './Navbar.module.css';
+
 type NavbarMobileItemProps = {
   to?: string;
   Icon?: IconType;
@@ -33,7 +35,8 @@ const NavbarMobileItem: React.FC<NavbarMobileItemProps> = ({
       {to !== undefined ? (
         <NavLink
           to={to}
-          className="flex flex-col h-full justify-around items-center px-4"
+          className="flex flex-col h-full justify-around items-center px-4 opacity-50"
+          activeClassName={styles.activeLinkMobile} exact
           {...newTabProps}
         >
           {Icon
