@@ -60,7 +60,9 @@ const CardItem: React.FC<CardItemProps> = ({
           <img
             src={image}
             alt={name}
-            className="w-full h-full sm:rounded-md min-h-full" />
+            className="w-full h-full sm:rounded-md min-h-full"
+            loading="lazy"
+          />
         ) : (
           <div className="w-full h-full">
             <FiMusic className="w-full h-full p-8" />

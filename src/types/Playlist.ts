@@ -1,6 +1,6 @@
 import Track from './Track';
 
-type Category = {
+type Playlist = {
   id: string;
   name: string;
   href: string;
@@ -24,4 +24,4 @@ type Category = {
   };
 };
 
-export default Category;
+export default Playlist;

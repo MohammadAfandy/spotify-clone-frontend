@@ -17,7 +17,7 @@ import PlayerListTrack from '../components/PlayerList/PlayerListTrack';
 import TextLink from '../components/Text/TextLink';
 import FolllowButton from '../components/Button/FollowButton';
 import Slider from '../components/Slider/Slider';
-import { CARD_COUNT } from '../utils/constants';
+import { SLIDER_CARD_COUNT } from '../utils/constants';
 import CardItemSkeleton from '../components/Card/CardItemSkeleton';
 
 const ArtistPage: React.FC = () => {
@@ -45,14 +45,14 @@ const ArtistPage: React.FC = () => {
 
         const dataAlbums = await makeRequest('/artists/' + params.id + '/albums', {
           params: {
-            limit: CARD_COUNT,
+            limit: SLIDER_CARD_COUNT,
           },
         }, isLoggedIn);
         setAlbums(dataAlbums.data.items);
 
         const dataRelatedArtists = await makeRequest('/artists/' + params.id + '/related-artists', {
           params: {
-            limit: CARD_COUNT,
+            limit: SLIDER_CARD_COUNT,
           },
         }, isLoggedIn);
         setRelatedArtists(dataRelatedArtists.data.artists);
@@ -108,7 +108,7 @@ const ArtistPage: React.FC = () => {
   };
 
   const CardLoading = (
-    [...Array(CARD_COUNT)].map((_, idx) => (
+    [...Array(SLIDER_CARD_COUNT)].map((_, idx) => (
       <CardItemSkeleton key={idx} />
     ))
   );

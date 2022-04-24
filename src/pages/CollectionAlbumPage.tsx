@@ -1,43 +1,24 @@
-import { useState, useEffect } from 'react';
 import Album from '../types/Album';
-import ApiSpotify from '../utils/api-spotify';
 import { getArtistNames, getHighestImage } from '../utils/helpers';
 
 import CardItem from '../components/Card/CardItem';
-import GridWrapper from '../components/Grid/GridWrapper';
-import { CARD_COUNT } from '../utils/constants';
 import CardItemSkeleton from '../components/Card/CardItemSkeleton';
+import useFetchList from '../hooks/useFetchList';
+import InfiniteScroll from '../components/InfiniteScroll/InfiniteScroll';
+import { GRID_CARD_COUNT } from '../utils/constants';
+
+type CollectionAlbum = {
+  added_at: Date;
+  album: Album;
+};
 
 const CollectionAlbumPage: React.FC = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [albums, setAlbums] = useState<Album[]>([]);
-
-  useEffect(() => {
-    const fetchCollectionAlbum = async () => {
-      try {
-        setIsLoading(true);
-        const response = await ApiSpotify.get('/me/albums', {
-          params: { limit: 50 },
-        });
-  
-        setAlbums(
-          response.data.items.map((item: { added_at: Date; album: Album }) => ({
-            ...item.album,
-            added_at: item.added_at,
-          }))
-        );
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCollectionAlbum();
-  }, []);
+  const { setNextUrl, items, pageData, hasPagination } = useFetchList<CollectionAlbum>({
+    url: '/me/albums',
+  });
 
   const CardLoading = (
-    [...Array(CARD_COUNT)].map((_, idx) => (
+    [...Array(GRID_CARD_COUNT)].map((_, idx) => (
       <CardItemSkeleton key={idx} />
     ))
   );
@@ -45,9 +26,14 @@ const CollectionAlbumPage: React.FC = () => {
   return (
     <div className="flex flex-col sm:p-4 p-2">
       <div className="text-2xl mb-4 font-bold">ALBUMS</div>
-      <GridWrapper>
-        {isLoading && CardLoading}
-        {!isLoading && albums.map((album) => (
+      <InfiniteScroll
+        className="grid-wrapper"
+        dataLength={items.length}
+        next={() => setNextUrl(pageData.next)}
+        hasMore={pageData.next === null ? !!pageData.next : hasPagination}
+        loader={CardLoading}
+      >
+        {items.map(({ album }) => (
           <CardItem
             key={album.id}
             name={album.name}
@@ -57,7 +43,7 @@ const CollectionAlbumPage: React.FC = () => {
             href={'/album/' + album.id}
           />
         ))}
-      </GridWrapper>
+      </InfiniteScroll>
     </div>
   );
 };

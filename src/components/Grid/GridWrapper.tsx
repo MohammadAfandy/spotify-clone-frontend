@@ -12,7 +12,7 @@ const GridWrapper: React.FC<GridWrapperProps> = ({
 }) => {
   return (
     <div
-      className={`grid-wrapper grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-4 auto-rows-auto ${className}`}
+      className={`grid-wrapper ${className}`}
     >
       {children}
     </div>

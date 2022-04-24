@@ -1,49 +1,36 @@
-import { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import Category from '../types/Category';
-import { AuthContext } from '../context/auth-context';
-import { makeRequest } from '../utils/helpers';
-
-import GridWrapper from '../components/Grid/GridWrapper';
 
 import cardStyles from '../components/Card/Card.module.css';
 import CardItemSkeleton from '../components/Card/CardItemSkeleton';
+import useFetchList from '../hooks/useFetchList';
+import InfiniteScroll from '../components/InfiniteScroll/InfiniteScroll';
+import { GRID_CARD_COUNT } from '../utils/constants';
 
 const SearchPage: React.FC = () => {
   const history = useHistory();
-  const [categories, setCategories] = useState<Category[]>([]);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { isLoggedIn } = useContext(AuthContext);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setIsLoading(true);
-        const params = { limit: 50 };
-        const response = await makeRequest('/browse/categories', { params }, isLoggedIn);
-        setCategories(response.data.categories.items);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, [isLoggedIn]);
+  const { setNextUrl, items, pageData, hasPagination } = useFetchList<Category>({
+    url: '/browse/categories',
+    propertyName: 'categories',
+  });
 
   const CardLoading = (
-    [...Array(20)].map((_, idx) => (
+    [...Array(GRID_CARD_COUNT)].map((_, idx) => (
       <CardItemSkeleton key={idx} />
     ))
   );
 
   return (
     <div className="sm:p-4 p-2">
-      <GridWrapper>
-        {isLoading && CardLoading}
-        {!isLoading && categories.map((category) => (
+      <InfiniteScroll
+        className="grid-wrapper"
+        dataLength={items.length}
+        next={() => setNextUrl(pageData.next)}
+        hasMore={pageData.next === null ? !!pageData.next : hasPagination}
+        loader={CardLoading}
+      >
+        {items.map((category) => (
           <div
             key={category.id}
             className={`${cardStyles.cardItem} relative cursor-pointer transition duration-300 ease-in-out transform hover:scale-105`}
@@ -59,7 +46,7 @@ const SearchPage: React.FC = () => {
             </div>
           </div>
         ))}
-      </GridWrapper>
+      </InfiniteScroll>
     </div>
   );
 };

@@ -29,7 +29,7 @@ const useFetchTracks = (url: string) => {
       let response;
       if (nextUrl) {
         let newUrl = nextUrl.split('/v1')[1];
-        response = await makeRequest(newUrl, { params }, isLoggedIn);
+        response = await makeRequest(newUrl, {}, isLoggedIn);
       } else {
         response = await makeRequest(url, { params }, isLoggedIn);
       }

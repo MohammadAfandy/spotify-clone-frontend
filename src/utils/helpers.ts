@@ -69,6 +69,10 @@ export const getArtistNames = (artists: Artist[]): string => {
   return artists.map((v) => v.name).join(', ');
 };
 
+export const isEmptyObject = (obj: Object): boolean => {
+  return Object.keys(obj).length === 0;
+};
+
 export const formatDate = (
   date: string | number | Date,
   format: string

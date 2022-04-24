@@ -20,13 +20,17 @@ const axiosInstance = axios.create({
 // before request, set the access token and country param
 axiosInstance.interceptors.request.use(
   async (config) => {
-    // await sleep(3000);
+    // await sleep(2000);
     const { url = '', method } = config;
-    const urlWithoutCountry = ['/me/top/tracks', '/me/top/artists', '/recommendations'];
+    const urlWithoutCountry = [
+      '/me/top/tracks',
+      '/me/top/artists',
+      '/me/player',
+      '/recommendations',
+    ];
     if (
       method?.toLowerCase() === 'get'
-      && urlWithoutCountry.includes(url) === false
-      && url.startsWith('/me/player') === false
+      && urlWithoutCountry.every((v) => url.startsWith(v) === false)
     ) {
       config.params.country = getCookie('country') || 'US';
       config.params.market = 'from_token';

@@ -6,13 +6,18 @@ import { getHighestImage } from '../utils/helpers';
 
 import CardItem from '../components/Card/CardItem';
 import CardCollection from '../components/Card/CardCollection';
-import GridWrapper from '../components/Grid/GridWrapper';
-import { CARD_COUNT } from '../utils/constants';
 import CardItemSkeleton from '../components/Card/CardItemSkeleton';
+import InfiniteScroll from '../components/InfiniteScroll/InfiniteScroll';
+import useFetchList from '../hooks/useFetchList';
+import { GRID_CARD_COUNT } from '../utils/constants';
+
+type CollectionPodcast = {
+  added_at: Date;
+  show: Show;
+};
 
 const CollectionPodcastPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [podcasts, setPodcasts] = useState<Show[]>([]);
   const [playlistEpisodes, setPlaylistEpisodes] = useState<Episode[]>([]);
   const [playlistTotalEpisode, setplaylistTotalEpisode] = useState<number>(0);
 
@@ -20,19 +25,9 @@ const CollectionPodcastPage: React.FC = () => {
     const fetchCollectionPodcast = async () => {
       try {
         setIsLoading(true);
-        const paramsPodcast = { limit: 50 };
         const paramsEpisode = { limit: 5 };
-        const [dataPodcast, dataPlaylistEpisode] = await Promise.all([
-          ApiSpotify.get('/me/shows', { params: paramsPodcast }),
-          ApiSpotify.get('/me/episodes', { params: paramsEpisode }),
-        ]);
-  
-        setPodcasts(
-          dataPodcast.data.items.map((item: { added_at: Date; show: Show }) => ({
-            ...item.show,
-            added_at: item.added_at,
-          }))
-        );
+        const dataPlaylistEpisode = await ApiSpotify.get('/me/episodes', { params: paramsEpisode });
+
         setPlaylistEpisodes(
           dataPlaylistEpisode.data.items.map(
             (item: { added_at: Date; episode: Episode }) => ({
@@ -52,8 +47,12 @@ const CollectionPodcastPage: React.FC = () => {
     fetchCollectionPodcast();
   }, []);
 
+  const { setNextUrl, items, pageData, hasPagination } = useFetchList<CollectionPodcast>({
+    url: '/me/shows',
+  });
+
   const CardLoading = (
-    [...Array(CARD_COUNT)].map((_, idx) => (
+    [...Array(GRID_CARD_COUNT)].map((_, idx) => (
       <CardItemSkeleton key={idx} />
     ))
   );
@@ -61,7 +60,13 @@ const CollectionPodcastPage: React.FC = () => {
   return (
     <div className="flex flex-col sm:p-4 p-2">
       <div className="text-2xl mb-4 font-bold">PODCASTS</div>
-      <GridWrapper>
+      <InfiniteScroll
+        className="grid-wrapper"
+        dataLength={items.length}
+        next={() => setNextUrl(pageData.next)}
+        hasMore={pageData.next === null ? !!pageData.next : hasPagination}
+        loader={CardLoading}
+      >
         <div className="col-span-2">
           <CardCollection
             className="bg-gradient-to-b from-green-300 to-green-800"
@@ -73,8 +78,7 @@ const CollectionPodcastPage: React.FC = () => {
             isLoading={isLoading}
           />
         </div>
-        {isLoading && CardLoading}
-        {!isLoading && podcasts.map((show) => (
+        {items.map(({ show }) => (
           <CardItem
             key={show.id}
             name={show.name}
@@ -84,7 +88,7 @@ const CollectionPodcastPage: React.FC = () => {
             href={'/show/' + show.id}
           />
         ))}
-      </GridWrapper>
+      </InfiniteScroll>
     </div>
   );
 };

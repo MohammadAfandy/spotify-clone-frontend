@@ -10,7 +10,7 @@ import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
 import Skeleton from '../components/Skeleton/Skeleton';
 import CardItem from '../components/Card/CardItem';
 import TextLink from '../components/Text/TextLink';
-import { CARD_COUNT } from '../utils/constants';
+import { SLIDER_CARD_COUNT } from '../utils/constants';
 import Slider from '../components/Slider/Slider';
 import RecentlyPlayed from '../types/RecentlyPlayed';
 import CardItemSkeleton from '../components/Card/CardItemSkeleton';
@@ -31,7 +31,7 @@ const HomePage: React.FC = () => {
     const fetchHome = async () => {
       try {
         setIsLoading(true);
-        const params = { limit: CARD_COUNT };
+        const params = { limit: SLIDER_CARD_COUNT };
         const promises = [
           makeRequest('/browse/new-releases', { params }, isLoggedIn),
           makeRequest('/browse/featured-playlists', { params }, isLoggedIn)
@@ -70,7 +70,7 @@ const HomePage: React.FC = () => {
   }, [isLoggedIn]);
 
   const CardLoading = (
-    [...Array(CARD_COUNT)].map((_, idx) => (
+    [...Array(SLIDER_CARD_COUNT)].map((_, idx) => (
       <CardItemSkeleton key={idx} />
     ))
   );

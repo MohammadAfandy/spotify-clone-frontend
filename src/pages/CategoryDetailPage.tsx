@@ -6,15 +6,16 @@ import { AuthContext } from '../context/auth-context';
 import { makeRequest } from '../utils/helpers';
 
 import CardItem from '../components/Card/CardItem';
-import GridWrapper from '../components/Grid/GridWrapper';
 import Skeleton from '../components/Skeleton/Skeleton';
 import CardItemSkeleton from '../components/Card/CardItemSkeleton';
+import InfiniteScroll from '../components/InfiniteScroll/InfiniteScroll';
+import useFetchList from '../hooks/useFetchList';
+import { GRID_CARD_COUNT } from '../utils/constants';
 
 const CategoryDetailPage: React.FC = () => {
   const params = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [category, setCategory] = useState<Category>(Object);
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
   const { isLoggedIn } = useContext(AuthContext);
 
@@ -24,12 +25,6 @@ const CategoryDetailPage: React.FC = () => {
         setIsLoading(true);
         const dataCategories = await makeRequest('/browse/categories/' + params.id, {}, isLoggedIn);
         setCategory(dataCategories.data);
-        const dataPlaylist = await makeRequest(
-          '/browse/categories/' + params.id + '/playlists',
-          {},
-          isLoggedIn,
-        );
-        setPlaylists(dataPlaylist.data.playlists.items);
       } catch (error) {
         console.error(error);
       } finally {
@@ -40,8 +35,14 @@ const CategoryDetailPage: React.FC = () => {
     fetchCategories();
   }, [params.id, isLoggedIn]);
 
+  const { setNextUrl, items, pageData, hasPagination } = useFetchList<Playlist>({
+    url: '/browse/categories/' + params.id + '/playlists',
+    propertyName: 'playlists',
+    limit: 20, // "j-trakcs" category will response with "server error" if limit above 27 ?
+  });
+
   const CardLoading = (
-    [...Array(20)].map((_, idx) => (
+    [...Array(GRID_CARD_COUNT)].map((_, idx) => (
       <CardItemSkeleton key={idx} />
     ))
   );
@@ -52,11 +53,16 @@ const CategoryDetailPage: React.FC = () => {
         {isLoading && <Skeleton width={200} height={20} />}
         {!isLoading && category.name}
       </div>
-      <GridWrapper>
-        {isLoading && CardLoading}
-        {!isLoading && playlists.map((playlist) => (
+      <InfiniteScroll
+        className="grid-wrapper"
+        dataLength={items.length}
+        next={() => setNextUrl(pageData.next)}
+        hasMore={pageData.next === null ? !!pageData.next : hasPagination}
+        loader={CardLoading}
+      >
+        {items.map((playlist, idx) => (
           <CardItem
-            key={playlist.id}
+            key={idx + playlist.id}
             name={playlist.name}
             description={`By ${playlist.owner.display_name}`}
             image={
@@ -66,7 +72,7 @@ const CategoryDetailPage: React.FC = () => {
             href={'/playlist/' + playlist.id}
           />
         ))}
-      </GridWrapper>
+      </InfiniteScroll>
     </div>
   );
 };

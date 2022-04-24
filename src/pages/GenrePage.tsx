@@ -1,29 +1,21 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import Track from '../types/Track';
-import Artist from '../types/Artist';
-import Album from '../types/Album';
-import Playlist from '../types/Playlist';
-import ApiSpotify from '../utils/api-spotify';
 import { AuthContext } from '../context/auth-context';
-import { getHighestImage, getArtistNames, makeRequest } from '../utils/helpers';
+import { getHighestImage, getArtistNames } from '../utils/helpers';
 
 import CardItem from '../components/Card/CardItem';
-import GridWrapper from '../components/Grid/GridWrapper';
 import Skeleton from '../components/Skeleton/Skeleton';
-import RecentlyPlayed from '../types/RecentlyPlayed';
 import CardItemSkeleton from '../components/Card/CardItemSkeleton';
+import InfiniteScroll from '../components/InfiniteScroll/InfiniteScroll';
+import useFetchList from '../hooks/useFetchList';
+import { GRID_CARD_COUNT } from '../utils/constants';
 
 const GenrePage: React.FC = () => {
   const { type } = useParams<{ query: string; type: string }>();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [recentlyPlayed, setRecentlyPlayed] = useState<RecentlyPlayed[]>([]);
-  const [topTracks, setTopTracks] = useState<Track[]>([]);
-  const [topArtists, setTopArtists] = useState<Artist[]>([]);
-  const [newReleases, setNewReleases] = useState<Album[]>([]);
-
-  const [featuredPlaylists, setFeaturedPlaylists] = useState<Playlist[]>([]);
+  const [endpoint, setEndpoint] = useState('');
+  const [propertyName, setPropertyName] = useState('');
   const [typeText, setTypeText] = useState('');
 
   const { isLoggedIn } = useContext(AuthContext);
@@ -32,43 +24,26 @@ const GenrePage: React.FC = () => {
     const fetchGenre = async () => {
       try {
         setIsLoading(true);
-        const params = { limit: 50 };
-  
+
         if (type === 'featured-playlists') {
-          const response = await makeRequest('/browse/featured-playlists', {
-            params,
-          }, isLoggedIn);
-          setFeaturedPlaylists(response.data.playlists.items);
-          setTypeText(response.data.message);
+          setEndpoint('/browse/featured-playlists');
+          setPropertyName('playlists');
         } else if (type === 'recently-played') {
-          const response = await ApiSpotify.get('/me/player/recently-played', {
-            params: { ...params, country: undefined },
-          });
-          setRecentlyPlayed(
-            response.data.items
-              .filter((v: RecentlyPlayed, i: number, a: RecentlyPlayed[]) => {
-                return a.findIndex((t) => t.track.id === v.track.id) === i;
-              })
-          );
           setTypeText('Recently Played');
+          setEndpoint('/me/player/recently-played');
+          setPropertyName('');
         } else if (type === 'top-tracks') {
-          const response = await ApiSpotify.get('/me/top/tracks', {
-            params: { ...params, country: undefined },
-          });
-          setTopTracks(response.data.items);
           setTypeText('Your Top Tracks');
+          setEndpoint('/me/top/tracks');
+          setPropertyName('');
         } else if (type === 'top-artists') {
-          const response = await ApiSpotify.get('/me/top/artists', {
-            params: { ...params, country: undefined },
-          });
-          setTopArtists(response.data.items);
           setTypeText('Your Top Artists');
+          setEndpoint('/me/top/artists');
+          setPropertyName('');
         } else if (type === 'new-releases') {
-          const response = await makeRequest('/browse/new-releases', {
-            params,
-          }, isLoggedIn);
-          setNewReleases(response.data.albums.items);
           setTypeText('New Releases');
+          setEndpoint('/browse/new-releases');
+          setPropertyName('albums');
         }
       } catch (error) {
         console.error(error);
@@ -81,91 +56,80 @@ const GenrePage: React.FC = () => {
   }, [type, isLoggedIn]);
 
   const CardLoading = (
-    [...Array(20)].map((_, idx) => (
+    [...Array(GRID_CARD_COUNT)].map((_, idx) => (
       <CardItemSkeleton key={idx} />
     ))
   );
 
+  const { setNextUrl, items, pageData, hasPagination, additionalData } = useFetchList<any>({
+    url: endpoint,
+    propertyName,
+  });
+
   return (
     <div className="flex flex-col sm:p-4 p-2">
       <div className="text-2xl font-bold mb-4 truncate">
-        {typeText || <Skeleton width={200} height={20} />}
+        {isLoading && <Skeleton width={200} height={20} />}
+        {!isLoading && (additionalData?.message || typeText)}
       </div>
-      {type === 'featured-playlists' && (
-        <GridWrapper>
-          {isLoading && CardLoading}
-          {featuredPlaylists.map((playlist) => (
-            <CardItem
-              key={playlist.id}
-              name={playlist.name}
-              description={`By ${playlist.owner.display_name}`}
-              image={getHighestImage(playlist.images)}
-              uri={playlist.uri}
-              href={'/playlist/' + playlist.id}
-            />
-          ))}
-        </GridWrapper>
-      )}
-      {type === 'top-tracks' && (
-        <GridWrapper>
-          {isLoading && CardLoading}
-          {!isLoading && topTracks.map((track) => (
-            <CardItem
-              key={track.id}
-              name={track.name}
-              description={getArtistNames(track.artists)}
-              image={getHighestImage(track.album.images)}
-              uri={track.uri}
-              href={'/album/' + track.album.id}
-            />
-          ))}
-        </GridWrapper>
-      )}
-      {type === 'recently-played' && (
-        <GridWrapper>
-          {isLoading && CardLoading}
-          {!isLoading && recentlyPlayed.map(({ track }) => (
-            <CardItem
-              key={track.id}
-              name={track.name}
-              description={getArtistNames(track.artists)}
-              image={getHighestImage(track.album.images)}
-              uri={track.uri}
-              href={'/album/' + track.album.id}
-            />
-          ))}
-        </GridWrapper>
-      )}
-      {type === 'top-artists' && (
-        <GridWrapper>
-          {isLoading && CardLoading}
-          {!isLoading && topArtists.map((artist) => (
-            <CardItem
-              key={artist.id}
-              name={artist.name}
-              description={artist.type}
-              image={getHighestImage(artist.images)}
-              uri={artist.uri}
-              href={'/artist/' + artist.id}
-            />
-          ))}
-        </GridWrapper>
-      )}
-      {type === 'new-releases' && (
-        <GridWrapper>
-          {isLoading && CardLoading}
-          {!isLoading && newReleases.map((album) => (
-            <CardItem
-              key={album.id}
-              name={album.name}
-              description={getArtistNames(album.artists)}
-              image={getHighestImage(album.images)}
-              uri={album.uri}
-              href={'/album/' + album.id}
-            />
-          ))}
-        </GridWrapper>
-      )}
+      <InfiniteScroll
+        className="grid-wrapper"
+        dataLength={items.length}
+        next={() => setNextUrl(pageData.next)}
+        hasMore={pageData.next === null ? !!pageData.next : hasPagination}
+        loader={CardLoading}
+      >
+        {type === 'featured-playlists' && items.map((item) => (
+          <CardItem
+            key={item.id}
+            name={item.name}
+            description={`By ${item.owner.display_name}`}
+            image={getHighestImage(item.images)}
+            uri={item.uri}
+            href={'/item/' + item.id}
+          />
+        ))}
+        {type === 'top-tracks' && items.map((item) => (
+          <CardItem
+            key={item.id}
+            name={item.name}
+            description={getArtistNames(item.artists)}
+            image={getHighestImage(item.album.images)}
+            uri={item.uri}
+            href={'/album/' + item.album.id}
+          />
+        ))}
+        {type === 'recently-played' && items.map(({ track: item }) => (
+          <CardItem
+            key={item.id}
+            name={item.name}
+            description={getArtistNames(item.artists)}
+            image={getHighestImage(item.album.images)}
+            uri={item.uri}
+            href={'/album/' + item.album.id}
+          />
+        ))}
+        {type === 'top-artists' && items.map((item) => (
+          <CardItem
+            key={item.id}
+            name={item.name}
+            description={item.type}
+            image={getHighestImage(item.images)}
+            uri={item.uri}
+            href={'/artist/' + item.id}
+          />
+        ))}
+        {type === 'new-releases' && items.map((item) => (
+          <CardItem
+            key={item.id}
+            name={item.name}
+            description={getArtistNames(item.artists)}
+            image={getHighestImage(item.images)}
+            uri={item.uri}
+            href={'/album/' + item.id}
+          />
+        ))}
+      </InfiniteScroll>
     </div>
   );
 };
