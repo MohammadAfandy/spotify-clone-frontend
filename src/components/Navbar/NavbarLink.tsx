@@ -1,18 +1,17 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, NavLinkProps } from 'react-router-dom';
 
 import NavbarItem from './NavbarItem';
 
 import styles from './Navbar.module.css';
 
 type NavbarLinkProps = {
-  to: string;
   Icon?: React.ReactNode;
   image?: string;
   text: string;
   editable?: boolean;
   onClick?: () => void;
   onClickEdit?: (e: React.MouseEvent) => void;
-};
+} & NavLinkProps;
 
 const defaultProps: NavbarLinkProps = {
   to: '',
@@ -21,16 +20,19 @@ const defaultProps: NavbarLinkProps = {
 };
 
 const NavbarLink: React.FC<NavbarLinkProps> = ({
-  to,
   Icon,
   text,
   image,
   editable,
   onClick,
   onClickEdit,
+  ...rest
 }) => {
   return (
-    <NavLink to={to} activeClassName={styles.activeLink} exact>
+    <NavLink
+      activeClassName={styles.activeLink}
+      {...rest}
+    >
       <NavbarItem
         Icon={Icon}
         text={text}

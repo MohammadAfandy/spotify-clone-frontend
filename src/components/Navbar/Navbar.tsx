@@ -12,7 +12,7 @@ import { RootState } from '../../store';
 import { AuthContext } from '../../context/auth-context';
 import ApiSpotify from '../../utils/api-spotify';
 import { SPOTIFY_LOGO_WHITE, EPISODE_LOGO_IMAGE, LIKED_SONG_IMAGE } from '../../utils/constants';
-import { getHighestImage } from '../../utils/helpers';
+import { getHighestImage, isActiveRoute } from '../../utils/helpers';
 
 import NavbarLink from './NavbarLink';
 import NavbarItem from './NavbarItem';
@@ -85,11 +85,14 @@ const Navbar: React.FC = () => {
             to="/"
             Icon={<MdHomeFilled className="w-6 h-6" />}
             text="Home"
+            exact
+            isActive={isActiveRoute('home')}
           />
           <NavbarLink
             to="/search"
             Icon={<MdSearch className="w-6 h-6" />}
             text="Search"
+            isActive={isActiveRoute('search')}
           />
           <div
             data-tip="library"
@@ -102,6 +105,7 @@ const Navbar: React.FC = () => {
                 to="/collection/playlists"
                 Icon={<MdLibraryMusic className="w-6 h-6" />}
                 text="Your Library"
+                isActive={isActiveRoute('library')}
               />
             ) : (
               <NavbarItem

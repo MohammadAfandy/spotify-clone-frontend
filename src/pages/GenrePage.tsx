@@ -86,7 +86,7 @@ const GenrePage: React.FC = () => {
             description={`By ${item.owner.display_name}`}
             image={getHighestImage(item.images)}
             uri={item.uri}
-            href={'/item/' + item.id}
+            href={'/playlist/' + item.id}
           />
         ))}
         {type === 'top-tracks' && items.map((item) => (

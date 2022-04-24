@@ -1,18 +1,17 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, NavLinkProps } from 'react-router-dom';
 import { IconType } from 'react-icons/lib';
 
 import styles from './Navbar.module.css';
 
 type NavbarMobileItemProps = {
-  to?: string;
   Icon?: IconType;
   image?: string;
   text: string;
   isExternal?: boolean;
-};
+} & NavLinkProps;
 
 const defaultProps: NavbarMobileItemProps = {
-  to: undefined,
+  to: '',
   text: '',
   Icon: undefined,
   image: '',
@@ -25,6 +24,7 @@ const NavbarMobileItem: React.FC<NavbarMobileItemProps> = ({
   text,
   image,
   isExternal,
+  ...rest
 }) => {
   const newTabProps = isExternal ? {
     target: '_blank',
@@ -32,11 +32,12 @@ const NavbarMobileItem: React.FC<NavbarMobileItemProps> = ({
   } : {};
   return (
     <>
-      {to !== undefined ? (
+      {to !== '' ? (
         <NavLink
           to={to}
           className="flex flex-col h-full justify-around items-center px-4 opacity-50"
-          activeClassName={styles.activeLinkMobile} exact
+          activeClassName={styles.activeLinkMobile}
+          {...rest}
           {...newTabProps}
         >
           {Icon

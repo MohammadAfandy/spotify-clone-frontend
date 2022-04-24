@@ -4,6 +4,8 @@ import moment from 'moment';
 import ApiBackend from './api-backend';
 import ApiSpotify from './api-spotify';
 import { AxiosRequestConfig } from 'axios';
+import { match } from 'react-router-dom';
+import { Location, LocationState } from 'history';
 
 const cookiePrefix = 'spotify_clone_';
 
@@ -161,4 +163,21 @@ export const ucwords = (str: string): string => {
   return (str + '').replace(/^([a-z])|\s+([a-z])/g, ($1) => {
       return $1.toUpperCase();
   });
-}
+};
+
+export const isActiveRoute = (route: string) => {
+  return <Params extends { [K in keyof Params]?: string }>(match: match<Params> | null, location: Location<LocationState>): boolean => {
+    switch (route) {
+      case 'home':
+        if (match) return true;
+        return location.pathname.startsWith('/genre');
+      case 'search':
+        if (match) return true;
+        return location.pathname.startsWith('/category');
+      case 'library':
+        const libraryPath = ['/collection/playlists', '/collection/podcasts', '/collection/artists', '/collection/albums'];
+        return libraryPath.some((path) => location.pathname.startsWith(path));
+      default: return !!match;
+    }
+  };
+};

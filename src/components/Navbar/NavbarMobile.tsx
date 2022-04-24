@@ -6,6 +6,7 @@ import {
 } from 'react-icons/md';
 import { AuthContext } from '../../context/auth-context';
 import { SPOTIFY_ICON_WHITE } from '../../utils/constants';
+import { isActiveRoute } from '../../utils/helpers';
 import NavbarMobileItem from './NavbarMobileItem';
 
 type NavbarMobileProps = {
@@ -25,11 +26,14 @@ const NavbarMobile: React.FC<NavbarMobileProps> = ({
         to="/"
         Icon={MdHomeFilled}
         text="Home"
+        exact
+        isActive={isActiveRoute('home')}
       />
       <NavbarMobileItem
         to="/search"
         Icon={MdSearch}
         text="Search"
+        isActive={isActiveRoute('search')}
       />
       <div
         className="h-full"
@@ -39,9 +43,10 @@ const NavbarMobile: React.FC<NavbarMobileProps> = ({
         data-place="top"
       >
         <NavbarMobileItem
-          to={isLoggedIn ? "/collection/playlists" : undefined}
+          to={isLoggedIn ? '/collection/playlists' : ''}
           Icon={MdLibraryMusic}
           text="Your Library"
+          isActive={isActiveRoute('library')}
         />
       </div>
       <NavbarMobileItem
