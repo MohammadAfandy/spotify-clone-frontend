@@ -45,18 +45,21 @@ const PlayerListEpisode: React.FC<PlayerListEpisodeProps> = ({
   const savedTrackIds = useSelector((state: RootState) => state.playlist.savedTrackIds);
 
   const handlePlayEpisode = ({
-    offset,
+    position,
     uri,
+    positionMs,
   }: {
-    offset: number,
+    position: number,
     uri: string,
+    positionMs: number,
   }) => {
     if (currentTrack && uri === currentTrack.uri) {
       dispatch(toggleResume());
     } else {
       dispatch(togglePlay({
         uris,
-        offset,
+        offset: uri,
+        positionMs,
       }));
     }
   };

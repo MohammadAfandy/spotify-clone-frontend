@@ -79,6 +79,7 @@ const AlbumPage: React.FC = () => {
   const handlePlayFromStart = () => {
     dispatch(togglePlay({
       uris: [album.uri],
+      offset: 0,
     }));
   };
 

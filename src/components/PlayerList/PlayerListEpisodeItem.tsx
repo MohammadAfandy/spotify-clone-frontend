@@ -5,6 +5,7 @@ import {
   MdCheckCircle,
   MdPauseCircle,
   MdOutlineMoreHoriz,
+  MdCheck,
 } from 'react-icons/md';
 import { PlaylistTrackParams, SavedTrackParams } from '../../store/playlist-slice';
 import Episode from '../../types/Episode';
@@ -21,6 +22,7 @@ import ContextSubMenu from '../ContextMenu/ContextSubMenu';
 import Skeleton from '../Skeleton/Skeleton';
 import Explicit from '../Text/Explicit';
 import TextLink from '../Text/TextLink';
+import RangeInput from '../Input/RangeInput';
 
 type PlayerListEpisodeItemProps = {
   episode?: Episode;
@@ -31,7 +33,7 @@ type PlayerListEpisodeItemProps = {
   isPlaying?: boolean,
   playlists?: Playlist[];
   userId?: string;
-  handlePlayEpisode?: ({ offset, uri }: { offset: number, uri: string }) => void;
+  handlePlayEpisode?: ({ position, uri, positionMs }: { position: number, uri: string, positionMs: number }) => void;
   handlePauseEpisode?: () => void;
   handleAddEpisodeToPlaylist?: (args: PlaylistTrackParams) => void;
   handleAddToSavedEpisode?: (args: SavedTrackParams) => void;
@@ -159,7 +161,7 @@ const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
             <div className="mb-2 text-sm font-light line-clamp-2">
               {episode.description}
             </div>
-            <div className="flex items-center text-xs">
+            <div className="flex items-center text-xs sm:text-sm">
               <div className="flex items-center mr-auto">
                 {(isPlaying && currentEpisode && episode.uri === currentEpisode.uri) ? (
                   <MdPauseCircle
@@ -172,17 +174,55 @@ const PlayerListEpisodeItem: React.FC<PlayerListEpisodeItemProps> = ({
                 ) : (
                   <MdPlayCircle
                     className="mr-4 w-8 h-8 cursor-pointer"
-                    onClick={() => handlePlayEpisode && number && handlePlayEpisode({ offset: offset || 0, uri: episode.uri })}
+                    onClick={() => handlePlayEpisode && number && handlePlayEpisode({
+                      position: offset || 0,
+                      uri: episode.uri,
+                      positionMs: episode.resume_point.resume_position_ms,
+                    })}
                     data-tip="play"
                     data-for="play-tooltip"
                     data-event="click"
                   />
                 )}
                 {episode.explicit && <Explicit />}
-                <div className="mr-2">
-                  {formatDate(episode.release_date, 'MMM DD')}
+                <div className="flex items-center">
+                  <div>
+                    {formatDate(episode.release_date, 'MMM DD')}
+                  </div>
+                  <div className="ml-1 sm:ml-2">
+                    {' • '}
+                  </div>
+                  {episode.resume_point?.fully_played
+                    ? (
+                      <div className="ml-1 sm:ml-2 flex items-center">
+                        Played
+                        <MdCheck
+                          className="ml-1 sm:ml-2 w-4 h-4 sm:w-6 sm:h-6 cursor-pointer text-green-400"
+                        />
+                      </div>
+                    )
+                    : episode.resume_point?.resume_position_ms > 0
+                      ? (
+                        <div className="ml-1 sm:ml-2">
+                          <div>
+                            {duration(episode.duration_ms - episode.resume_point?.resume_position_ms, true, false) + ' left'}
+                          </div>
+                          <div className="hidden sm:block">
+                            <RangeInput
+                              max={episode.duration_ms || 100}
+                              value={episode.resume_point?.resume_position_ms}
+                              disabled
+                            />
+                          </div>
+                        </div>
+                      )
+                      : (
+                        <div className="ml-1 sm:ml-2">
+                          {duration(episode.duration_ms, true, false)}
+                        </div>
+                      )
+                  }
                 </div>
-                <div>{duration(episode.duration_ms, true)}</div>
               </div>
               <div className="flex items-center">
                 {isSavedEpisode ? (

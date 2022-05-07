@@ -63,7 +63,10 @@ module.exports = {
         '-1': '-1',
       },
       screens: {
-        'canhover': {'raw': '(hover: hover)'},
+        'canhover': { 'raw': '(hover: hover)' },
+        '3xl': '1792px',
+        '4xl': '2048px',
+        '5xl': '2304px',
       },
     },
   },

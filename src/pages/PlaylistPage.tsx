@@ -136,12 +136,14 @@ const PlaylistPage: React.FC = () => {
   const handlePlayFromStart = () => {
     dispatch(togglePlay({
       uris: [playlist.uri],
+      offset: 0,
     }));
   };
 
   const handlePlaySuggestedTrack = (uri: string) => {
     dispatch(togglePlay({
       uris: [uri],
+      offset: 0,
     }));
   };
 

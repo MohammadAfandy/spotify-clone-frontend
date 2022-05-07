@@ -1,3 +1,4 @@
+import { overrideTailwindClasses } from 'tailwind-override'
 import { useCallback, useEffect, useRef } from 'react';
 import styles from './RangeInput.module.css';
 
@@ -19,7 +20,7 @@ const RangeInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = ({
   }, [max, min]);
 
   useEffect(() => {
-    if (!disabled) changeRangeStyle(Number(value));
+    changeRangeStyle(Number(value));
   }, [changeRangeStyle, value, disabled]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,8 +30,9 @@ const RangeInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = ({
 
   return (
     <div
-      className={`${styles.wrapper} ${className}`}
+      className={overrideTailwindClasses(`${styles.wrapper} ${className}`)}
       ref={wrapperRef}
+      data-disabled={disabled}
     >
       <input
         type="range"

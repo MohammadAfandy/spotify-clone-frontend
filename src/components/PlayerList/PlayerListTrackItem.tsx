@@ -33,7 +33,7 @@ type PlayerListTrackItemProps = {
   showDateAdded?: boolean;
   playlists: Playlist[];
   userId: string;
-  handlePlayTrack: ({ offset, uri }: { offset: number, uri: string }) => void;
+  handlePlayTrack: ({ position, uri }: { position: number, uri: string }) => void;
   handlePauseTrack: () => void;
   handleAddTrackToPlaylist: (args: PlaylistTrackParams) => void;
   handleRemoveFromPlaylist?: ({ trackUri, position }: { trackUri: string, position?: number }) => void;
@@ -120,7 +120,7 @@ const PlayerListTrackItem: React.FC<PlayerListTrackItemProps> = ({
         ) : (
           <MdPlayArrow
             className="w-6 h-6 cursor-pointer block canhover:hidden canhover:group-hover:block"
-            onClick={(e) => handlePlayTrack({ offset: offset || 0, uri: track.uri })}
+            onClick={(e) => handlePlayTrack({ position: offset || 0, uri: track.uri })}
             data-tip="play"
             data-for="play-tooltip"
             data-event="click"

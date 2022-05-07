@@ -104,6 +104,7 @@ const ArtistPage: React.FC = () => {
   const handlePlay = () => {
     dispatch(togglePlay({
       uris: [artist.uri],
+      offset: 0,
     }));
   };
 

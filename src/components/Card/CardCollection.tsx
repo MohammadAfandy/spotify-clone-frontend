@@ -55,6 +55,7 @@ const CardCollection: React.FC<CardCollectionProps> = ({
       event.stopPropagation();
       dispatch(togglePlay({
         uris,
+        offset: 0,
       }));
     }
   };

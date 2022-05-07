@@ -47,6 +47,7 @@ const CardItem: React.FC<CardItemProps> = ({
     if (!uri) return;
     dispatch(togglePlay({
       uris: [uri],
+      offset: 0,
     }));
   };
 

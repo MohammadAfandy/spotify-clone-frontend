@@ -74,10 +74,10 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
   const savedTrackIds = useSelector((state: RootState) => state.playlist.savedTrackIds);
 
   const handlePlayTrack = ({
-    offset,
+    position,
     uri,
   }: {
-    offset: number,
+    position: number,
     uri: string,
   }) => {
     if (currentTrack && uri === currentTrack.uri) {
@@ -85,7 +85,7 @@ const PlayerListTrack: React.FC<PlayerListTrackProps> = ({
     } else {
       dispatch(togglePlay({
         uris,
-        offset,
+        offset: handleRemoveFromPlaylist ? position : uri,
       }));
     }
   };

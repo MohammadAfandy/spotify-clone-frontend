@@ -5,7 +5,7 @@
   @apply flex items-center w-full h-2;
 }
 
-.wrapper:hover, .wrapper:active {
+.wrapper:hover[data-disabled=false], .wrapper:active[data-disabled=false] {
   --leftColor: rgba(52, 211, 153, 1);
 }
 

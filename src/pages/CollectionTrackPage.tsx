@@ -19,6 +19,7 @@ const CollectionTrackPage: React.FC = () => {
   const handlePlayFromStart = () => {
     dispatch(togglePlay({
       uris: [`spotify:user:${user.id}:collection`],
+      offset: 0,
     }));
   };
 

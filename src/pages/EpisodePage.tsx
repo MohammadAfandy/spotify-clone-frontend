@@ -17,13 +17,13 @@ import TextLink from '../components/Text/TextLink';
 import { duration, formatDate } from '../utils/helpers';
 import { addToSavedTrack, removeFromSavedTrack, setSavedTrackIds } from '../store/playlist-slice';
 import { RootState } from '../store';
+import HtmlDescription from '../components/Text/HtmlDescription';
 
 const EpisodePage: React.FC = () => {
   const dispatch = useDispatch();
   const params = useParams<{ id: string }>();
   const history = useHistory();
   const [episode, setEpisode] = useState<Episode>(Object);
-  // const [isSaved, setIsSaved] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { user } = useContext(AuthContext);
@@ -45,7 +45,6 @@ const EpisodePage: React.FC = () => {
         ]);
 
         setEpisode(dataEpisode.data);
-        // setIsSaved(dataSaved.data[0]);
         if (dataSaved.data[0]) setSavedTrackIds(dataEpisode.data.id);
       } catch (error) {
         console.error(error);
@@ -69,6 +68,7 @@ const EpisodePage: React.FC = () => {
   const handlePlayEpisode = () => {
     dispatch(togglePlay({
       uris: [episode.uri],
+      offset: 0,
     }));
   };
 
@@ -109,9 +109,13 @@ const EpisodePage: React.FC = () => {
         )}
       </div>
 
-      <div className="w-full sm:w-8/12">
-        <div className="text-lg font-bold mb-4">Episode Description</div>
-        <div className="font-light mb-4">{episode.description}</div>
+      <div className="w-full sm:w-8/12 md:w-6/12">
+        <div className="text-xl font-bold mb-4">Episode Description</div>
+        <HtmlDescription
+          className="mb-4"
+          description={episode.html_description}
+          uri={episode.uri}
+        />
         <div className="text-center sm:text-left">
           <Button
             text="SEE ALL EPISODES"

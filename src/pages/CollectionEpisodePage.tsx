@@ -18,7 +18,8 @@ const CollectionEpisodePage: React.FC = () => {
   const handlePlayFromStart = () => {
     const episodeUris = episodes.map((v) => v.uri);
     dispatch(togglePlay({
-      uris: episodeUris
+      uris: episodeUris,
+      offset: 0,
     }));
   };
 

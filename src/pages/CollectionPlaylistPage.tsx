@@ -70,6 +70,7 @@ const CollectionPlaylistPage: React.FC = () => {
     );
     dispatch(togglePlay({
       uris: episodeUris,
+      offset: 0,
     }));
   };
 

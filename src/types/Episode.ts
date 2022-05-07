@@ -14,6 +14,11 @@ type Episode = {
   is_playable: boolean;
   language: string;
   release_date: string;
+  release_date_precision: string;
+  resume_point: {
+    fully_played: boolean;
+    resume_position_ms: number;
+  };
   is_saved: boolean;
   images?: {
     [key: string]: any;

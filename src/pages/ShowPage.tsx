@@ -91,7 +91,7 @@ const ShowPage: React.FC = () => {
           <div className="text-lg font-bold mb-4">All Episode</div>
           <PlayerListEpisode
             episodes={episodes}
-            uris={episodes.map((v) => v.uri)}
+            uris={[show.uri]}
             handleNext={() => setNextUrl(pageData.next)}
             hasMore={!!pageData.next}
           />

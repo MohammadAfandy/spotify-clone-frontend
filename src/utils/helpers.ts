@@ -181,3 +181,16 @@ export const isActiveRoute = (route: string) => {
     }
   };
 };
+
+export const hmsToSeconds = (hms: string) => {
+  const part = hms.split(':');
+  let second = 0;
+  let minute = 1;
+
+  while (part.length > 0) {
+    second += minute * parseInt(part.pop() || '', 10);
+    minute *= 60;
+  }
+
+  return second;
+};

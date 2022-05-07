@@ -20,8 +20,8 @@ export type PlayerState = {
 };
 
 export type TogglePlayParams = {
-  uris: string[];
-  offset?: number;
+  uris?: string[];
+  offset?: number | string;
   positionMs?: number;
 };
 
@@ -38,9 +38,14 @@ const initialState: PlayerState = {
 
 export const togglePlay = createAsyncThunk(
   'player/togglePlay',
-  async (params: TogglePlayParams, { rejectWithValue }) => {
+  async (params: TogglePlayParams, { rejectWithValue, getState }) => {
     try {
-      const { uris = [], offset = 0, positionMs = 0 } = params;
+      const { player } = getState() as { player: PlayerState };
+      const {
+        uris = player.uris,
+        offset = player.offset,
+        positionMs = 0,
+      } = params;
       let newUris = [];
       let newContextUri = '';
       let noOffset = false;
@@ -73,13 +78,17 @@ export const togglePlay = createAsyncThunk(
           newContextUri = uri;
         }
       }
+      let offsetKey = 'position';
+      if (typeof offset === 'string') {
+        offsetKey = 'uri';
+      }
       const body = {
         uris: newUris.length ? newUris : undefined,
         context_uri: newContextUri || undefined,
         offset: noOffset
           ? undefined
           : {
-              position: offset,
+              [offsetKey]: offset,
             },
         position_ms: positionMs,
       };
@@ -145,10 +154,14 @@ export const playerSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(togglePlay.fulfilled, (state, action) => {
-      const { uris = [], offset = 0, positionMs = 0 } = action.payload;
-      state.uris = uris;
+      const { uris = [], offset, positionMs = 0 } = action.payload;
+      if (uris.length > 0) {
+        state.uris = uris;
+      }
+      if (offset != null) {
+        state.offset = offset as number;
+      }
       state.positionMs = positionMs;
-      state.offset = offset;
       state.isPlaying = true;
       state.forceUpdate += 1;
     });

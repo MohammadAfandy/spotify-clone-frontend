@@ -1,4 +1,4 @@
-import { overrideTailwindClasses } from 'tailwind-override'
+import { overrideTailwindClasses } from 'tailwind-override';
 import { IconType, IconBaseProps } from 'react-icons/lib';
 
 export type ControlButtonProps = {
